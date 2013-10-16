@@ -36,10 +36,10 @@
   %div.checkbox
     = f.check_box :notify_on_deploys
     = f.label :notify_on_deploys, 'Notify on deploys'
-
-%div.checkbox
-  = f.check_box :notify_all_users
-  = f.label :notify_all_users, 'Send notifications to all users'
+- if need_display_notify_all_users_field?
+  %div.checkbox
+    = f.check_box :notify_all_users
+    = f.label :notify_all_users, 'Send notifications to all users'
 
 
 %fieldset.watchers.nested-wrapper{:style => f.object.notify_all_users ? 'display: none;' : ''}

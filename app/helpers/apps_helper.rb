@@ -36,6 +36,10 @@ module AppsHelper
     @any_deploys
   end
 
+  def need_display_notify_all_users_field?
+    Errbit::Config.try :display_notify_all_users_field
+  end
+
   private
 
   def detect_any_apps_with_attributes

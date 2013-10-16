@@ -57,6 +57,7 @@ allow_comments_with_issue_tracker: true
 # Pull requests are always welcome!
 # However, you might be more comfortable setting this to false if your server can be accessed by anyone.
 display_internal_errors: true
+display_notify_all_users_field: true
 
 # Enable Gravatar.
 use_gravatar: true
