@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notice version="2.0">
+  <api-key>APIKEY</api-key>
+  <notifier>
+    <name>Hoptoad Notifier</name>
+    <version>2.3.2</version>
+    <url>http://hoptoadapp.com</url>
+  </notifier>
+  <error>
+    <class>HoptoadTestingException</class>
+    <message>HoptoadTestingException: Testing hoptoad via "rake hoptoad:test". If you can see this, it works.</message>
+    <backtrace/>
+  </error>
+  <request>
+    <url>http://example.com/verify</url>
+    <component>application</component>
+    <action>verify</action>
+    <cgi-data>
+      <var key="browser">Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/534.52.7 (KHTML, like Gecko) Version/5.1.2 Safari/534.52.7</var>
+      <var key="page time">214.727</var>
+    </cgi-data>
+  </request>
+  <server-environment>
+    <environment-name>production</environment-name>
+  </server-environment>
+</notice>

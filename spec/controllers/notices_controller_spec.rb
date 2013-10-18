@@ -63,6 +63,20 @@ describe NoticesController do
     end
   end
 
+  context "Notice without backtrace" do
+    before do
+      @xml = Rails.root.join('spec','fixtures','hoptoad_test_notice_without_backtrace.xml').read
+      App.stub(:find_by_api_key!).and_return(app)
+      @notice = App.report_error!(@xml)
+    end
+
+    it "generate a notice without backtrace from xml [POST]" do
+      App.should_receive(:report_error!).with(@xml).and_return(@notice)
+      request.should_receive(:raw_post).and_return(@xml)
+      post :create
+    end
+  end
+
   describe "GET /locate/:id" do
     context 'when logged in as an admin' do
       before(:each) do

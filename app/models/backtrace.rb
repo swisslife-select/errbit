@@ -18,6 +18,7 @@ class Backtrace < ActiveRecord::Base
   end
 
   def raw=(raw)
+    return if raw.compact.blank?
     raw.compact.each do |raw_line|
       lines << BacktraceLine.new(BacktraceLineNormalizer.new(raw_line).call)
     end
