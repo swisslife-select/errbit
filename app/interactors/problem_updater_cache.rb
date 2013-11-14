@@ -44,7 +44,6 @@ class ProblemUpdaterCache
     attrs.merge!(
       :message     => notice.message,
       :where       => notice.where,
-      :messages    => attribute_count(:message, messages),
       :hosts       => attribute_count(:host, hosts),
       :user_agents => attribute_count(:user_agent_string, user_agents)
     ) if notice

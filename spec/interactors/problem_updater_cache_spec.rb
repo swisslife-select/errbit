@@ -126,6 +126,7 @@ describe ProblemUpdaterCache do
       end
 
       it 'inc stats messages' do
+        pending 'Problem#messages'
         expect(problem.messages).to eq({
           Digest::MD5.hexdigest(notice.message) => {'value' => notice.message, 'count' => 2}
         })

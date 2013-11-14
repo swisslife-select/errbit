@@ -130,10 +130,20 @@ class Problem < ActiveRecord::Base
 
   def remove_cached_notice_attributes(notice)
     update_attributes!(
-      :messages    => attribute_count_descrease(:messages, notice.message),
       :hosts       => attribute_count_descrease(:hosts, notice.host),
       :user_agents => attribute_count_descrease(:user_agents, notice.user_agent_string)
     )
+  end
+
+  #FIXME: Problem with different error messages (PID, Time, etc.). They become too much and errbit slow write them.
+  def messages
+    m = notices.except(:order).group(:message).count
+    @messages = {}
+    m.each_pair do |key, value|
+      index = attribute_index(key)
+      @messages[index] = {'count' => value, 'value' => key}
+    end
+    @messages
   end
 
   def issue_type
