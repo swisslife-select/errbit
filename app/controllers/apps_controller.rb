@@ -106,10 +106,12 @@ class AppsController < ApplicationController
     end
 
     def plug_params app
+      donor = App.find_by_id(params[:copy_attributes_from])
+      AppCopy.deep_copy_attributes(app, donor) if donor
+
       app.watchers.build if app.watchers.none?
       app.issue_tracker = IssueTracker.new unless app.issue_tracker_configured?
       app.notification_service = NotificationService.new unless app.notification_service_configured?
-      app.copy_attributes_from(params[:copy_attributes_from]) if params[:copy_attributes_from]
     end
 
     # email_at_notices is edited as a string, and stored as an array.

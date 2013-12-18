@@ -163,22 +163,6 @@ class App < ActiveRecord::Base
     end
   end
 
-  # Copy app attributes from another app.
-  def copy_attributes_from(app_id)
-    if copy_app = App.find(app_id)
-      # Copy fields
-      (copy_app.attribute_names - %w(id name created_at updated_at)).each do |k|
-        self.send("#{k}=", copy_app.send(k))
-      end
-      # Clone the embedded objects that can be changed via apps/edit (ignore errs & deploys, etc.)
-      %w(watchers issue_tracker notification_service).each do |relation|
-        if obj = copy_app.send(relation)
-          self.send("#{relation}=", obj.is_a?(Array) ? obj.map(&:clone) : obj.clone)
-        end
-      end
-    end
-  end
-
   def unresolved_count
     @unresolved_count ||= problems.unresolved.count
   end
