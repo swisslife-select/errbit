@@ -10,10 +10,12 @@ if defined? RedmineClient
         :placeholder => "API Token for your account"
       }],
       [:username, {
-        :placeholder => "Your username"
+        :optional    => true,
+        :placeholder => "Your username (optional)"
       }],
       [:password, {
-        :placeholder => "Your password"
+        :optional    => true,
+        :placeholder => "Your password (optional)"
       }],
       [:project_id, {
         :label       => "Ticket Project",
@@ -28,7 +30,7 @@ if defined? RedmineClient
 
     def check_params
       if Fields.detect {|f| self[f[0]].blank? && !f[1][:optional]}
-        errors.add :base, 'You must specify your Redmine URL, API token, Username, Password and Project ID'
+        errors.add :base, 'You must specify your Redmine URL, API token and Project ID'
       end
     end
 
