@@ -31,7 +31,6 @@ class Problem < ActiveRecord::Base
   def default_values
     if self.new_record?
       self.user_agents ||= Hash.new
-      self.messages ||= Hash.new
       self.hosts ||= Hash.new
       self.comments_count ||= 0
       self.notices_count ||= 0
