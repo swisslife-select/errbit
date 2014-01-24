@@ -1,21 +1,19 @@
 %table.errs
   %thead
     %tr
+      %th Page
       %th App
       %th When
       %th Who
-      %th Message
-      %th Repository
       %th Revision
   %tbody
     - deploys.each do |deploy|
       %tr
+        %td= link_to 'More info', app_deploy_path(deploy.app, deploy)
         %td.app
-          = deploy.app.name
+          = link_to deploy.app.name, app_path(deploy.app)
           %span.environment= deploy.environment
         %td.latest= deploy.created_at.to_s( deploy.created_at.year == Time.now.year ? :micro : :micro_with_year )
         %td.who= deploy.username
-        %td.message= deploy.message
-        %td.repository= link_to_repository deploy.repository
-        %td.revision= link_to_commit deploy.repository, deploy.short_revision
+        %td.revision= link_to_commit deploy.repository, deploy.revision
 

@@ -123,6 +123,8 @@ en:
       unwatch: unwatch
       user_or_email: User or Email
       watchers: Watchers
+      page: Page
+      more_info: More info
       when:  When
       who: Who
 

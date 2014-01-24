@@ -37,7 +37,7 @@ Errbit::Application.routes.draw do
         delete :unlink_issue
       end
     end
-    resources :deploys, :only => [:index]
+    resources :deploys, :only => [:index, :show]
     resources :watchers, :only => [:destroy]
     member do
       post :regenerate_api_key

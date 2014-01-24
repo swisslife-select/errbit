@@ -60,5 +60,20 @@ describe DeploysController do
     end
   end
 
+  context "GET #show" do
+    before(:each) do
+      @deploy = Fabricate :deploy
+      @params = { app_id: @deploy.app.id, id: @deploy.id }
+
+      watcher = Fabricate :user_watcher, app: @deploy.app
+      sign_in watcher.user
+    end
+
+    it "should render successfully" do
+      get :show, @params
+      response.should be_success
+    end
+  end
+
 end
 

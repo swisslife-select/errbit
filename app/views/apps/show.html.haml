@@ -59,22 +59,19 @@
     %table.deploys
       %thead
         %tr
+          %th=t('.page')
           %th=t('.when')
           %th=t('.environment')
           %th=t('.who')
-          %th=t('.message')
-          %th=t('.repository')
           %th=t('.revision')
-
       %tbody
         - deploys.each do |deploy|
           %tr
+            %td= link_to t('.more_info'), app_deploy_path(deploy.app, deploy)
             %td.when #{deploy.created_at.to_s(:micro)}
             %td.environment #{deploy.environment}
             %td.who #{deploy.username}
-            %td.message #{deploy.message}
-            %td.repository= link_to_repository deploy.repository
-            %td.revision= link_to_commit deploy.repository, deploy.short_revision
+            %td.revision= link_to_commit deploy.repository, deploy.revision
         = link_to t('.all_deploys', :count => app.deploys.count), app_deploys_path(app), :class => 'button'
   - else
     %h3=t('.no_deploys')

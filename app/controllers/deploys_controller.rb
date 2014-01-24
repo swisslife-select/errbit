@@ -12,16 +12,23 @@ class DeploysController < ApplicationController
   end
 
   def index
-    # See AppsController#find_app for the reasoning behind this code.
-    app = App.find(params[:app_id])
-    raise ActiveRecord::RecordNotFound.new(App, app.id) unless current_user.admin? || current_user.watching?(app)
+    @app = resource_app
+    @deploys = @app.deploys.by_created_at.page(params[:page]).per(10)
+  end
 
-    @deploys = Kaminari.paginate_array(app.deploys.by_created_at).
-      page(params[:page]).per(10)
-    @app = app
+  def show
+    @app = resource_app
+    @deploy = @app.deploys.find params[:id]
   end
 
   private
+    def resource_app
+      return @resource_app if @resource_app
+      @resource_app = App.find(params[:app_id])
+      #TODO: use ACL
+      raise ActiveRecord::RecordNotFound unless current_user.admin? || current_user.watching?(@resource_app)
+      @resource_app
+    end
 
     def default_deploy
       if params[:deploy]
