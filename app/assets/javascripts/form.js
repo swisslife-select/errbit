@@ -49,10 +49,15 @@ function appendNestedItem() {
 
   nestedItem.find('input, select').each(function(){
     var input = $(this);
-    input.attr('id', input.attr('id').replace(/([_\[])\d+([\]_])/,'$1'+timestamp+'$2'));
+    if (input.attr('id')) {
+      input.attr('id', input.attr('id').replace(/([_\[])\d+([\]_])/,'$1'+timestamp+'$2'));
+    }
     input.attr('name', input.attr('name').replace(/([_\[])\d+([\]_])/,'$1'+timestamp+'$2'));
-    if(input.attr('type') != 'radio')
+
+    var type = input.attr('type');
+    if( $.inArray(type, ['radio', 'checkbox', 'hidden']) == -1 ) {
       input.val('');
+    }
   });
   nestedItem.find('label').each(function(){
     var label = $(this);

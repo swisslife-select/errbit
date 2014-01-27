@@ -156,7 +156,7 @@ describe ErrorReport do
         before do
           app.notify_on_errs = true
           app.email_at_notices = [1]
-          app.watchers.build(:email => 'foo@example.com')
+          app.watchers.build(Fabricate.attributes_for(:watcher))
           app.save!
         end
         

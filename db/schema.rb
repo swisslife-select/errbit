@@ -203,8 +203,10 @@ ActiveRecord::Schema.define(:version => 20140220133128) do
     t.integer  "app_id"
     t.integer  "user_id"
     t.string   "email"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+    t.boolean  "watching_errors"
+    t.boolean  "watching_deploys"
   end
 
   add_index "watchers", ["app_id"], :name => "index_watchers_on_app_id"

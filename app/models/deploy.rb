@@ -18,6 +18,10 @@ class Deploy < ActiveRecord::Base
     revision.to_s[0,7]
   end
 
+  def should_notify?
+    app.should_notify_on_deploy?
+  end
+
   protected
 
     def should_resolve_app_errs?
@@ -29,7 +33,7 @@ class Deploy < ActiveRecord::Base
     end
 
     def deliver_email
-      if app.notify_on_deploys? && app.notification_recipients.any?
+      if should_notify?
         Mailer.deploy_notification(self).deliver
       end
     end

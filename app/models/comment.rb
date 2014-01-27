@@ -16,7 +16,7 @@ class Comment < ActiveRecord::Base
   end
 
   def notification_recipients
-    app.notification_recipients - [user.email]
+    app.error_recipients - [user.email]
   end
 
   def emailable?

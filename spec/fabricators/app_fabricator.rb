@@ -27,11 +27,27 @@ Fabricator(:watcher) do
   app
   watcher_type 'email'
   email   { sequence(:email){|n| "email#{n}@example.com"} }
+
+  watching_errors true
+  watching_deploys true
+end
+
+Fabricator(:watcher_of_errors, from: :watcher) do
+  watching_errors true
+  watching_deploys false
+end
+
+Fabricator(:watcher_of_deploys, from: :watcher) do
+  watching_errors false
+  watching_deploys true
 end
 
 Fabricator(:user_watcher, :from => :watcher) do
   user
   watcher_type 'user'
+
+  watching_errors true
+  watching_deploys true
 end
 
 Fabricator(:deploy) do

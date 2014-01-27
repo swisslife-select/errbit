@@ -16,7 +16,7 @@ class Mailer < ActionMailer::Base
     count = @notice.similar_count
     count = count > 1 ? "(#{count}) " : ""
 
-    mail :to      => @app.notification_recipients,
+    mail :to      => @app.error_recipients,
          :subject => "#{count}[#{@app.name}][#{@notice.environment_name}] #{@notice.message.truncate(50)}"
   end
 
@@ -24,7 +24,7 @@ class Mailer < ActionMailer::Base
     @deploy   = deploy
     @app  = deploy.app
 
-    mail :to       => @app.notification_recipients,
+    mail :to       => @app.deploy_recipients,
          :subject  => "[#{@app.name}] Deployed to #{@deploy.environment} by #{@deploy.username}"
   end
 

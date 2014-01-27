@@ -59,6 +59,9 @@ class App < ActiveRecord::Base
 
   has_many :problems, :inverse_of => :app, :dependent => :destroy
 
+  has_many :watchers_of_errors, conditions: { watching_errors: true }, class_name: 'Watcher'
+  has_many :watchers_of_deploys, conditions: { watching_deploys: true }, class_name: 'Watcher'
+
   before_validation :generate_api_key, :on => :create
   after_update :store_cached_attributes_on_problems
   after_initialize :default_values
@@ -108,13 +111,17 @@ class App < ActiveRecord::Base
   alias :notify_on_errs? :notify_on_errs
 
   def emailable?
-    notify_on_errs? && notification_recipients.any?
+    notify_on_errs? && error_recipients.any?
   end
 
   def notify_on_deploys
     !(super == false)
   end
   alias :notify_on_deploys? :notify_on_deploys
+
+  def should_notify_on_deploy?
+    notify_on_deploys? && deploy_recipients.any?
+  end
 
   def repo_branch
     self.repository_branch.present? ? self.repository_branch : 'master'
@@ -150,13 +157,18 @@ class App < ActiveRecord::Base
     !!(notification_service.class < NotificationService && notification_service.configured?)
   end
 
+  def error_recipients
+    return application_wide_recipients if notify_all_users
+    watchers_of_errors.map(&:address)
+  end
 
-  def notification_recipients
-    if notify_all_users
-      (User.with_not_blank_email.map(&:email) + watchers.map(&:address)).uniq
-    else
-      watchers.map(&:address)
-    end
+  def deploy_recipients
+    return application_wide_recipients if notify_all_users
+    watchers_of_deploys.map(&:address)
+  end
+
+  def application_wide_recipients
+    (User.with_not_blank_email.pluck(:email) + watchers.pluck(:email)).uniq
   end
 
   def unresolved_count

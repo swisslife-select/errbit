@@ -100,29 +100,54 @@ describe App do
     end
   end
 
-  context "notification recipients" do
-    it "should send notices to either all users plus watchers, or the configured watchers" do
+  context "application_wide_recipients" do
+    it "should send notices to all users plus all app watchers" do
       @app = Fabricate(:app)
       3.times { Fabricate(:user) }
-      5.times { Fabricate(:watcher, :app => @app) }
+      Fabricate(:watcher, :app => @app)
+      Fabricate(:watcher_of_errors, :app => @app)
+      Fabricate(:watcher_of_deploys, :app => @app)
+
       @app.reload
       @app.notify_all_users = true
-      expect(@app.notification_recipients.size).to eq 8
+      expect(@app.error_recipients.count).to eq(6) # 3 users and 3 watchers
+    end
+  end
+
+  context "error_recipients" do
+    it "should send notices to the configured watchers" do
+      @app = Fabricate(:app)
+      Fabricate(:watcher, :app => @app)
+      Fabricate(:watcher_of_errors, :app => @app)
+      Fabricate(:watcher_of_deploys, :app => @app)
+      @app.reload
       @app.notify_all_users = false
-      expect(@app.notification_recipients.size).to eq 5
+      @app.error_recipients.count.should == 2
+    end
+  end
+
+  context "deploy_recipients" do
+    it "should send notices to the configured watchers" do
+      @app = Fabricate(:app)
+      Fabricate(:watcher, :app => @app)
+      Fabricate(:watcher_of_errors, :app => @app)
+      Fabricate(:watcher_of_deploys, :app => @app)
+      @app.reload
+      @app.notify_all_users = false
+      @app.deploy_recipients.count.should == 2
     end
   end
 
   context "emailable?" do
     it "should be true if notify on errs and there are notification recipients" do
       app = Fabricate(:app, :notify_on_errs => true, :notify_all_users => false)
-      2.times { app.watchers.build Fabricate.attributes_for(:watcher) }
+      2.times { app.watchers.create Fabricate.attributes_for(:watcher) }
       expect(app.emailable?).to be_true
     end
 
     it "should be false if notify on errs is disabled" do
       app = Fabricate(:app, :notify_on_errs => false, :notify_all_users => false)
-      2.times { app.watchers.build Fabricate.attributes_for(:watcher) }
+      2.times { app.watchers.create Fabricate.attributes_for(:watcher) }
       expect(app.emailable?).to be_false
     end
 

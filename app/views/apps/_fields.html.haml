@@ -52,6 +52,12 @@
         = w.select :user_id, users_for_select, :include_blank => '-- Select a User --'
       %div.watcher_params.email{:class => w.object.email.present? ? 'chosen' : nil}
         = w.text_field :email
+      .checkbox
+        = w.check_box :watching_errors
+        = w.label :watching_errors
+      .checkbox
+        = w.check_box :watching_deploys
+        = w.label :watching_deploys
 
 %div.checkbox
   = f.check_box :resolve_errs_on_deploy
