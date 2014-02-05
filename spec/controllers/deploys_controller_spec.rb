@@ -60,6 +60,19 @@ describe DeploysController do
     end
   end
 
+  context "GET #index in atom format" do
+    before(:each) do
+      @deploy = Fabricate :deploy
+      watcher = Fabricate :user_watcher, app: @deploy.app
+
+      get :index, app_id: @deploy.app.id, format: :atom, auth_token: watcher.user.authentication_token
+    end
+
+    it "should render successfully" do
+      expect(response).to be_success
+    end
+  end
+
   context "GET #show" do
     before(:each) do
       @deploy = Fabricate :deploy
