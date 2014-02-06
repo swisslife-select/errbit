@@ -177,7 +177,7 @@ class Notice < ActiveRecord::Base
     return true unless should_email?
     Mailer.err_notification(self).deliver
   rescue => e
-    HoptoadNotifier.notify(e)
+    Airbrake.notify(e)
   end
 
   ##
@@ -186,7 +186,7 @@ class Notice < ActiveRecord::Base
     return true unless app.notification_service_configured? and should_notify?
     app.notification_service.create_notification(problem)
   rescue => e
-    HoptoadNotifier.notify(e)
+    Airbrake.notify(e)
   end
 
 end

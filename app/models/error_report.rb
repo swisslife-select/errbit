@@ -1,5 +1,3 @@
-require 'hoptoad_notifier'
-
 ##
 # Processes a new error report.
 #

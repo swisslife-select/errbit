@@ -46,7 +46,7 @@ describe "Callback on Notice" do
       @err.problem.resolve!
       expect(Mailer).to receive(:err_notification).
         and_raise(ArgumentError)
-      expect(HoptoadNotifier).to receive(:notify)
+      expect(Airbrake).to receive(:notify)
       Fabricate(:notice, :err => @err)
     end
   end

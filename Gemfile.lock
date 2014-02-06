@@ -33,7 +33,7 @@ GEM
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
     addressable (2.3.5)
-    airbrake (3.1.14)
+    airbrake (3.1.15)
       builder
       json
     arel (3.0.3)
@@ -128,9 +128,6 @@ GEM
     hoi (0.0.6)
       httparty (> 0.6.0)
       json (> 1.4.0)
-    hoptoad_notifier (2.4.11)
-      activesupport
-      builder
     htmlentities (4.3.1)
     httparty (0.12.0)
       json (~> 1.8)
@@ -354,7 +351,7 @@ PLATFORMS
 
 DEPENDENCIES
   actionmailer_inline_css
-  airbrake
+  airbrake (= 3.1.15)
   better_errors
   binding_of_caller
   bitbucket_rest_api
@@ -376,7 +373,6 @@ DEPENDENCIES
   haml
   hipchat
   hoi
-  hoptoad_notifier (~> 2.4)
   htmlentities
   httparty
   jira-ruby

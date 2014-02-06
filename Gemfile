@@ -17,9 +17,9 @@ gem 'kaminari', '>= 0.14.1'
 gem 'rack-ssl-enforcer', :require => false
 gem 'fabrication'
 gem 'rails_autolink'
-# Please don't update hoptoad_notifier to airbrake.
+# Please don't update airbrake.
 # It's for internal use only, and we monkeypatch certain methods
-gem 'hoptoad_notifier', "~> 2.4"
+gem 'airbrake', '3.1.15'
 
 # Need for mongodb data import
 gem 'mongo', :require => false
@@ -76,7 +76,6 @@ gem 'yajl-ruby', :require => "yajl"
 group :development, :test do
   gem 'rspec-rails'
   gem 'webmock', :require => false
-  gem 'airbrake', :require => false
   gem 'ruby-debug', :platform => :mri_18
   gem 'debugger', :platform => :mri_19
   gem 'pry-rails'
