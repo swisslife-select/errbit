@@ -45,6 +45,16 @@ describe NoticesController do
         expect(response.body).to match(%r{<id[^>]*>#{notice.id}</id>})
         expect(response.body).to match(%r{<url[^>]*>(.+)#{locate_path(notice.id)}</url>})
       end
+
+      context "without backtrace" do
+        let(:xml) { Rails.root.join('spec','fixtures','hoptoad_test_notice_without_backtrace.xml').read }
+
+        it "generates a notice from xml [POST]" do
+          post :create, data: xml
+          expect(response).to be_success
+        end
+      end
+
       context "with an invalid API_KEY" do
         let(:error_report) { double(:valid? => false) }
         it 'return 422' do
@@ -60,20 +70,6 @@ describe NoticesController do
         expect(response.status).to eq 400
         expect(response.body).to eq 'Need a data params in GET or raw post data'
       end
-    end
-  end
-
-  context "Notice without backtrace" do
-    before do
-      @xml = Rails.root.join('spec','fixtures','hoptoad_test_notice_without_backtrace.xml').read
-      App.stub(:find_by_api_key!).and_return(app)
-      @notice = App.report_error!(@xml)
-    end
-
-    it "generate a notice without backtrace from xml [POST]" do
-      App.should_receive(:report_error!).with(@xml).and_return(@notice)
-      request.should_receive(:raw_post).and_return(@xml)
-      post :create
     end
   end
 
