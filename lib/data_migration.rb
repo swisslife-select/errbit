@@ -82,11 +82,11 @@ module DataMigration
 
     APP_FIELDS_MAPPING = {
       :remote_id => lambda{|v| v["_id"].to_s},
-      
+
       :name => :name,
       :api_key => :api_key,
-      :github_repo => :github_repo,
-      :bitbucket_repo => :bitbucket_repo,
+      :repo_url => lambda{|v| ("https://github.com/#{v['github_repo']}" if v['github_repo'].present?) \
+                           || ("https://bitbucket.com/#{v['bitbucket_repo']}" if v['bitbucket_repo'].present?)},
       :asset_host => :asset_host,
       :repository_branch => :repository_branch,
       :resolve_errs_on_deploy => :resolve_errs_on_deploy,

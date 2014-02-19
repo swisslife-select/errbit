@@ -4,7 +4,7 @@ describe IssueTrackers::BitbucketIssuesTracker do
   it "should create an issue on BitBucket Issues with problem params, and set issue link for problem" do
     repo = "test_user/test_repo"
     notice = Fabricate :notice
-    notice.app.bitbucket_repo = repo
+    notice.app.repo_url = "https://bitbucket.org/#{repo}"
     tracker = Fabricate :bitbucket_issues_tracker, :app => notice.app
     problem = notice.problem
 

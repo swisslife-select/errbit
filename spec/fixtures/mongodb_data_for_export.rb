@@ -5,7 +5,7 @@ class MongodbDataStubs
         "_id" => "04f2a83052892bcb7d82d2d708cf8e3f",
         "api_key" => "f4e172e2723e430b25fc49218a345c13",
         "email_at_notices" => [1, 3, 5, 10, 20],
-        "github_repo" => "git://github.com/errbit/errbit",
+        "github_repo" => "errbit/errbit",
         "name" => "Errbit",
         "notify_all_users" => false,
         "notify_on_deploys" => true,

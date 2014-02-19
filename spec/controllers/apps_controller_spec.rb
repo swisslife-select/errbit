@@ -187,14 +187,14 @@ describe AppsController do
       end
 
       it "should copy attributes from an existing app" do
-        github_repo = 'test/example'
+        repo_url = 'https://github.com/test/example'
         @app = Fabricate(:app_with_watcher, :name => "do not copy",
-                             :github_repo => github_repo)
+                             :repo_url => repo_url)
         get :new, :copy_attributes_from => @app.id
         expect(controller.app).to be_a(App)
         expect(controller.app).to be_new_record
         expect(controller.app.name).to be_blank
-        expect(controller.app.github_repo).to eq github_repo
+        expect(controller.app.repo_url).to eq repo_url
         expect(controller.app.watchers.first.new_record?).to be true
       end
     end

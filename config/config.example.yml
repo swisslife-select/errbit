@@ -112,3 +112,20 @@ github_access_scope: ['repo']
 # sendmail_settings:
 #  :location: '/usr/sbin/sendmail'
 #  :arguments: '-i -t'
+
+repository_hostings:
+  - name: github
+    base_url: https://github.com
+    matcher: \A.*github.com(\/|:)(?<repository>.*?)(\.git|\/)?\z
+    repo_path_template: '%{repository}'
+    commit_path_template: '%{repository}/commit/%{sha}'
+    file_path_template: '%{repository}/blob/%{sha}/%{file_path}'
+    file_line_anchor_template: 'L%{line}'
+
+  - name: bitbucket
+    base_url: https://bitbucket.org
+    matcher: \A.*bitbucket.org(\/|:)(?<repository>.*?)(\.git|\/)?\z
+    repo_path_template: '%{repository}'
+    commit_path_template: '%{repository}/commits/%{sha}'
+    file_path_template: '%{repository}/src/%{sha}/%{file_path}'
+    file_line_anchor_template: 'cl-%{line}'

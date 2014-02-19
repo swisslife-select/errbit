@@ -11,19 +11,14 @@ module AppsHelper
     end
   end
 
-  def any_github_repos?
-    detect_any_apps_with_attributes if @any_github_repos.nil?
-    @any_github_repos
+  def any_repo_urls?
+    detect_any_apps_with_attributes if @any_repo_urls.nil?
+    @any_repo_urls
   end
 
   def any_notification_services?
     detect_any_apps_with_attributes if @any_notification_services.present?
     @any_notification_services
-  end
-
-  def any_bitbucket_repos?
-    detect_any_apps_with_attributes if @any_bitbucket_repos.nil?
-    @any_bitbucket_repos
   end
 
   def any_issue_trackers?
@@ -43,11 +38,10 @@ module AppsHelper
   private
 
   def detect_any_apps_with_attributes
-    @any_github_repos = @any_issue_trackers = @any_deploys = @any_bitbucket_repos = @any_notification_services = false
+    @any_repo_urls = @any_issue_trackers = @any_deploys = @any_notification_services = false
 
     apps.each do |app|
-      @any_github_repos   ||= app.github_repo?
-      @any_bitbucket_repos   ||= app.bitbucket_repo?
+      @any_repo_urls ||= app.repo_url?
       @any_issue_trackers ||= app.issue_tracker_configured?
       @any_deploys        ||= !!app.last_deploy_at
       @any_notification_services ||= app.notification_service_configured?

@@ -3,12 +3,12 @@ require 'spec_helper'
 describe AppCopy do
   it "copy the necessary fields" do
     recipient_name = "recipient"
-    recipient = Fabricate(:app, :name => recipient_name, :github_repo => "url")
-    donor = Fabricate(:app_with_watcher, :name => "donor", :github_repo => "copy url")
+    recipient = Fabricate(:app, :name => recipient_name, :repo_url => "https://github.com/recipient/recipient")
+    donor = Fabricate(:app_with_watcher, :name => "donor", :repo_url => "https://github.com/donor/donor")
 
     AppCopy.deep_copy_attributes recipient, donor
     expect(recipient.name).to be(recipient_name)
-    expect(recipient.github_repo).to be(donor.github_repo)
+    expect(recipient.repo_url).to be(donor.repo_url)
 
     expect(donor.watchers.one?).to be true
     expect(recipient.watchers.one?).to be true

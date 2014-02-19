@@ -64,46 +64,33 @@ describe App do
     end
 
     it 'is fine with blank github repos' do
-      app = Fabricate.build(:app, :github_repo => "")
+      app = Fabricate.build(:app, :repo_url => "")
       app.save
-      expect(app.github_repo).to eq ""
-    end
-
-    it 'doesnt touch github user/repo' do
-      app = Fabricate.build(:app, :github_repo => "errbit/errbit")
-      app.save
-      expect(app.github_repo).to eq "errbit/errbit"
+      expect(app.github_repo).to be_blank
     end
 
     it 'removes domain from https github repos' do
-      app = Fabricate.build(:app, :github_repo => "https://github.com/errbit/errbit")
+      app = Fabricate.build(:app, :repo_url => "https://github.com/errbit/errbit")
       app.save
       expect(app.github_repo).to eq "errbit/errbit"
     end
 
     it 'normalizes public git repo as a github repo' do
-      app = Fabricate.build(:app, :github_repo => "https://github.com/errbit/errbit.git")
+      app = Fabricate.build(:app, :repo_url => "https://github.com/errbit/errbit.git")
       app.save
       expect(app.github_repo).to eq "errbit/errbit"
     end
 
     it 'normalizes private git repo as a github repo' do
-      app = Fabricate.build(:app, :github_repo => "git@github.com:errbit/errbit.git")
+      app = Fabricate.build(:app, :repo_url => "git@github.com:errbit/errbit.git")
       app.save
       expect(app.github_repo).to eq "errbit/errbit"
     end
   end
 
-  context '#github_url_to_file' do
-    it 'resolves to full path to file' do
-      app = Fabricate(:app, :github_repo => "errbit/errbit")
-      expect(app.github_url_to_file('path/to/file')).to eq "https://github.com/errbit/errbit/blob/master/path/to/file"
-    end
-  end
-
   context '#github_repo?' do
     it 'is true when there is a github_repo' do
-      app = Fabricate(:app, :github_repo => "errbit/errbit")
+      app = Fabricate(:app, :repo_url => "https://github.com/errbit/errbit.git")
       expect(app.github_repo?).to be_true
     end
 

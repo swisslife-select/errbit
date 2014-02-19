@@ -9,7 +9,7 @@ Airbrake.module_eval do
         # Log the error internally if we are not in a development environment.
         if configuration.public?
           app = App.find_or_initialize_by_name("Self.Errbit")
-          app.github_repo = "errbit/errbit"
+          app.repo_url = "https://github.com/errbit/errbit"
           app.save!
           notice.instance_variable_set(:"@api_key", app.api_key)
 

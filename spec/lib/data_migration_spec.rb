@@ -67,6 +67,12 @@ describe DataMigration do
       end
     end
 
+    it "fill repo_url" do
+      github_repo = @mongo_app['github_repo']
+      @pg_app.repo_url.should == "https://github.com/#{github_repo}"
+      @pg_app.github_repo.should == github_repo
+    end
+
     it "should copy issue tracker" do
       @pg_app.issue_tracker.should_not be_nil
       @pg_app.issue_tracker.type.should == @mongo_app["issue_tracker"]["_type"]

@@ -13,11 +13,8 @@
   = f.label :repository_branch
   = f.text_field :repository_branch, :placeholder => "master"
 %div
-  = f.label :github_repo
-  = f.text_field :github_repo, :placeholder => "errbit/errbit from https://github.com/errbit/errbit"
-%div
-  = f.label :bitbucket_repo
-  = f.text_field :bitbucket_repo, :placeholder => "errbit/errbit from https://bitbucket.org/errbit/errbit"
+  = f.label :repo_url
+  = f.text_field :repo_url, :placeholder => "https://github.com/errbit/errbit"
 %div
   = f.label :asset_host
   %em Used to generate links for JavaScript errors

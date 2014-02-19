@@ -66,7 +66,7 @@ describe "problems/show.html.haml" do
         user = Fabricate(:user, :github_login => 'test_user', :github_oauth_token => 'abcdef')
         controller.stub(:current_user) { user }
 
-        problem = Fabricate(:problem_with_comments, :app => Fabricate(:app, :github_repo => "test_user/test_repo"))
+        problem = Fabricate(:problem_with_comments, :app => Fabricate(:app, :repo_url => "https://github.com/test_user/test_repo"))
         view.stub(:problem).and_return(problem)
         view.stub(:app).and_return(problem.app)
         render
@@ -75,7 +75,7 @@ describe "problems/show.html.haml" do
       end
 
       it 'should allow creating issue for github if application has a github tracker' do
-        problem = Fabricate(:problem_with_comments, :app => Fabricate(:app, :github_repo => "test_user/test_repo"))
+        problem = Fabricate(:problem_with_comments, :app => Fabricate(:app, :repo_url => "https://github.com/test_user/test_repo"))
         with_issue_tracker(GithubIssuesTracker, problem)
         view.stub(:problem).and_return(problem)
         view.stub(:app).and_return(problem.app)

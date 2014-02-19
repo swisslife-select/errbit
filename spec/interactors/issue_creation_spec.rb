@@ -31,7 +31,7 @@ describe IssueCreation do
 
     context 'with repo set up' do
       before do
-        notice.app.update_attribute(:github_repo, 'errbit/errbit')
+        notice.app.update_attribute(:repo_url, 'https://github.com/errbit/errbit')
       end
 
       it "adds the error when github account isn't linked" do

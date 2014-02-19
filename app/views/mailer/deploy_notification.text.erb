@@ -13,5 +13,5 @@ WHEN:
 
 REPOSITORY:
 
-<%= @deploy.repository.blank? ? 'n/a' : @deploy.repository %>
+<%= @deploy.repository.blank? ? 'n/a' : repository_curl(@deploy.repository) %>
 

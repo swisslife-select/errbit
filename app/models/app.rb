@@ -60,7 +60,6 @@ class App < ActiveRecord::Base
   has_many :problems, :inverse_of => :app, :dependent => :destroy
 
   before_validation :generate_api_key, :on => :create
-  before_save :normalize_github_repo
   after_update :store_cached_attributes_on_problems
   after_initialize :default_values
 
@@ -121,30 +120,27 @@ class App < ActiveRecord::Base
     self.repository_branch.present? ? self.repository_branch : 'master'
   end
 
+  def github_repo
+    return unless repo_url?
+    repo = RepositoryHosting.github
+    return unless repo
+    repo.repository repo_url
+  end
+
   def github_repo?
-    self.github_repo.present?
+    github_repo.present?
   end
 
-  def github_url
-    "https://github.com/#{github_repo}" if github_repo?
-  end
-
-  def github_url_to_file(file)
-    "#{github_url}/blob/#{repo_branch}/#{file}"
+  def bitbucket_repo
+    return unless repo_url?
+    repo = RepositoryHosting.bitbucket
+    return unless repo
+    repo.repository repo_url
   end
 
   def bitbucket_repo?
-    self.bitbucket_repo.present?
+    bitbucket_repo.present?
   end
-
-  def bitbucket_url
-    "https://bitbucket.org/#{bitbucket_repo}" if bitbucket_repo?
-  end
-
-  def bitbucket_url_to_file(file)
-    "#{bitbucket_url}/src/#{repo_branch}/#{file}"
-  end
-
 
   def issue_tracker_configured?
     !!(issue_tracker.class < IssueTracker && issue_tracker.configured?)
@@ -203,13 +199,6 @@ class App < ActiveRecord::Base
           errors[:base] << error
         end if issue_tracker.errors
       end
-    end
-
-    def normalize_github_repo
-      return if github_repo.blank?
-      github_repo.strip!
-      github_repo.sub!(/(git@|https?:\/\/)github\.com(\/|:)/, '')
-      github_repo.sub!(/\.git$/, '')
     end
 end
 

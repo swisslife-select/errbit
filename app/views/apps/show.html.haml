@@ -41,18 +41,15 @@
             %td
               %em= t('.no_watcher')
 
-- if app.github_repo?
+- if app.repo_url?
   %h3#repository_toggle
     =t('.repository')
     %span.click_span=t('.show_hide')
   #repository_div
     %table.repository
-      %thead
-        %tr
-          %th=t('.github_repo')
       %tbody
         %tr
-          %td= link_to(app.github_repo, app.github_url, :target => '_blank')
+          %td= link_to_repository(app.repo_url)
 
 %h3#deploys_toggle
   =t('.latest_deploys')
@@ -76,9 +73,9 @@
             %td.environment #{deploy.environment}
             %td.who #{deploy.username}
             %td.message #{deploy.message}
-            %td.repository #{deploy.repository}
-            %td.revision #{deploy.short_revision}
-    = link_to t('.all_deploys', :count => app.deploys.count), app_deploys_path(app), :class => 'button'
+            %td.repository= link_to_repository deploy.repository
+            %td.revision= link_to_commit deploy.repository, deploy.short_revision
+        = link_to t('.all_deploys', :count => app.deploys.count), app_deploys_path(app), :class => 'button'
   - else
     %h3=t('.no_deploys')
 
