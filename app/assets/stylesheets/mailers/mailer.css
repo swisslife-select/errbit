@@ -43,7 +43,7 @@ td.footer {
   color: #666666;
 }
 
-a.bold, span.bold { font-weight: bold; }
+a.bold, span.bold, strong { font-weight: bold; }
 
 p { margin: 0 0 15px 0; }
 p.heading {

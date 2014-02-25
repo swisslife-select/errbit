@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe Mailer do
-  context "Err Notification" do
-    include EmailSpec::Helpers
-    include EmailSpec::Matchers
+  include EmailSpec::Helpers
+  include EmailSpec::Matchers
 
+  context "Err Notification" do
     let(:notice)  { Fabricate(:notice, :message => "class < ActionController::Base") }
     let!(:user)   { Fabricate(:admin) }
 
@@ -48,9 +48,6 @@ describe Mailer do
   end
 
   context "Comment Notification" do
-    include EmailSpec::Helpers
-    include EmailSpec::Matchers
-
     let!(:notice) { Fabricate(:notice) }
     let!(:comment) { Fabricate.build(:comment, :err => notice.problem) }
     let!(:watcher) { Fabricate(:watcher, :app => comment.app) }
@@ -76,6 +73,25 @@ describe Mailer do
 
     it "should have the comment body" do
       expect(@email).to have_body_text(comment.body)
+    end
+  end
+
+  context "Deploy Notification" do
+    let!(:app) { Fabricate(:app_with_watcher) }
+    let!(:first_deploy) { Fabricate(:deploy, app: app) }
+    let!(:second_deploy) { Fabricate(:deploy, app: app) }
+
+    before do
+      second_deploy.reload
+      @email = Mailer.deploy_notification(second_deploy).deliver
+    end
+
+    it "should send the email" do
+      expect(ActionMailer::Base.deliveries.size).to eq 1
+    end
+
+    it "should have the changes" do
+      expect(@email).to have_body_text("CHANGES:")
     end
   end
 end

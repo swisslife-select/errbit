@@ -1,5 +1,7 @@
 class Deploy < ActiveRecord::Base
 
+  serialize :vcs_changes, Hash
+
   belongs_to :app, :inverse_of => :deploys
 
   after_create :resolve_app_errs, :if => :should_resolve_app_errs?
@@ -28,6 +30,10 @@ class Deploy < ActiveRecord::Base
 
   def should_notify?
     notice_unprocessed? && app.should_notify_on_deploy?
+  end
+
+  def previous
+    app.deploys.where('created_at < ?', self.created_at).where(environment: self.environment).order(:created_at).last
   end
 
   protected

@@ -26,3 +26,6 @@
               %p.heading REPOSITORY:
               %p= @deploy.repository.blank? ? 'n/a' : link_to_repository(@deploy.repository)
 
+              - if @deploy.vcs_changes.any?
+                %p.heading CHANGES:
+                != htmlize_changes(@deploy.vcs_changes)

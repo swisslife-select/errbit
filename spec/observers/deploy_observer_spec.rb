@@ -16,5 +16,17 @@ describe "Callback on Deploy" do
         Fabricate(:deploy, :app => Fabricate(:app_with_watcher, :notify_on_deploys => false))
       end
     end
+
+    context 'after creating a second deploy' do
+      it 'have filled vcs_changes field' do
+        app = Fabricate(:app)
+        Fabricate(:deploy, app: app)
+        deploy = Fabricate(:deploy, app: app)
+        # job
+        deploy.reload
+
+        expect(deploy.vcs_changes.any?).to be_true
+      end
+    end
   end
 end

@@ -6,6 +6,7 @@ class Mailer < ActionMailer::Base
   helper ApplicationHelper
   helper BacktraceLineHelper
   helper RepositoryHelper
+  helper ChangesHelper
 
   default :from => Errbit::Config.email_from
 

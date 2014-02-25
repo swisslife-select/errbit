@@ -6,6 +6,6 @@ class DeployObserver < ActiveRecord::Observer
   end
 
   def after_commit_on_create(deploy)
-    DeployNotificationWorker.perform_async(deploy.id)
+    AfterDeployOperationsWorker.perform_async(deploy.id)
   end
 end

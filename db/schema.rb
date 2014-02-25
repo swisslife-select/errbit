@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(:version => 20140220133128) do
     t.integer  "app_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.text     "vcs_changes"
     t.string   "notice_state"
   end
 

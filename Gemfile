@@ -75,6 +75,7 @@ gem 'yajl-ruby', :require => "yajl"
 gem 'sidekiq'
 gem 'sinatra', :require => false
 gem 'state_machine'
+gem 'git'
 
 group :development, :test do
   gem 'rspec-rails'
