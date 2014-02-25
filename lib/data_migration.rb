@@ -105,7 +105,8 @@ module DataMigration
       :environment => :environment,
       :revision => :revision,
       :message => :message,
-      
+      :notice_state => lambda{ |v| 'delivered' },
+
       :created_at => :created_at,
       :updated_at => :updated_at
     }

@@ -138,6 +138,14 @@ describe DataMigration do
           @pg_deploy.read_attribute(column.name).should == @mongo_deploy[column.name] if @mongo_deploy.has_key?(column.name)
         end
       end
+
+      it 'set notice_state' do
+        all_delivered = @pg_app.deploys.inject(true) do |memo, i|
+          memo && i.notice_delivered?
+        end
+
+        expect(all_delivered).to be_true
+      end
     end
   end
 
