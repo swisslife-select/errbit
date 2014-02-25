@@ -9,6 +9,15 @@ class Deploy < ActiveRecord::Base
 
   scope :by_created_at, order("created_at DESC")
 
+  state_machine :notice_state, initial: :unprocessed, namespace: :notice do
+    event :mark_as_delivered do
+      transition :unprocessed => :delivered
+    end
+
+    state :unprocessed
+    state :delivered
+  end
+
   def resolve_app_errs
     app.problems.unresolved.in_env(environment).each {|problem| problem.resolve!}
   end
@@ -18,7 +27,7 @@ class Deploy < ActiveRecord::Base
   end
 
   def should_notify?
-    app.should_notify_on_deploy?
+    notice_unprocessed? && app.should_notify_on_deploy?
   end
 
   protected

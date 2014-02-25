@@ -23,6 +23,7 @@ require 'database_cleaner'
 require 'webmock/rspec'
 require 'xmpp4r'
 require 'xmpp4r/muc'
+require 'sidekiq/testing'
 
 
 # Requires supporting files with custom matchers and macros, etc,
@@ -44,6 +45,7 @@ RSpec.configure do |config|
   DatabaseCleaner[:active_record].strategy = :truncation
   DatabaseCleaner.clean
   config.include WebMock::API
+  Sidekiq::Testing.inline!
 
   config.include Haml, :type => :helper
   config.include Haml::Helpers, :type => :helper

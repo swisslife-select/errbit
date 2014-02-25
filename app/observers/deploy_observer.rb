@@ -6,6 +6,6 @@ class DeployObserver < ActiveRecord::Observer
   end
 
   def after_commit_on_create(deploy)
-    Mailer.deploy_notification(deploy).deliver if deploy.should_notify?
+    DeployNotificationWorker.perform_async(deploy.id)
   end
 end

@@ -113,6 +113,10 @@ github_access_scope: ['repo']
 #  :location: '/usr/sbin/sendmail'
 #  :arguments: '-i -t'
 
+sidekiq_namespace: sidekiq:errbit
+sidekiq_admin: sidekiq_admin
+sidekiq_admin_password: sidekiq_admin_password
+
 repository_hostings:
   - name: github
     base_url: https://github.com

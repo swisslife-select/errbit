@@ -42,13 +42,6 @@ describe "Callback on Notice" do
         and_return(double('email', :deliver => true))
       Fabricate(:notice, :err => @err)
     end
-    it 'self notify if mailer failed' do
-      @err.problem.resolve!
-      expect(Mailer).to receive(:err_notification).
-        and_raise(ArgumentError)
-      expect(Airbrake).to receive(:notify)
-      Fabricate(:notice, :err => @err)
-    end
   end
 
   describe "should send a notification if a notification service is configured with defaults" do

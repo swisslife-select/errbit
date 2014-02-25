@@ -321,7 +321,6 @@ module DataMigration
         Comment#increase_counter_cache
         Deploy#resolve_app_errs
         Deploy#store_cached_attributes_on_problems
-        Deploy#deliver_email
         Notice#cache_attributes_on_problem
         Notice#unresolve_problem
       }

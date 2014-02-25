@@ -72,6 +72,9 @@ gem 'omniauth-github'
 
 gem 'ri_cal'
 gem 'yajl-ruby', :require => "yajl"
+gem 'sidekiq'
+gem 'sinatra', :require => false
+gem 'state_machine'
 
 group :development, :test do
   gem 'rspec-rails'

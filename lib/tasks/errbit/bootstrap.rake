@@ -8,6 +8,7 @@ namespace :errbit do
       'config.example.yml'  => 'config.yml',
       'deploy.example.rb'   => 'deploy.rb',
       'database.example.yml'   => 'database.yml',
+      'sidekiq.example.yml'   => 'sidekiq.yml',
     }
 
     puts "Copying example config files..."
