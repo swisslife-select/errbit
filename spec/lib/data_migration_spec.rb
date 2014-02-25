@@ -105,6 +105,22 @@ describe DataMigration do
           @pg_app.watchers.find_by_user_id(user.id).should_not be_nil
         end
       end
+
+      it 'set watching_errors' do
+        all_watch_errors = @pg_app.watchers.pluck(:watching_errors).inject(true) do |memo, item|
+          memo && item
+        end
+
+        expect(all_watch_errors).to be_true
+      end
+
+      it 'set watching_deploys' do
+        all_watch_deploys = @pg_app.watchers.pluck(:watching_deploys).inject(true) do |memo, item|
+          memo && item
+        end
+
+        expect(all_watch_deploys).to be_true
+      end
     end
 
     describe "migrate deploys" do

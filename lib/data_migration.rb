@@ -113,6 +113,8 @@ module DataMigration
     WATCHER_FIELDS_MAPPING = {
       :email => :email,
       :user_id => lambda{|v| v["user_id"] ? User.where(:remote_id => v["user_id"].to_s).pluck(:id).first : nil  },
+      :watching_errors => lambda{|v| true},
+      :watching_deploys => lambda{|v| true},
       :created_at => :created_at,
       :updated_at => :updated_at
     }
@@ -435,10 +437,7 @@ module DataMigration
       def copy_watcher(app, old_watcher)
         # not app.watchers.new, cause it's reason for memory leak (if you has many watchers)
         watcher = Watcher.new(:app_id => app.id)
-        watcher.email = old_watcher["email"]
-        if old_watcher["user_id"]
-          watcher.user = User.find_by_remote_id(old_watcher["user_id"].to_s)
-        end
+        copy_attributes_with_mapping(WATCHER_FIELDS_MAPPING, old_watcher, watcher)
         watcher.save!
         watcher
       end
