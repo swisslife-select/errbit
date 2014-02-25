@@ -4,7 +4,6 @@ class Deploy < ActiveRecord::Base
 
   after_create :resolve_app_errs, :if => :should_resolve_app_errs?
   after_create :store_cached_attributes_on_problems
-  after_create :deliver_email
 
   validates_presence_of :username, :environment
 
@@ -31,12 +30,5 @@ class Deploy < ActiveRecord::Base
     def store_cached_attributes_on_problems
       Problem.where(:app_id => app.id).each(&:cache_app_attributes)
     end
-
-    def deliver_email
-      if should_notify?
-        Mailer.deploy_notification(self).deliver
-      end
-    end
-
 end
 

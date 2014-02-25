@@ -31,7 +31,7 @@ module Errbit
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
-    config.active_record.observers = :notice_observer
+    config.active_record.observers = :notice_observer, :deploy_observer
 
     # > rails generate - config
     config.generators do |g|
