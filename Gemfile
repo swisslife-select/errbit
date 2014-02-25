@@ -102,6 +102,7 @@ group :test do
   gem 'capybara'
   gem 'launchy'
   gem 'database_cleaner'
+  gem 'test_after_commit'
   gem 'email_spec'
   gem 'timecop'
   gem 'coveralls', :require => false

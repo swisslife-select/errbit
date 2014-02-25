@@ -324,8 +324,6 @@ module DataMigration
         Deploy#deliver_email
         Notice#cache_attributes_on_problem
         Notice#unresolve_problem
-        Notice#email_notification
-        Notice#services_notification
       }
       without_callbacks_recursive(callbacks, &block)
     end

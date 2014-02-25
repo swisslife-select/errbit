@@ -15,8 +15,6 @@ class Notice < ActiveRecord::Base
   belongs_to :backtrace
 
   after_create :cache_attributes_on_problem, :unresolve_problem
-  after_create :email_notification
-  after_create :services_notification
   before_save :sanitize
   before_destroy :decrease_counter_cache, :remove_cached_attributes_from_problem
   after_initialize :default_values
@@ -113,7 +111,8 @@ class Notice < ActiveRecord::Base
   end
 
   def should_notify?
-    app.notification_service.notify_at_notices.include?(0) || app.notification_service.notify_at_notices.include?(similar_count)
+    app.notification_service_configured? &&
+    (app.notification_service.notify_at_notices.include?(0) || app.notification_service.notify_at_notices.include?(similar_count))
   end
 
   ##
@@ -168,26 +167,5 @@ class Notice < ActiveRecord::Base
       end
     end
   end
-
-  private
-
-  ##
-  # Send email notification if needed
-  def email_notification
-    return true unless should_email?
-    Mailer.err_notification(self).deliver
-  rescue => e
-    Airbrake.notify(e)
-  end
-
-  ##
-  # Launch all notification define on the app associate to this notice
-  def services_notification
-    return true unless app.notification_service_configured? and should_notify?
-    app.notification_service.create_notification(problem)
-  rescue => e
-    Airbrake.notify(e)
-  end
-
 end
 
