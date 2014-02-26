@@ -98,6 +98,11 @@ describe App do
       app = Fabricate(:app)
       expect(app.github_repo?).to be_false
     end
+
+    it 'is false when app has another repo' do
+      app = Fabricate(:app, :repo_url => "https://bitbucket.com/errbit/errbit.git")
+      app.github_repo?.should be_false
+    end
   end
 
   context "application_wide_recipients" do

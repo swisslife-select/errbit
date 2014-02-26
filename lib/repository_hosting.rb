@@ -31,6 +31,7 @@ class RepositoryHosting
 
   def repository(git_url)
     result = git_url.match matcher
+    return unless result
     result[:repository]
   end
 
