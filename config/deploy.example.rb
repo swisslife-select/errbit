@@ -9,6 +9,8 @@
 config = YAML.load_file('config/config.yml')['deployment'] || {}
 
 require 'bundler/capistrano'
+require 'sidekiq/capistrano'
+
 load 'deploy/assets'
 
 set :application, "errbit"
