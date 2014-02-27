@@ -117,7 +117,7 @@ ActiveRecord::Schema.define(:version => 20140220133128) do
     t.text     "user_attributes"
     t.string   "framework"
     t.text     "current_user"
-    t.string   "error_class"
+    t.text     "error_class"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
   end
