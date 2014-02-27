@@ -10,7 +10,7 @@ class CreateNotices < ActiveRecord::Migration
       t.text :user_attributes
       t.string :framework
       t.text :current_user
-      t.string :error_class
+      t.text :error_class
 
       t.timestamps
     end
