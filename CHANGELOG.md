@@ -1,3 +1,34 @@
+## 0.4.0 - Not released Yet
+
+### Improvements
+
+- Migrate to PostgreSQL ([@realmyst][], [@numbata][], [@boblail][])
+- Add observers ([@darkleaf][])
+- Add sidekiq ([@darkleaf][])
+- Add ability to customize the hosting repository links (see Errbit::Config.repository_hostings) ([@darkleaf][])
+- Watcher can watch only the errors or only deploys or both ([@darkleaf][])
+- Add deploys atom feed ([@darkleaf][])
+- Add deploy page ([@darkleaf][])
+- Show code changes(with git submodules) between deploys in deploys feed and page ([@darkleaf][])
+- Update hoptoad_notifier to airbrake ([@darkleaf][])
+- Use 24hours time format ([@darkleaf][])
+- Show timezone on problem page ([@darkleaf][])
+- Redmine username and password are optional ([@darkleaf][])
+- Add app copy interactor ([@darkleaf][])
+- Receive notice without backtrace ([@seliverstov][])
+- Add conditions for display notify_all_users field ([@seliverstov][])
+- Add Year to deploy date output ([@seliverstov][])
+
+### Bug Fixes
+
+- Fix mistake in link_to_copy_attributes_from_other_app helper. ([@darkleaf][])
+
+[@realmyst]: https://github.com/realmyst
+[@numbata]: https://github.com/numbata
+[@boblail]: https://github.com/boblail
+[@darkleaf]: https://github.com/darkleaf
+[@seliverstov]: https://github.com/seliverstov
+
 ## 0.3.0 - Not released Yet
 
 ### Improvements
