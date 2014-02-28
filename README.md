@@ -10,6 +10,11 @@
 [gemnasium-url]:https://gemnasium.com/errbit/errbit
 
 
+### Migrate data from MongoDB
+
+* Create postgres database
+* Run `rake errbit:db:migrate_from_mongo`. It read config from config/mongoid.yml or ENV.
+
 
 ### The open source, self-hosted error catcher
 
