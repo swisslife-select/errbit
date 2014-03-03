@@ -10,6 +10,7 @@ config/mongoid.yml
 config/newrelic.yml
 config/database.yml
 config/sidekiq.yml
+config/unicorn.rb
 .rvmrc
 .idea
 *~

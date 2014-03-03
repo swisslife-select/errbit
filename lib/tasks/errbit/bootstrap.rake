@@ -9,6 +9,7 @@ namespace :errbit do
       'deploy.example.rb'   => 'deploy.rb',
       'database.example.yml'   => 'database.yml',
       'sidekiq.example.yml'   => 'sidekiq.yml',
+      'unicorn.example.rb'   => 'unicorn.rb',
     }
 
     puts "Copying example config files..."
