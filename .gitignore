@@ -4,6 +4,8 @@ log/*.log
 tmp/**/*
 tmp/*
 config/config.yml
+config/config.production.yml
+config/config.staging.yml
 config/deploy.rb
 config/deploy
 config/mongoid.yml
