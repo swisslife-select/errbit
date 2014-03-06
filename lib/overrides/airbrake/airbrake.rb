@@ -14,7 +14,7 @@ Airbrake.module_eval do
           notice.instance_variable_set(:"@api_key", app.api_key)
 
           # Create notice internally.
-          report = ErrorReport.new(notice.to_xml)
+          report = ErrorReport.from_xml notice.to_xml
           report.generate_notice!
 
           logger.info "Internal error was logged to 'Self.Errbit' app."

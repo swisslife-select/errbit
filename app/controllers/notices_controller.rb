@@ -31,10 +31,10 @@ class NoticesController < ApplicationController
 
   def notice_params
     return @notice_params if @notice_params
-    @notice_params = params[:data] || request.raw_post
-    if @notice_params.blank?
-      raise ParamsError.new('Need a data params in GET or raw post data')
-    end
+
+    @notice_params = NoticeAttributesFetcher.from_request request
+
+    raise ParamsError.new('Incorrect a data param in GET or raw POST data') if @notice_params.blank?
     @notice_params
   end
 

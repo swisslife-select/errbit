@@ -5,13 +5,14 @@ describe NoticesController do
 
   let(:notice) { Fabricate(:notice) }
   let(:xml) { Rails.root.join('spec','fixtures','hoptoad_test_notice.xml').read }
+  let(:attributes) { Hoptoad.parse_xml! xml }
   let(:app) { Fabricate(:app) }
   let(:error_report) { double(:valid? => true, :generate_notice! => true, :notice => notice) }
 
   context 'notices API' do
     context "with all params" do
       before do
-        expect(ErrorReport).to receive(:new).with(xml).and_return(error_report)
+        expect(ErrorReport).to receive(:new).with(attributes).and_return(error_report)
       end
 
       context "with xml pass in raw_port" do
@@ -68,7 +69,7 @@ describe NoticesController do
       it 'return 400' do
         post :create, :format => :xml
         expect(response.status).to eq 400
-        expect(response.body).to eq 'Need a data params in GET or raw post data'
+        expect(response.body).to eq 'Incorrect a data param in GET or raw POST data'
       end
     end
   end

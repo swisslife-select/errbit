@@ -13,11 +13,17 @@
 # * <tt>:notifier</tt> - information to identify the source of the error report
 #
 class ErrorReport
+  class << self
+    def from_xml(xml)
+      attrs = Hoptoad.parse_xml! xml
+      new attrs
+    end
+  end
+
   attr_reader :error_class, :message, :request, :server_environment, :api_key, :notifier, :user_attributes, :framework
 
-  def initialize(xml_or_attributes)
-    @attributes = (xml_or_attributes.is_a?(String) ? Hoptoad.parse_xml!(xml_or_attributes) : xml_or_attributes).with_indifferent_access
-    @attributes.each{|k, v| instance_variable_set(:"@#{k}", v) }
+  def initialize(attributes)
+    attributes.each{ |k, v| instance_variable_set(:"@#{k}", v) }
   end
 
   def rails_env

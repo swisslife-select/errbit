@@ -24,7 +24,7 @@ describe ErrorReport do
     }
 
     let(:error_report) {
-      ErrorReport.new(xml)
+      ErrorReport.from_xml xml
     }
 
     let!(:app) {
