@@ -5,6 +5,7 @@ class RepositoryHosting
     end
 
     def for_git_url(git_url)
+      return if git_url.blank?
       hostings.find{ |hosting| git_url.match(hosting.matcher) }
     end
 
