@@ -297,9 +297,9 @@ module DataMigration
     end
     
     def copy_all!
-      ActiveRecord::Base.transaction do
+      #ActiveRecord::Base.transaction do
         COLLECTIONS.each(&method(:copy!))
-      end
+      #end
     end
 
     def copy!(collection)
