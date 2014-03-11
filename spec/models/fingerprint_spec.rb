@@ -35,19 +35,6 @@ describe Fingerprint do
       end
     end
 
-    context 'with messages differing in object string memory addresses' do
-      let(:backtrace_2) { backtrace }
-
-      before do
-        notice1.message = "NoMethodError: undefined method `foo' for #<ActiveSupport::HashWithIndifferentAccess:0x007f6bfe3287e8>"
-        notice2.message = "NoMethodError: undefined method `foo' for #<ActiveSupport::HashWithIndifferentAccess:0x007f6bfd9f5338>"
-      end
-
-      its 'fingerprints should be equal' do
-        expect(Fingerprint.generate(notice1, 'api key')).to eq Fingerprint.generate(notice2, 'api key')
-      end
-    end
-
     context 'with different messages at same stacktrace' do
       let(:backtrace_2) { backtrace }
 
@@ -56,32 +43,10 @@ describe Fingerprint do
         notice2.message = "NoMethodError: undefined method `bar' for nil:NilClass"
       end
 
-      its 'fingerprints should not be equal' do
-        expect(Fingerprint.generate(notice1, 'api key')).to_not eq Fingerprint.generate(notice2, 'api key')
+      its 'fingerprints should be equal' do
+        expect(Fingerprint.generate(notice1, 'api key')).to eq Fingerprint.generate(notice2, 'api key')
       end
     end
   end
-
-  describe '#unified_message' do
-    subject{ Fingerprint.new(double('notice', message: message), 'api key').unified_message }
-
-    context "full error message" do
-      let(:message) { "NoMethodError: undefined method `foo' for #<ActiveSupport::HashWithIndifferentAccess:0x007f6bfe3287e8>" }
-
-      it 'removes memory address from object strings' do
-        should eq "NoMethodError: undefined method `foo' for #<ActiveSupport::HashWithIndifferentAccess>"
-      end
-    end
-
-    context "multiple object strings in message" do
-      let(:message) { "#<ActiveSupport::HashWithIndifferentAccess:0x007f6bfe3287e8> #<Object:0x007fa2b33d9458>" }
-
-      it 'removes memory addresses globally' do
-        should eq "#<ActiveSupport::HashWithIndifferentAccess> #<Object>"
-      end
-    end
-
-  end
-
 end
 

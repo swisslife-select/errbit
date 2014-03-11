@@ -19,7 +19,7 @@ class Fingerprint
 
   def fingerprint_source
     {
-      :file_or_message => file_or_message,
+      :backtrace_fingerprint => notice.backtrace.try(:fingerprint),
       :error_class => notice.error_class,
       :component => notice.component || 'unknown',
       :action => notice.action,
@@ -27,15 +27,4 @@ class Fingerprint
       :api_key => api_key
     }
   end
-
-  def file_or_message
-    @file_or_message ||= unified_message + notice.backtrace.fingerprint
-  end
-
-  # filter memory addresses out of object strings
-  # example: "#<Object:0x007fa2b33d9458>" becomes "#<Object>"
-  def unified_message
-    notice.message.gsub(/(#<.+?):[0-9a-f]x[0-9a-f]+(>)/, '\1\2')
-  end
-
 end
