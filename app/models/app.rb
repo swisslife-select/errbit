@@ -1,5 +1,6 @@
 class App < ActiveRecord::Base
   include Comparable
+  include AppRepository
 
   serialize :email_at_notices, Array
 

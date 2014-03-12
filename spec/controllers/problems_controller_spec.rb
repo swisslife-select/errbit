@@ -198,14 +198,14 @@ describe ProblemsController do
       sign_in Fabricate(:admin)
 
       @problem = Fabricate(:err)
-      App.stub(:find).with(@problem.app.id.to_s).and_return(@problem.app)
-      @problem.app.problems.stub(:find).and_return(@problem.problem)
+      App.stub(:detect_by_param!).with(@problem.app.id.to_s).and_return(@problem.app)
+      @problem.app.problems.stub(:detect_by_param!).and_return(@problem.problem)
       @problem.problem.stub(:resolve!)
     end
 
     it 'finds the app and the problem' do
-      expect(App).to receive(:find).with(@problem.app.id.to_s).and_return(@problem.app)
-      expect(@problem.app.problems).to receive(:find).and_return(@problem.problem)
+      expect(App).to receive(:detect_by_param!).with(@problem.app.id.to_s).and_return(@problem.app)
+      expect(@problem.app.problems).to receive(:detect_by_param!).and_return(@problem.problem)
       put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
       expect(controller.app).to eq @problem.app
       expect(controller.problem).to eq @problem.problem
