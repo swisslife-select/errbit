@@ -9,6 +9,7 @@ module AppRepository
       param = raw_param.to_s
 
       return find(param) if param.match(/\A\d+\z/)
+      return find($1) if param.match(/\A(\d+)-.*\z/) #see App#to_param
       return find_by_remote_id!(param) if column_names.include? 'remote_id' #old mongodb id
 
       raise ActiveRecord::RecordNotFound

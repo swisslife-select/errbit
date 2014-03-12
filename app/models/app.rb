@@ -195,6 +195,10 @@ class App < ActiveRecord::Base
     update_column :api_key, SecureRandom.hex
   end
 
+  def to_param
+    "#{id}-#{name.parameterize}"
+  end
+
   protected
 
     def store_cached_attributes_on_problems
