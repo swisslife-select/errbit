@@ -14,6 +14,7 @@ module RepositoryHelper
   end
 
   def link_to_commit(git_url, sha, options = nil)
+    return if sha.blank?
     hosting = RepositoryHosting.for_git_url git_url
     return sha unless hosting
 

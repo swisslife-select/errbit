@@ -5,11 +5,14 @@ module SaveDeployChanges
       prev_deploy = deploy.previous
       return unless prev_deploy
 
+      curr_commit = deploy.revision
+      prev_commit = prev_deploy.revision
+
+      return if curr_commit.blank?
+      return if prev_commit.blank?
+
       repo_name = "repo-#{deploy.app_id}-#{deploy.created_at.to_i}"
       repository_addr = deploy.repository
-
-      prev_commit = prev_deploy.revision
-      curr_commit = deploy.revision
 
       changes = differ.diff(repo_name, repository_addr, prev_commit, curr_commit)
 
