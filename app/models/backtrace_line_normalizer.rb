@@ -22,11 +22,15 @@ class BacktraceLineNormalizer
   end
 
   def normalized_method
-    if @raw_line['method'].blank?
+    if raw_method.blank?
       "[unknown method]"
     else
-      @raw_line['method'].to_s.gsub(/[0-9_]{10,}+/, "__FRAGMENT__")
+      raw_method.to_s.gsub(/[0-9_]{10,}+/, "__FRAGMENT__")
     end
   end
 
+  def raw_method
+    # https://github.com/errbit/errbit/issues/595
+    @raw_method ||= @raw_line.delete('method') || @raw_line.delete('method_name')
+  end
 end
