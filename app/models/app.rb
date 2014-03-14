@@ -6,11 +6,10 @@ class App < ActiveRecord::Base
 
   has_many :watchers, inverse_of: :app
   has_many :deploys, inverse_of: :app
+  has_many :problems, inverse_of: :app, dependent: :destroy
 
   has_one :issue_tracker, inverse_of: :app, dependent: :destroy
   has_one :notification_service, inverse_of: :app, dependent: :destroy
-
-
 
   def issue_tracker
     return @tentative_issue_tracker if has_tentative_issue_tracker?
@@ -33,8 +32,6 @@ class App < ActiveRecord::Base
     remove_instance_variable :@tentative_issue_tracker
   end
 
-
-
   def notification_service
     return @tentative_notification_service if has_tentative_notification_service?
     super
@@ -56,12 +53,6 @@ class App < ActiveRecord::Base
     remove_instance_variable :@tentative_notification_service
   end
 
-
-
-  has_many :problems, :inverse_of => :app, :dependent => :destroy
-
-  has_many :watchers_of_errors, conditions: { watching_errors: true }, class_name: 'Watcher'
-  has_many :watchers_of_deploys, conditions: { watching_deploys: true }, class_name: 'Watcher'
 
   before_validation :generate_api_key, :on => :create
   after_update :store_cached_attributes_on_problems
@@ -87,23 +78,9 @@ class App < ActiveRecord::Base
     end
   end
 
-  # Accepts a hash with the following attributes:
-  #
-  # * <tt>:error_class</tt> - the class of error (required to create a new Problem)
-  # * <tt>:environment</tt> - the environment the source app was running in (required to create a new Problem)
-  # * <tt>:fingerprint</tt> - a unique value identifying the notice
-  #
-  def find_or_create_err!(attrs)
-    Err.where(
-      :fingerprint => attrs[:fingerprint]
-    ).first ||
-      problems.create!(attrs.slice(:error_class, :environment)).errs.create!(attrs.slice(:fingerprint, :problem_id))
-  end
-
   def last_deploy_at
     (last_deploy = deploys.last) && last_deploy.created_at
   end
-
 
   # Legacy apps don't have notify_on_errs and notify_on_deploys params
   def notify_on_errs
@@ -156,20 +133,6 @@ class App < ActiveRecord::Base
 
   def notification_service_configured?
     !!(notification_service.class < NotificationService && notification_service.configured?)
-  end
-
-  def error_recipients
-    return application_wide_recipients if notify_all_users
-    watchers_of_errors.map(&:address)
-  end
-
-  def deploy_recipients
-    return application_wide_recipients if notify_all_users
-    watchers_of_deploys.map(&:address)
-  end
-
-  def application_wide_recipients
-    (User.with_not_blank_email.pluck(:email) + watchers.pluck(:email)).uniq
   end
 
   def unresolved_count

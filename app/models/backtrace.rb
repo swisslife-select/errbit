@@ -1,4 +1,5 @@
 class Backtrace < ActiveRecord::Base
+  include BacktraceRepository
 
   has_many :notices
   has_one :notice
@@ -8,14 +9,6 @@ class Backtrace < ActiveRecord::Base
   after_initialize :generate_fingerprint, :if => :new_record?
 
   delegate :app, :to => :notice
-
-  def self.find_or_create(attributes = {})
-    new(attributes).similar || create(attributes)
-  end
-
-  def similar
-    Backtrace.where(:fingerprint => fingerprint).first
-  end
 
   def raw=(raw)
     return if raw.compact.blank?

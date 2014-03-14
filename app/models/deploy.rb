@@ -1,4 +1,5 @@
 class Deploy < ActiveRecord::Base
+  include DeployRepository
 
   serialize :vcs_changes, Hash
 
@@ -8,8 +9,6 @@ class Deploy < ActiveRecord::Base
   after_create :store_cached_attributes_on_problems
 
   validates_presence_of :username, :environment
-
-  scope :by_created_at, order("created_at DESC")
 
   state_machine :notice_state, initial: :unprocessed, namespace: :notice do
     event :mark_as_delivered do
@@ -30,10 +29,6 @@ class Deploy < ActiveRecord::Base
 
   def should_notify?
     notice_unprocessed? && app.should_notify_on_deploy?
-  end
-
-  def previous
-    app.deploys.where('created_at < ?', self.created_at).where(environment: self.environment).order(:created_at).last
   end
 
   protected

@@ -10,22 +10,13 @@ class Problem < ActiveRecord::Base
   serialize :hosts, Hash
 
   belongs_to :app, inverse_of: :problems
-  has_many :errs, :inverse_of => :problem, :dependent => :destroy
-  has_many :comments, :inverse_of => :err, :dependent => :destroy
+  has_many :errs, inverse_of: :problem, dependent: :destroy
+  has_many :comments, inverse_of: :err, dependent: :destroy
 
   validates_presence_of :environment
 
   before_create :cache_app_attributes
   after_initialize :default_values
-
-  scope :resolved, where(:resolved => true)
-  scope :unresolved, where(:resolved => false)
-  scope :ordered, order("last_notice_at desc")
-  
-  def self.for_apps(apps)
-    return where(app_id: apps.pluck(:id)) if apps.is_a? ActiveRecord::Relation
-    where(app_id: apps.map(&:id))
-  end
 
   validates_presence_of :last_notice_at, :first_notice_at
 
@@ -39,22 +30,6 @@ class Problem < ActiveRecord::Base
       self.first_notice_at ||= Time.new
       self.last_notice_at ||= Time.new
     end
-  end
-
-  def self.all_else_unresolved(fetch_all)
-    if fetch_all
-      scoped
-    else
-      where(:resolved => false)
-    end
-  end
-
-  def self.in_env(env)
-    env.present? ? where(:environment => env) : scoped
-  end
-
-  def notices
-    Notice.for_errs(errs).ordered
   end
 
   def comments_allowed?
@@ -72,7 +47,6 @@ class Problem < ActiveRecord::Base
   def unresolved?
     !resolved?
   end
-
 
   def self.merge!(*problems)
     ProblemMerge.new(problems).merge
@@ -94,23 +68,6 @@ class Problem < ActiveRecord::Base
       end
     end
   end
-
-
-  def self.ordered_by(sort, order)
-    case sort
-    when "app";            order("app_name #{order}")
-    when "message";        order("message #{order}")
-    when "last_notice_at"; order("last_notice_at #{order}")
-    when "last_deploy_at"; order("last_deploy_at #{order}")
-    when "count";          order("notices_count #{order}")
-    else raise("\"#{sort}\" is not a recognized sort")
-    end
-  end
-
-  def self.in_date_range(date_range)
-    where(["first_notice_at <= ? AND (resolved_at IS NULL OR resolved_at >= ?)", date_range.end, date_range.begin])
-  end
-
 
   def reset_cached_attributes
     ProblemUpdaterCache.new(self).update
@@ -155,16 +112,6 @@ class Problem < ActiveRecord::Base
 
   def inc(attr, increment_by)
     self.update_attribute(attr, self.send(attr) + increment_by)
-  end
-
-  def self.search(value)
-    t = arel_table
-    where(t[:error_class].matches("%#{value}%")
-      .or(t[:where].matches("%#{value}%"))
-      .or(t[:message].matches("%#{value}%"))
-      .or(t[:app_name].matches("%#{value}%"))
-      .or(t[:environment].matches("%#{value}%"))
-    )
   end
 
   private

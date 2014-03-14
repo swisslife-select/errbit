@@ -1,6 +1,7 @@
 require 'recurse'
 
 class Notice < ActiveRecord::Base
+  include NoticeRepository
 
   serialize :server_environment, Hash
   serialize :request, Hash
@@ -20,11 +21,6 @@ class Notice < ActiveRecord::Base
   after_initialize :default_values
 
   validates_presence_of :backtrace, :server_environment, :notifier
-
-  scope :ordered, -> { reorder('created_at asc') }
-  scope :reverse_ordered, -> { reorder('created_at desc') }
-  scope :for_errs, lambda {|errs| where(:err_id => errs.pluck(:id))}
-  scope :created_between, lambda {|start_date, end_date| where(created_at: start_date..end_date)}
 
   def default_values
     if self.new_record?

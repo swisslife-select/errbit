@@ -1,7 +1,9 @@
 module AppRepository
   extend ActiveSupport::Concern
-  included do
 
+  included do
+    has_many :watchers_of_errors, conditions: { watching_errors: true }, class_name: 'Watcher'
+    has_many :watchers_of_deploys, conditions: { watching_deploys: true }, class_name: 'Watcher'
   end
 
   module ClassMethods
@@ -14,5 +16,31 @@ module AppRepository
 
       raise ActiveRecord::RecordNotFound
     end
+  end
+
+  # Accepts a hash with the following attributes:
+  #
+  # * <tt>:error_class</tt> - the class of error (required to create a new Problem)
+  # * <tt>:environment</tt> - the environment the source app was running in (required to create a new Problem)
+  # * <tt>:fingerprint</tt> - a unique value identifying the notice
+  #
+  def find_or_create_err!(attrs)
+    err = Err.find_by_fingerprint(attrs[:fingerprint])
+    return err if err
+    problems.create!(attrs.slice(:error_class, :environment)).errs.create!(attrs.slice(:fingerprint, :problem_id))
+  end
+
+  def error_recipients
+    return application_wide_recipients if notify_all_users
+    watchers_of_errors.map(&:address)
+  end
+
+  def deploy_recipients
+    return application_wide_recipients if notify_all_users
+    watchers_of_deploys.map(&:address)
+  end
+
+  def application_wide_recipients
+    (User.with_not_blank_email.pluck(:email) + watchers.pluck(:email)).uniq
   end
 end

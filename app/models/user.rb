@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  include UserRepository
+
   PER_PAGE = 30
 
   devise *Errbit::Config.devise_modules
@@ -12,9 +14,6 @@ class User < ActiveRecord::Base
   has_many :apps, through: :watchers
   has_many :watchers
 
-  scope :with_not_blank_email, -> { where("email IS NOT NULL AND email != ''") }
-  scope :ordered, -> { order('name ASC') }
-
   if Errbit::Config.user_has_username
     validates_presence_of :username
   end
@@ -27,6 +26,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  #FIXME
   def watchers
     apps.map(&:watchers).flatten.select {|w| w.user_id.to_s == id.to_s}
   end
