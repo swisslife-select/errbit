@@ -7,6 +7,7 @@ class AppsController < ApplicationController
   before_filter :parse_notice_at_notices_or_set_default, :only => [:create, :update]
   respond_to :html
 
+  #TODO: remove decent_exposure
   expose(:app_scope) {
     (current_user.admin? ? App : current_user.apps)
   }
@@ -15,7 +16,7 @@ class AppsController < ApplicationController
     app_scope.all.sort.to_a
   }
 
-  expose(:app, :ancestor => :app_scope)
+  expose(:app, finder: :detect_by_param!, ancestor: :app_scope)
 
   expose(:all_errs) {
     !!params[:all_errs]

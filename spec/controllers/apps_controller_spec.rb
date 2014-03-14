@@ -251,7 +251,8 @@ describe AppsController do
         it "should redirect to app page" do
           id = @app.id
           put :update, :id => id, :app => {:name => "new name"}
-          expect(response).to redirect_to(app_path(id))
+          @app.reload
+          expect(response).to redirect_to(app_path(@app))
         end
       end
 

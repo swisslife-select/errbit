@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "apps/edit.html.haml" do
-  let(:app) { stub_model(App) }
+  let(:app) { stub_model(App, name: 'app') }
   before do
     view.stub(:app).and_return(app)
     controller.stub(:current_user) { stub_model(User) }
@@ -20,11 +20,9 @@ describe "apps/edit.html.haml" do
   end
 
   context "with unvalid app" do
-    let(:app) {
-      app = stub_model(App)
+    before do
       app.errors.add(:base,'You must specify your')
-      app
-    }
+    end
 
     it 'see the error' do
       render

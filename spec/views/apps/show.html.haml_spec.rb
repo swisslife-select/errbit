@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "apps/show.html.haml" do
-  let(:app) { stub_model(App) }
+  let(:app) { stub_model(App, name: 'app') }
   let(:user) { stub_model(User) }
 
   let(:action_bar) do

@@ -1,5 +1,6 @@
 class App < ActiveRecord::Base
   include Comparable
+  include AppRepository
 
   serialize :email_at_notices, Array
 
@@ -192,6 +193,10 @@ class App < ActiveRecord::Base
 
   def regenerate_api_key!
     update_column :api_key, SecureRandom.hex
+  end
+
+  def to_param
+    "#{id}-#{name.parameterize}"
   end
 
   protected

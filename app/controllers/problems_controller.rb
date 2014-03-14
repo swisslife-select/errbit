@@ -15,14 +15,14 @@ class ProblemsController < ApplicationController
 
   expose(:app) {
     if current_user.admin?
-      App.find(params[:app_id])
+      App.detect_by_param!(params[:app_id])
     else
-      current_user.apps.find(params[:app_id])
+      current_user.apps.detect_by_param!(params[:app_id])
     end
   }
 
   expose(:problem) {
-    app.problems.find(params[:id])
+    app.problems.detect_by_param!(params[:id])
   }
 
 
