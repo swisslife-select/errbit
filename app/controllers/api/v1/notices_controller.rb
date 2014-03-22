@@ -14,8 +14,7 @@ class Api::V1::NoticesController < ApplicationController
     results = benchmark("[api/v1/notices_controller] query time") { notices.all }
 
     respond_to do |format|
-      format.html { render :json => Yajl.dump(results) } # render JSON if no extension specified on path
-      format.json { render :json => Yajl.dump(results) }
+      format.any(:html, :json) { render :json => Yajl.dump(results) } # render JSON if no extension specified on path
       format.xml  { render :xml  => results }
     end
   end
