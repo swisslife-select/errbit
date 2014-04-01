@@ -23,5 +23,13 @@ describe BacktraceLineNormalizer do
         expect(subject['file']).to eq "[PROJECT_ROOT]/assets/file.js"
       end
     end
+
+    context 'old api version' do
+      let(:raw_line) { { 'method_name' => 'some_method' } }
+
+      it "fill method from method_name" do
+        expect(subject['method']).to eq "some_method"
+      end
+    end
   end
 end

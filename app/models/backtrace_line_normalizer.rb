@@ -4,7 +4,12 @@ class BacktraceLineNormalizer
   end
 
   def call
-    @raw_line.merge 'file' => normalized_file, 'method' => normalized_method
+    {
+      'column' => @raw_line['column'],
+      'number' => @raw_line['number'],
+      'file' => normalized_file,
+      'method' => normalized_method,
+    }
   end
 
   private
@@ -31,6 +36,6 @@ class BacktraceLineNormalizer
 
   def raw_method
     # https://github.com/errbit/errbit/issues/595
-    @raw_method ||= @raw_line.delete('method') || @raw_line.delete('method_name')
+    @raw_line['method'] || @raw_line['method_name']
   end
 end
