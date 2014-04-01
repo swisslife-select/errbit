@@ -31,6 +31,6 @@ class BacktraceLineNormalizer
 
   def raw_method
     # https://github.com/errbit/errbit/issues/595
-    @raw_method ||= @raw_line.delete('method') || @raw_line.delete('method_name')
+    @raw_line['method'] || @raw_line['method_name']
   end
 end
