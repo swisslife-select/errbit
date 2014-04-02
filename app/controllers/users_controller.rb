@@ -1,22 +1,24 @@
 class UsersController < ApplicationController
   respond_to :html
 
-  before_filter :require_admin!, :except => [:edit, :update]
-  before_filter :require_user_edit_priviledges, :only => [:edit, :update]
+  before_filter :require_admin!, only: [:index, :show, :destroy]
+  before_filter :require_user_edit_priviledges, only: [:edit, :update]
+  skip_before_filter :authenticate_user!, only: [:new, :create]
 
   expose(:user, :attributes => :user_params)
-  expose(:users) {
-    User.page(params[:page]).per(current_user.per_page)
-  }
 
-  def index; end
+  def index
+    @users = User.page(params[:page]).per(current_user.per_page)
+  end
+
   def new; end
   def show; end
 
   def create
     if user.save
-      flash[:success] = "#{user.name} is now part of the team. Be sure to add them as a project watcher."
-      redirect_to user_path(user)
+      flash[:success] = "#{user.name} is now part of the team."
+      sign_in(user)
+      redirect_to root_path
     else
       render :new
     end
@@ -64,7 +66,6 @@ class UsersController < ApplicationController
 
   def user_permit_params
     @user_permit_params ||= [:name,:username, :email, :github_login, :per_page, :time_zone]
-    @user_permit_params << :admin if current_user.admin? && current_user.id != params[:id]
     @user_permit_params |= [:password, :password_confirmation] if user_password_params.values.all?{|pa| !pa.blank? }
     @user_permit_params
   end
