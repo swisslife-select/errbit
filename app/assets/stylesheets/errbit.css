@@ -348,7 +348,7 @@ form div.buttons:hover {
   -moz-box-shadow: 0 0 3px #69c;
   -webkit-box-shadow: 0 0 3px #69c;
 }
-form div.buttons input, form div.buttons button {
+form div.buttons input, form div.buttons button, form div.buttons a {
   padding: 0 20px;
   color: #666;
   background: none;
@@ -363,6 +363,10 @@ form div.buttons input, form div.buttons button {
 form div.buttons button.sign_in {
   padding-left: 40px;
   background: transparent url(images/icons/right-arrow.png) 3px 3px no-repeat;
+}
+form div.buttons a.register {
+    padding-left: 40px;
+    background: transparent url(images/icons/add.png) 6px 6px no-repeat;
 }
 form strong.option {
   display: block;

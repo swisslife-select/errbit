@@ -2,12 +2,14 @@ require 'spec_helper'
 
 describe UsersController do
 
-  it_requires_authentication
+  it_requires_authentication :for => {
+      :edit    => :get,
+      :update     => :put,
+  }
+
   it_requires_admin_privileges :for => {
     :index    => :get,
     :show     => :get,
-    :new      => :get,
-    :create   => :post,
     :destroy  => :delete
   }
 
@@ -111,7 +113,7 @@ describe UsersController do
           Fabricate(:user)
         }
         get :index
-        expect(controller.users.to_a.size).to eq 2
+        expect(assigns(:users).count).to eq 2
       end
 
     end
@@ -135,49 +137,6 @@ describe UsersController do
       it 'finds the user' do
         get :edit, :id => user.id
         expect(controller.user).to eq user
-      end
-    end
-
-    context "POST /users" do
-      context "when the create is successful" do
-        let(:attrs) { {:user => Fabricate.attributes_for(:user)} }
-
-        it "sets a message to display" do
-          post :create, attrs
-          expect(request.flash[:success]).to include('part of the team')
-        end
-
-        it "redirects to the user's page" do
-          post :create, attrs
-          expect(response).to redirect_to(user_path(controller.user))
-        end
-
-        it "should be able to create admin" do
-          attrs[:user][:admin] = true
-          post :create, attrs
-          expect(response).to be_redirect
-          expect(User.find(controller.user.to_param).admin).to be_true
-        end
-
-        it "should has auth token" do
-          post :create, attrs
-          expect(User.last.authentication_token).to_not be_blank
-        end
-      end
-
-      context "when the create is unsuccessful" do
-        let(:user) {
-          Struct.new(:admin, :attributes).new(true, {})
-        }
-        before do
-          expect(User).to receive(:new).and_return(user)
-          expect(user).to receive(:save).and_return(false)
-        end
-
-        it "renders the new page" do
-          post :create, :user => { :username => 'foo' }
-          expect(response).to render_template(:new)
-        end
       end
     end
 
@@ -258,6 +217,44 @@ describe UsersController do
         end
         context "on his own user" do
           it 'not have admin field'
+        end
+      end
+    end
+  end
+
+  context 'Guest' do
+    context "POST /users" do
+      context "when the create is successful" do
+        let(:attrs) { {:user => Fabricate.attributes_for(:user)} }
+
+        it "sets a message to display" do
+          post :create, attrs
+          expect(request.flash[:success]).to include('part of the team')
+        end
+
+        it "redirects to the root page" do
+          post :create, attrs
+          expect(response).to redirect_to(root_path)
+        end
+
+        it "should has auth token" do
+          post :create, attrs
+          expect(User.last.authentication_token).to_not be_blank
+        end
+      end
+
+      context "when the create is unsuccessful" do
+        let(:user) {
+          Struct.new(:admin, :attributes).new(true, {})
+        }
+        before do
+          expect(User).to receive(:new).and_return(user)
+          expect(user).to receive(:save).and_return(false)
+        end
+
+        it "renders the new page" do
+          post :create, :user => { :username => 'foo' }
+          expect(response).to render_template(:new)
         end
       end
     end

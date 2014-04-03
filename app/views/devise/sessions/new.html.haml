@@ -21,8 +21,10 @@
       = f.check_box :remember_me, :tabindex => 3
       = f.label :remember_me
 
-  %div.buttons
+  .buttons
     %button{:type => 'submit', :class => 'sign_in'}=t('.sign_in')
+  .buttons
+    = link_to('Register', new_user_path, :class => 'register')
 
 :javascript
   $('a#forgot_password').click(function(){
