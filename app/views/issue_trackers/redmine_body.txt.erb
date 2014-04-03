@@ -13,5 +13,11 @@ h3. When
 
 <%= notice.created_at.to_s(:micro) %>
 
+h3. Backtrace
+
+| File | Line | Method |
+<% notice.backtrace_lines.limit(5).each do |line| %>| <%= line.file_relative %> | <%= line.number %> | *<%= line.method %>* |
+<% end %>
+
 "More Details on Errbit":<%= app_problem_url problem.app, problem %>
 <% end %>
