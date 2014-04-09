@@ -33,3 +33,7 @@
   = f.label :password_confirmation
   = f.password_field :password_confirmation
 
+- if current_user.try :admin?
+  .checkbox
+    = f.check_box :admin
+    = f.label :admin, 'Admin?'
