@@ -46,6 +46,6 @@ USER:
 BACKTRACE:
 
 <% @notice.backtrace_lines.each do |line| %>
-  <%= line %>
+  <%= line.file_relative %>:<%= line.number %> <%= line.method %>
 <% end %>
 

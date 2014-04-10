@@ -59,5 +59,6 @@
                 - @notice.backtrace_lines.each do |line|
                   %p.backtrace
                     = link_to_source_file(line) do
-                      = line.to_s
+                      #{line.file_relative}:#{line.number}
+                      %strong= line.method
                 %br
