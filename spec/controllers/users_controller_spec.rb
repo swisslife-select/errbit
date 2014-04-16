@@ -133,6 +133,19 @@ describe UsersController do
       end
     end
 
+    context "POST /users" do
+      context "when the create is successful" do
+        let(:attrs) { {:user => Fabricate.attributes_for(:user)} }
+
+        it "should be able to create admin" do
+          attrs[:user][:admin] = true
+          post :create, attrs
+          expect(response).to be_redirect
+          expect(User.find(controller.user.to_param).admin).to be_true
+        end
+      end
+    end
+
     context "GET /users/:id/edit" do
       it 'finds the user' do
         get :edit, :id => user.id
