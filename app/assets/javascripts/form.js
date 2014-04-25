@@ -43,7 +43,7 @@ function makeNestedItemsDestroyable(wrapper) {
 
 function appendNestedItem() {
   var addLink = $(this);
-  var nestedItem = addLink.parent().find('.nested').first().clone().show();
+  var nestedItem = addLink.parent().find('.nested').first().clone(true).show();
   var timestamp = new Date();
   timestamp = timestamp.valueOf();
 
