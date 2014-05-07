@@ -12,6 +12,7 @@
 .required
   = f.label :email
   = f.text_field :email
+  = t 'form_help.use_corporate_email' if Errbit::Config.corporate_emails
 
 - if Errbit::Config.github_authentication
   = f.label :github_login
