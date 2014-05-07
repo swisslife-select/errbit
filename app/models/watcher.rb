@@ -5,6 +5,7 @@ class Watcher < ActiveRecord::Base
   belongs_to :user
 
   validate :ensure_user_or_email
+  validates :email, format: { with: Errbit::Config.email_regexp }, allow_blank: true, if: :email_changed?
 
   before_validation :clear_unused_watcher_type
 
