@@ -126,7 +126,8 @@ group :assets do
   # We can't upgrade because not compatible to jquery >= 1.9.
   # To do that, we need fix the rails.js
   gem 'jquery-rails', '~> 2.1.4'
-  gem 'pjax_rails'
   gem 'underscore-rails'
   gem 'turbo-sprockets-rails3'
 end
+
+gem 'pjax_rails'
