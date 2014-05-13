@@ -47,6 +47,11 @@ confirm_err_actions: true
 # Helpful when you need to plug in a custom authentication strategy, such as LDAP.
 user_has_username: false
 
+email_regexp: !ruby/regexp '/\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i'
+
+# Show "Please use corporate email" near email fields
+corporate_emails: false
+
 # Allow comments while an issue tracker is configured.
 # This is useful if the err is not critical enough to create a ticket,
 # but you want to leave a short comment.
