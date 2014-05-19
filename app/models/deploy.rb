@@ -38,7 +38,7 @@ class Deploy < ActiveRecord::Base
     end
 
     def store_cached_attributes_on_problems
-      Problem.where(:app_id => app.id).each(&:cache_app_attributes)
+      app.problems.in_env(environment).update_all(:last_deploy_at => created_at.utc)
     end
 end
 

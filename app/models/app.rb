@@ -165,7 +165,7 @@ class App < ActiveRecord::Base
   protected
 
     def store_cached_attributes_on_problems
-      problems.each(&:cache_app_attributes)
+      problems.update_all(:app_name => name)
     end
 
     def generate_api_key
