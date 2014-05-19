@@ -2,12 +2,13 @@
 
 [travis-img-url]: https://travis-ci.org/Undev/errbit.svg
 [travis-ci-url]: https://travis-ci.org/Undev/errbit
-[codeclimate-img-url]: https://codeclimate.com/github/errbit/errbit.png
-[codeclimate-url]: https://codeclimate.com/github/errbit/errbit
-[coveralls-img-url]: https://coveralls.io/repos/errbit/errbit/badge.png?branch=master
-[coveralls-url]:https://coveralls.io/r/errbit/errbit
-[gemnasium-img-url]:https://gemnasium.com/errbit/errbit.png
-[gemnasium-url]:https://gemnasium.com/errbit/errbit
+[codeclimate-img-url]: https://codeclimate.com/github/Undev/errbit.png
+[codeclimate-url]: https://codeclimate.com/github/Undev/errbit
+[coveralls-img-url]: https://coveralls.io/repos/Undev/errbit/badge.png?branch=master
+[coveralls-url]:https://coveralls.io/r/Undev/errbit
+[gemnasium-img-url]:https://gemnasium.com/Undev/errbit.png
+[gemnasium-url]:https://gemnasium.com/Undev/errbit
+
 
 ### Migrate data from MongoDB
 
