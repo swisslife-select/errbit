@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 3.2.15'
+gem 'rails', '~> 3.2.18'
 
 gem 'pg'
 
@@ -39,7 +39,7 @@ gem 'pivotal-tracker'
 # Fogbugz
 gem 'ruby-fogbugz', :require => 'fogbugz'
 # Github Issues
-gem 'octokit', '~> 1.18'
+gem 'octokit', '~> 2.0'
 # Gitlab
 gem 'gitlab', '~> 3.0.0'
 

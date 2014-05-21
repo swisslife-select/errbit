@@ -303,6 +303,13 @@ heroku config:add GITHUB_SECRET=the_secret_provided_by_GitHub
 heroku config:add GITHUB_ACCESS_SCOPE=repo,public_repo
 ```
 
+* GITHUB_ORG_ID [*optional*] - If set, any user of the specified GitHub Organization can login.  If it is their first time, an account will automatically be created for them.
+
+```bash
+heroku config:add GITHUB_ORG_ID=1234567
+```
+
+
 __Note__: To avoid restarting your Heroku app 4 times you can set Heroku variables in a single command, i.e:
 
 ```bash
@@ -405,6 +412,19 @@ end
 ```
 
 Then get the `notifier.js` from `errbit/public/javascript/notifier.js` and add to `application.js` on your rails app or include `http://YOUR-ERRBIT-HOST/javascripts/notifier.js` on your `application.html.erb.`
+
+Using custom fingerprinting methods
+-----------------------------------
+
+Errbit now allows you to easily use your own Fingerprint Strategy if that's what you'd like to do. If you are upgrading from a very old version of errbit, you can use the `LegacyFingerprint` to provide yourself
+with compatibility. The fingerprint strategy can be changed by adding an initializer to errbit:
+
+```ruby
+# config/fingerprint.rb
+ErrorReport.fingerprint_strategy = LegacyFingerprint
+```
+
+The easiest way to add custom fingerprint methods is to simply subclass `Fingerprint`
 
 Issue Trackers
 --------------
@@ -593,8 +613,4 @@ Copyright
 ---------
 
 Copyright (c) 2010-2013 Errbit Team. See LICENSE for details.
-
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/errbit/errbit/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 

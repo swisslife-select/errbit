@@ -20,6 +20,10 @@ class ErrorReport
     end
   end
 
+  cattr_accessor :fingerprint_strategy do
+    Fingerprint
+  end
+
   attr_reader :error_class, :message, :request, :server_environment, :api_key, :notifier, :user_attributes, :framework
 
   def initialize(attributes)
@@ -79,7 +83,7 @@ class ErrorReport
   private
 
   def fingerprint
-    @fingerprint ||= Fingerprint.generate(notice, api_key)
+    @fingerprint ||= fingerprint_strategy.generate(notice, api_key)
   end
 
 end

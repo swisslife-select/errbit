@@ -24,6 +24,7 @@ unless defined?(Errbit::Config)
     Errbit::Config.github_authentication = ENV['GITHUB_AUTHENTICATION']
     Errbit::Config.github_client_id = ENV['GITHUB_CLIENT_ID']
     Errbit::Config.github_secret = ENV['GITHUB_SECRET']
+    Errbit::Config.github_org_id = ENV['GITHUB_ORG_ID'] if ENV['GITHUB_ORG_ID']
     Errbit::Config.github_access_scope = ENV['GITHUB_ACCESS_SCOPE'].split(',').map(&:strip) if ENV['GITHUB_ACCESS_SCOPE']
 
     Errbit::Config.smtp_settings = {
@@ -81,7 +82,8 @@ end
 (ActionMailer::Base.default_url_options ||= {}).tap do |default|
   options_from_config = {
     host: Errbit::Config.host,
-    port: Errbit::Config.port
+    port: Errbit::Config.port,
+    protocol: Errbit::Config.protocol
   }.select { |k, v| v }
 
   default.reverse_merge!(options_from_config)
