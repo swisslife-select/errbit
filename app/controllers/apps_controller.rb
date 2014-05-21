@@ -9,7 +9,7 @@ class AppsController < ApplicationController
 
   #TODO: remove decent_exposure
   expose(:app_scope) {
-    (current_user.admin? ? App : current_user.apps)
+    current_user.available_apps
   }
 
   expose(:apps) {
