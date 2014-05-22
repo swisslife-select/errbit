@@ -5,9 +5,9 @@ class Comment < ActiveRecord::Base
 
   after_create :deliver_email, :if => :emailable?
 
-  belongs_to :err, :class_name => "Problem", :foreign_key => "problem_id"
+  belongs_to :problem
   belongs_to :user
-  delegate   :app, :to => :err
+  delegate   :app, :to => :problem
 
   validates_presence_of :body
 
@@ -25,11 +25,11 @@ class Comment < ActiveRecord::Base
 
   protected
     def increase_counter_cache
-      err.inc(:comments_count, 1)
+      problem.inc(:comments_count, 1)
     end
 
     def decrease_counter_cache
-      err.inc(:comments_count, -1) if err
+      problem.inc(:comments_count, -1) if problem
     end
 
 end

@@ -4,9 +4,9 @@ describe Problem do
 
   context 'validations' do
     it 'requires an environment' do
-      err = Fabricate.build(:problem, :environment => nil)
-      expect(err).to_not be_valid
-      expect(err.errors[:environment]).to include("can't be blank")
+      problem = Fabricate.build(:problem, :environment => nil)
+      expect(problem).to_not be_valid
+      expect(problem.errors[:environment]).to include("can't be blank")
     end
   end
 
@@ -357,12 +357,12 @@ describe Problem do
 
     it "adding a comment increases #comments_count by 1" do
       expect {
-        Fabricate(:comment, :err => @problem)
+        Fabricate(:comment, :problem => @problem)
       }.to change(@problem, :comments_count).from(0).to(1)
     end
 
     it "removing a comment decreases #comments_count by 1" do
-      comment1 = Fabricate(:comment, :err => @problem)
+      comment1 = Fabricate(:comment, :problem => @problem)
       expect {
         @problem.reload.comments.first.destroy
         @problem.reload

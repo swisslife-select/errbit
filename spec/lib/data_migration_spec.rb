@@ -195,7 +195,7 @@ describe DataMigration do
     end
   
     it "should correct link to problem" do
-      @pg_comment.err.should == @pg_problem
+      @pg_comment.problem.should == @pg_problem
     end
   
     it "should correct link to user" do

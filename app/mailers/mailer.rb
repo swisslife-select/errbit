@@ -32,7 +32,7 @@ class Mailer < ActionMailer::Base
   def comment_notification(comment)
     @comment  = comment
     @user     = comment.user
-    @problem  = comment.err
+    @problem  = comment.problem
     @notice   = @problem.notices.first
     @app      = @problem.app
 
