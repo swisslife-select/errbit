@@ -1,12 +1,11 @@
 class Comment < ActiveRecord::Base
-
-  after_create :increase_counter_cache
-  before_destroy :decrease_counter_cache
-
   after_create :deliver_email, :if => :emailable?
 
   belongs_to :problem
   belongs_to :user
+
+  counter_culture :problem
+
   delegate   :app, :to => :problem
 
   validates_presence_of :body
@@ -22,14 +21,4 @@ class Comment < ActiveRecord::Base
   def emailable?
     app.emailable? && notification_recipients.any?
   end
-
-  protected
-    def increase_counter_cache
-      problem.inc(:comments_count, 1)
-    end
-
-    def decrease_counter_cache
-      problem.inc(:comments_count, -1) if problem
-    end
-
 end

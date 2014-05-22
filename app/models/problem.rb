@@ -25,7 +25,6 @@ class Problem < ActiveRecord::Base
     if self.new_record?
       self.user_agents ||= Hash.new
       self.hosts ||= Hash.new
-      self.comments_count ||= 0
       self.notices_count ||= 0
       self.resolved = false if self.resolved.nil?
       self.first_notice_at ||= Time.new

@@ -344,32 +344,5 @@ describe Problem do
       }).to({})
     end
   end
-
-  context "comment counter cache" do
-    before do
-      @app = Fabricate(:app)
-      @problem = Fabricate(:problem, :app => @app)
-    end
-
-    it "#comments_count returns 0 by default" do
-      expect(@problem.comments_count).to eq 0
-    end
-
-    it "adding a comment increases #comments_count by 1" do
-      expect {
-        Fabricate(:comment, :problem => @problem)
-      }.to change(@problem, :comments_count).from(0).to(1)
-    end
-
-    it "removing a comment decreases #comments_count by 1" do
-      comment1 = Fabricate(:comment, :problem => @problem)
-      expect {
-        @problem.reload.comments.first.destroy
-        @problem.reload
-      }.to change(@problem, :comments_count).from(1).to(0)
-    end
-  end
-
-
 end
 
