@@ -11,6 +11,8 @@ class App < ActiveRecord::Base
   has_one :issue_tracker, inverse_of: :app, dependent: :destroy
   has_one :notification_service, inverse_of: :app, dependent: :destroy
 
+  has_one :last_deploy, class_name: 'Deploy', order: 'created_at DESC'
+
   def issue_tracker
     return @tentative_issue_tracker if has_tentative_issue_tracker?
     super
@@ -79,7 +81,8 @@ class App < ActiveRecord::Base
   end
 
   def last_deploy_at
-    (last_deploy = deploys.last) && last_deploy.created_at
+    #(last_deploy = deploys.last) && last_deploy.created_at
+    last_deploy.try(:created_at)
   end
 
   # Legacy apps don't have notify_on_errs and notify_on_deploys params

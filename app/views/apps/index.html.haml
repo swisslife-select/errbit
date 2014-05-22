@@ -41,7 +41,7 @@
         - if any_deploys?
           %td.deploy
             - if app.last_deploy_at
-              - revision = app.deploys.last.short_revision
+              - revision = app.last_deploy.short_revision
               = link_to( app.last_deploy_at.to_s(:micro) << (revision.present? ? " (#{revision})" : ""), app_deploys_path(app))
         %td.count
           - if app.problem_count > 0
