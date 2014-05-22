@@ -11,21 +11,23 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140220133128) do
+ActiveRecord::Schema.define(:version => 20140522083721) do
 
   create_table "apps", :force => true do |t|
     t.string   "name"
     t.string   "api_key"
     t.string   "asset_host"
     t.string   "repository_branch"
-    t.boolean  "resolve_errs_on_deploy", :default => false
-    t.boolean  "notify_all_users",       :default => false
-    t.boolean  "notify_on_errs",         :default => true
-    t.boolean  "notify_on_deploys",      :default => false
+    t.boolean  "resolve_errs_on_deploy",    :default => false
+    t.boolean  "notify_all_users",          :default => false
+    t.boolean  "notify_on_errs",            :default => true
+    t.boolean  "notify_on_deploys",         :default => false
     t.text     "email_at_notices"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
     t.string   "repo_url"
+    t.integer  "resolved_problems_count",   :default => 0,     :null => false
+    t.integer  "unresolved_problems_count", :default => 0,     :null => false
   end
 
   create_table "backtrace_lines", :force => true do |t|

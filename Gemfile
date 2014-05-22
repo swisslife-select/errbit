@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'rails', '~> 3.2.18'
 
 gem 'pg'
+gem 'counter_culture'
 
 gem 'devise'
 gem 'haml'

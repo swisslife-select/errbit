@@ -136,7 +136,7 @@ describe ProblemsController do
 
       it "finds the app" do
         get :show, :app_id => app.id, :id => err.problem.id
-        expect(controller.app).to eq app
+        expect(controller.app.id).to eq app.id
       end
 
       it "finds the problem" do
@@ -431,7 +431,7 @@ describe ProblemsController do
         expect {
           post :destroy_all, :app_id => @app.id
         }.to change(Problem, :count).by(-2)
-        expect(controller.app).to eq @app
+        expect(controller.app.id).to eq @app.id
       end
 
       it "should display a message" do

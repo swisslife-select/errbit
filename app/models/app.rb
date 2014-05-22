@@ -136,11 +136,11 @@ class App < ActiveRecord::Base
   end
 
   def unresolved_count
-    @unresolved_count ||= problems.unresolved.count
+    unresolved_problems_count
   end
 
   def problem_count
-    @problem_count ||= problems.count
+    resolved_problems_count + unresolved_problems_count
   end
 
   # Compare by number of unresolved errs, then problem counts.
