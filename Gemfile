@@ -4,6 +4,7 @@ gem 'rails', '~> 3.2.18'
 
 gem 'pg'
 gem 'counter_culture'
+gem 'ransack'
 
 gem 'devise'
 gem 'haml'

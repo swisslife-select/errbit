@@ -4,7 +4,8 @@ describe "apps/index.html.haml" do
   before do
     deploy = Fabricate(:deploy, :created_at => Time.now, :revision => "123456789abcdef")
     app = Fabricate(:app, :deploys => [deploy])
-    view.stub(:apps).and_return([app])
+    assign :apps, [app]
+    assign :q , App.search
     controller.stub(:current_user) { stub_model(User) }
   end
 

@@ -37,7 +37,7 @@ describe AppsController do
         sign_in admin
         unwatched_app && watched_app1 && watched_app2
         get :index
-        expect(controller.apps.entries).to eq App.all.sort.entries
+        expect(assigns(:apps).entries).to eq App.all.sort.entries
       end
     end
 
@@ -46,8 +46,8 @@ describe AppsController do
         sign_in(user)
         watched_app1 && watched_app2 && unwatched_app
         get :index
-        expect(controller.apps).to include(watched_app1, watched_app2)
-        expect(controller.apps).to_not include(unwatched_app)
+        expect(assigns(:apps)).to include(watched_app1, watched_app2)
+        expect(assigns(:apps)).to_not include(unwatched_app)
       end
     end
   end

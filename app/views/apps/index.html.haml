@@ -5,7 +5,7 @@
 %table.apps
   %thead
     %tr
-      %th= t('.name')
+      %th= sort_link @q, :name, t('.name')
       - if any_repo_urls?
         %th= t('.repository')
       - if any_notification_services?
@@ -14,9 +14,9 @@
         %th= t('.tracker')
       - if any_deploys?
         %th= t('.last_deploy')
-      %th=t('.errors')
+      %th= sort_link @q, :unresolved_problems_count, t('.errors')
   %tbody
-    - apps.each do |app|
+    - @apps.each do |app|
       %tr
         %td.name= link_to app.name, app_path(app)
         - if any_repo_urls?
@@ -46,7 +46,7 @@
         %td.count
           - if app.unresolved_problems_count > 0
             = link_to app.unresolved_problems_count, app_path(app)
-    - if apps.none?
+    - if @apps.none?
       %tr
         %td{:colspan => 3}
           %em

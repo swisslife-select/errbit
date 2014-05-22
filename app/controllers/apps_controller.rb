@@ -12,10 +12,6 @@ class AppsController < ApplicationController
     current_user.available_apps
   }
 
-  expose(:apps) {
-    app_scope
-  }
-
   expose(:app, finder: :detect_by_param!, ancestor: :app_scope)
 
   expose(:all_errs) {
@@ -37,7 +33,12 @@ class AppsController < ApplicationController
     app.deploys.by_created_at.limit(5)
   }
 
-  def index; end
+  def index
+    @q = app_scope.search(params[:q])
+    @q.sorts = 'unresolved_problems_count desc' if @q.sorts.empty?
+    @apps = @q.result(distinct: true)
+  end
+
   def show
     app
   end
