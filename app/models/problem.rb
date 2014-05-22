@@ -12,7 +12,7 @@ class Problem < ActiveRecord::Base
   belongs_to :app, inverse_of: :problems
   has_many :errs, inverse_of: :problem, dependent: :destroy
   has_many :comments, inverse_of: :err, dependent: :destroy
-  counter_culture :app, column_name: -> (model) { "#{model.resolve_status}_problems_count" }
+  counter_culture :app, column_name: -> (model) { "unresolved_problems_count" if model.unresolved? }
 
   validates_presence_of :environment
 
@@ -47,11 +47,6 @@ class Problem < ActiveRecord::Base
 
   def unresolved?
     !resolved?
-  end
-
-  # TODO Enumerize?
-  def resolve_status
-    resolved? ? 'resolved' : 'unresolved'
   end
 
   def self.merge!(*problems)

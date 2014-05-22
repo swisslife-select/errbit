@@ -13,7 +13,7 @@ class AppsController < ApplicationController
   }
 
   expose(:apps) {
-    app_scope.all.sort.to_a
+    app_scope
   }
 
   expose(:app, finder: :detect_by_param!, ancestor: :app_scope)

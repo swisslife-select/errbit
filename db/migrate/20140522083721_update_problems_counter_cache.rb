@@ -1,8 +1,7 @@
 class UpdateProblemsCounterCache < ActiveRecord::Migration
   class Problem < ActiveRecord::Base
     belongs_to :app, inverse_of: :problems
-    counter_culture :app, column_names: { ["problems.resolved = ?", true] => 'resolved_problems_count',
-                                          ["problems.resolved = ?", false] => 'unresolved_problems_count' }
+    counter_culture :app, column_names: { ["problems.resolved = ?", false] => 'unresolved_problems_count' }
   end
 
   class App < ActiveRecord::Base

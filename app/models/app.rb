@@ -1,5 +1,4 @@
 class App < ActiveRecord::Base
-  include Comparable
   include AppRepository
 
   serialize :email_at_notices, Array
@@ -140,17 +139,6 @@ class App < ActiveRecord::Base
 
   def unresolved_count
     unresolved_problems_count
-  end
-
-  def problem_count
-    resolved_problems_count + unresolved_problems_count
-  end
-
-  # Compare by number of unresolved errs, then problem counts.
-  def <=>(other)
-    (other.unresolved_count <=> unresolved_count).nonzero? ||
-    (other.problem_count <=> problem_count).nonzero? ||
-    name <=> other.name
   end
 
   def email_at_notices

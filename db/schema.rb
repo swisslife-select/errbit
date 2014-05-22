@@ -13,10 +13,19 @@
 
 ActiveRecord::Schema.define(:version => 20140522083721) do
 
+  create_table "app_managements", :force => true do |t|
+    t.integer  "app_id"
+    t.integer  "master_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "app_managements", ["app_id"], :name => "index_app_managements_on_app_id"
+  add_index "app_managements", ["master_id"], :name => "index_app_managements_on_master_id"
+
   create_table "apps", :force => true do |t|
     t.string   "name"
     t.string   "api_key"
-    t.string   "asset_host"
     t.string   "repository_branch"
     t.boolean  "resolve_errs_on_deploy",    :default => false
     t.boolean  "notify_all_users",          :default => false
@@ -25,19 +34,23 @@ ActiveRecord::Schema.define(:version => 20140522083721) do
     t.text     "email_at_notices"
     t.datetime "created_at",                                   :null => false
     t.datetime "updated_at",                                   :null => false
+    t.string   "remote_id"
     t.string   "repo_url"
-    t.integer  "resolved_problems_count",   :default => 0,     :null => false
+    t.string   "asset_host"
+    t.string   "kind"
     t.integer  "unresolved_problems_count", :default => 0,     :null => false
   end
 
+  add_index "apps", ["remote_id"], :name => "index_apps_on_remote_id"
+
   create_table "backtrace_lines", :force => true do |t|
     t.integer  "backtrace_id"
-    t.integer  "column"
     t.integer  "number"
     t.text     "file"
     t.text     "method"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.integer  "column"
   end
 
   add_index "backtrace_lines", ["backtrace_id"], :name => "index_backtrace_lines_on_backtrace_id"
@@ -46,9 +59,11 @@ ActiveRecord::Schema.define(:version => 20140522083721) do
     t.string   "fingerprint"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.string   "remote_id"
   end
 
   add_index "backtraces", ["fingerprint"], :name => "index_backtraces_on_fingerprint"
+  add_index "backtraces", ["remote_id"], :name => "index_backtraces_on_remote_id"
 
   create_table "comments", :force => true do |t|
     t.integer  "user_id"
@@ -56,9 +71,11 @@ ActiveRecord::Schema.define(:version => 20140522083721) do
     t.text     "body"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "remote_id"
   end
 
   add_index "comments", ["problem_id"], :name => "index_comments_on_problem_id"
+  add_index "comments", ["remote_id"], :name => "index_comments_on_remote_id"
   add_index "comments", ["user_id"], :name => "index_comments_on_user_id"
 
   create_table "deploys", :force => true do |t|
@@ -78,13 +95,20 @@ ActiveRecord::Schema.define(:version => 20140522083721) do
 
   create_table "errs", :force => true do |t|
     t.integer  "problem_id"
+    t.string   "error_class"
+    t.string   "component"
+    t.string   "action"
+    t.string   "environment"
     t.string   "fingerprint"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.string   "remote_id"
   end
 
+  add_index "errs", ["error_class"], :name => "index_errs_on_error_class"
   add_index "errs", ["fingerprint"], :name => "index_errs_on_fingerprint"
   add_index "errs", ["problem_id"], :name => "index_errs_on_problem_id"
+  add_index "errs", ["remote_id"], :name => "index_errs_on_remote_id"
 
   create_table "issue_trackers", :force => true do |t|
     t.integer  "app_id"
@@ -97,14 +121,14 @@ ActiveRecord::Schema.define(:version => 20140522083721) do
     t.string   "password"
     t.string   "ticket_properties"
     t.string   "subdomain"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
     t.string   "milestone_id"
     t.string   "base_url"
     t.string   "context_path"
     t.string   "issue_type"
     t.string   "issue_component"
     t.string   "issue_priority"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
   end
 
   add_index "issue_trackers", ["app_id"], :name => "index_issue_trackers_on_app_id"
@@ -122,10 +146,12 @@ ActiveRecord::Schema.define(:version => 20140522083721) do
     t.text     "error_class"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.string   "remote_id"
   end
 
   add_index "notices", ["backtrace_id"], :name => "index_notices_on_backtrace_id"
   add_index "notices", ["err_id", "created_at", "id"], :name => "index_notices_on_err_id_and_created_at_and_id"
+  add_index "notices", ["remote_id"], :name => "index_notices_on_remote_id"
 
   create_table "notification_services", :force => true do |t|
     t.integer  "app_id"
@@ -137,9 +163,9 @@ ActiveRecord::Schema.define(:version => 20140522083721) do
     t.string   "subdomain"
     t.string   "sender_name"
     t.string   "type"
-    t.text     "notify_at_notices"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+    t.text     "notify_at_notices"
   end
 
   add_index "notification_services", ["app_id"], :name => "index_notification_services_on_app_id"
@@ -165,6 +191,7 @@ ActiveRecord::Schema.define(:version => 20140522083721) do
     t.text     "hosts"
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
+    t.string   "remote_id"
   end
 
   add_index "problems", ["app_id"], :name => "index_problems_on_app_id"
@@ -172,8 +199,8 @@ ActiveRecord::Schema.define(:version => 20140522083721) do
   add_index "problems", ["comments_count"], :name => "index_problems_on_comments_count"
   add_index "problems", ["first_notice_at"], :name => "index_problems_on_first_notice_at"
   add_index "problems", ["last_notice_at"], :name => "index_problems_on_last_notice_at"
-  add_index "problems", ["message"], :name => "index_problems_on_message"
   add_index "problems", ["notices_count"], :name => "index_problems_on_notices_count"
+  add_index "problems", ["remote_id"], :name => "index_problems_on_remote_id"
   add_index "problems", ["resolved_at"], :name => "index_problems_on_resolved_at"
 
   create_table "users", :force => true do |t|
@@ -184,23 +211,26 @@ ActiveRecord::Schema.define(:version => 20140522083721) do
     t.boolean  "admin"
     t.integer  "per_page"
     t.string   "time_zone"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-    t.string   "email",                  :default => "", :null => false
-    t.string   "encrypted_password",     :default => "", :null => false
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
+    t.string   "email",                                 :default => "", :null => false
+    t.string   "encrypted_password",     :limit => 128, :default => "", :null => false
     t.string   "reset_password_token"
-    t.datetime "reset_password_sent_at"
+    t.string   "remember_token"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          :default => 0
+    t.integer  "sign_in_count",                         :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.string   "authentication_token"
+    t.string   "remote_id"
+    t.datetime "reset_password_sent_at"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+  add_index "users", ["remote_id"], :name => "index_users_on_remote_id"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
   create_table "watchers", :force => true do |t|
