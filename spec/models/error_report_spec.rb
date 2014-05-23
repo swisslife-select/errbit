@@ -7,15 +7,15 @@ require 'airbrake/utils/params_cleaner'
 # MonkeyPatch to instanciate a Airbrake::Notice without configure
 # Airbrake
 #
-module Airbrake
-  API_VERSION = '2.4'
-
-  class Notice
-    def framework
-      'rails'
-    end
-  end
-end
+#module Airbrake
+#  API_VERSION = '2.4'
+#
+#  class Notice
+#    def framework
+#      'rails'
+#    end
+#  end
+#end
 
 describe ErrorReport do
   context "with notice without line of backtrace" do

@@ -1,10 +1,12 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 3.2.18'
+gem 'rails', '4.0.0'
 
 gem 'pg'
 gem 'counter_culture'
 gem 'ransack'
+gem 'rails-observers'
+
 
 gem 'devise'
 gem 'haml'
@@ -13,7 +15,6 @@ gem 'rack-ssl', :require => 'rack/ssl'   # force SSL
 
 gem 'useragent'
 gem 'decent_exposure'
-gem 'strong_parameters'
 gem 'actionmailer_inline_css'
 gem 'kaminari', '>= 0.14.1'
 gem 'rack-ssl-enforcer', :require => false
@@ -116,18 +117,12 @@ group :heroku, :production do
   gem 'unicorn', :require => false
 end
 
-
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'execjs'
-  gem 'therubyracer', :platform => :ruby  # C Ruby (MRI) or Rubinius, but NOT Windows
-  gem 'uglifier',     '>= 1.0.3'
-  # We can't upgrade because not compatible to jquery >= 1.9.
-  # To do that, we need fix the rails.js
-  gem 'jquery-rails', '~> 2.1.4'
-  gem 'underscore-rails'
-  gem 'turbo-sprockets-rails3'
-end
+gem 'execjs'
+gem 'therubyracer', :platform => :ruby  # C Ruby (MRI) or Rubinius, but NOT Windows
+gem 'uglifier',     '>= 1.0.3'
+# We can't upgrade because not compatible to jquery >= 1.9.
+# To do that, we need fix the rails.js
+gem 'jquery-rails', '~> 2.1.4'
+gem 'underscore-rails'
 
 gem 'pjax_rails'

@@ -162,8 +162,8 @@ describe Problem do
       it 'only finds resolved Problems' do
         resolved = Fabricate(:problem, :resolved => true)
         unresolved = Fabricate(:problem, :resolved => false)
-        expect(Problem.resolved.all).to include(resolved)
-        expect(Problem.resolved.all).to_not include(unresolved)
+        expect(Problem.resolved).to include(resolved)
+        expect(Problem.resolved).to_not include(unresolved)
       end
     end
 
@@ -171,8 +171,8 @@ describe Problem do
       it 'only finds unresolved Problems' do
         resolved = Fabricate(:problem, :resolved => true)
         unresolved = Fabricate(:problem, :resolved => false)
-        expect(Problem.unresolved.all).to_not include(resolved)
-        expect(Problem.unresolved.all).to include(unresolved)
+        expect(Problem.unresolved).to_not include(resolved)
+        expect(Problem.unresolved).to include(unresolved)
       end
     end
 

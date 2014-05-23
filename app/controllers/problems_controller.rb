@@ -31,7 +31,7 @@ class ProblemsController < ApplicationController
   }
 
   expose(:app_scope) {
-    apps = current_user.admin? ? App.scoped : current_user.apps
+    apps = current_user.available_apps
     params[:app_id] ? apps.where(:id => params[:app_id]) : apps
   }
 

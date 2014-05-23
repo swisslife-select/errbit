@@ -195,7 +195,7 @@ describe ProblemsController do
     end
   end
 
-  describe "PUT /apps/:app_id/problems/:id/resolve" do
+  describe "patch /apps/:app_id/problems/:id/resolve" do
     before do
       sign_in Fabricate(:admin)
 
@@ -208,29 +208,29 @@ describe ProblemsController do
     it 'finds the app and the problem' do
       expect(App).to receive(:detect_by_param!).with(@problem.app.id.to_s).and_return(@problem.app)
       expect(@problem.app.problems).to receive(:detect_by_param!).and_return(@problem.problem)
-      put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      patch :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
       expect(controller.app).to eq @problem.app
       expect(controller.problem).to eq @problem.problem
     end
 
     it "should resolve the issue" do
       expect(@problem.problem).to receive(:resolve!).and_return(true)
-      put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      patch :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
     end
 
     it "should display a message" do
-      put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      patch :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
       expect(request.flash[:success]).to match(/Great news/)
     end
 
     it "should redirect to the app page" do
-      put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      patch :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
       expect(response).to redirect_to(app_path(@problem.app))
     end
 
     it "should redirect back to problems page" do
-      request.env["Referer"] = problems_path
-      put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      request.env["HTTP_REFERER"] = problems_path
+      patch :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
       expect(response).to redirect_to(problems_path)
     end
   end
@@ -437,13 +437,13 @@ describe ProblemsController do
       end
 
       it "should display a message" do
-        put :destroy_all, :app_id => @app.id
+        patch :destroy_all, :app_id => @app.id
         expect(request.flash[:success]).to match(/been deleted/)
       end
 
       it "should redirect back to the app page" do
-        request.env["Referer"] = edit_app_path(@app)
-        put :destroy_all, :app_id => @app.id
+        request.env["HTTP_REFERER"] = edit_app_path(@app)
+        patch :destroy_all, :app_id => @app.id
         expect(response).to redirect_to(edit_app_path(@app))
       end
     end

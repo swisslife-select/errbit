@@ -10,7 +10,7 @@ class App < ActiveRecord::Base
   has_one :issue_tracker, inverse_of: :app, dependent: :destroy
   has_one :notification_service, inverse_of: :app, dependent: :destroy
 
-  has_one :last_deploy, class_name: 'Deploy', order: 'created_at DESC'
+  has_one :last_deploy, -> { order('created_at DESC') }, class_name: 'Deploy'
 
   def issue_tracker
     return @tentative_issue_tracker if has_tentative_issue_tracker?

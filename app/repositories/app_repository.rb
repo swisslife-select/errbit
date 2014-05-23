@@ -2,8 +2,8 @@ module AppRepository
   extend ActiveSupport::Concern
 
   included do
-    has_many :watchers_of_errors, conditions: { watching_errors: true }, class_name: 'Watcher'
-    has_many :watchers_of_deploys, conditions: { watching_deploys: true }, class_name: 'Watcher'
+    has_many :watchers_of_errors, -> { where(watching_errors: true) }, class_name: 'Watcher'
+    has_many :watchers_of_deploys, -> { where(watching_deploys: true) }, class_name: 'Watcher'
   end
 
   module ClassMethods
@@ -25,7 +25,7 @@ module AppRepository
   # * <tt>:fingerprint</tt> - a unique value identifying the notice
   #
   def find_or_create_err!(attrs)
-    err = Err.find_by_fingerprint(attrs[:fingerprint])
+    err = Err.find_by fingerprint: attrs[:fingerprint]
     return err if err
     problems.create!(attrs.slice(:error_class, :environment)).errs.create!(attrs.slice(:fingerprint, :problem_id))
   end

@@ -57,7 +57,8 @@ class ErrorReport
       :user_attributes => user_attributes,
       :framework => framework
     )
-    error.notices << @notice
+    @notice.err = error
+    @notice.save
     @notice
   end
   attr_reader :notice

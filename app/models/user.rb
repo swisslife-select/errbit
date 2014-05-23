@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   end
 
   def watching?(app)
-    apps.all.include?(app)
+    apps.to_a.include?(app)
   end
 
   def password_required?

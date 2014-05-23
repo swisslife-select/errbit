@@ -11,7 +11,7 @@ class Api::V1::NoticesController < ApplicationController
       notices = notices.created_between(start_date, end_date)
     end
 
-    results = benchmark("[api/v1/notices_controller] query time") { notices.all }
+    results = benchmark("[api/v1/notices_controller] query time") { notices.to_a }
 
     respond_to do |format|
       format.any(:html, :json) { render :json => Yajl.dump(results) } # render JSON if no extension specified on path

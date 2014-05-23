@@ -2,9 +2,9 @@ module ProblemRepository
   extend ActiveSupport::Concern
 
   included do
-    scope :resolved, where(resolved: true)
-    scope :unresolved, where(resolved: false)
-    scope :ordered, order("last_notice_at desc")
+    scope :resolved, -> { where(resolved: true) }
+    scope :unresolved, -> { where(resolved: false) }
+    scope :ordered, -> { order("last_notice_at desc") }
   end
 
   module ClassMethods
@@ -12,7 +12,7 @@ module ProblemRepository
       param = raw_param.to_s
 
       return find(param) if param.match(/\A\d+\z/)
-      return find_by_remote_id!(param) if column_names.include? 'remote_id' #old mongodb id
+      return find_by!(remote_id: param) if column_names.include? 'remote_id' #old mongodb id
 
       raise ActiveRecord::RecordNotFound
     end
@@ -24,14 +24,14 @@ module ProblemRepository
 
     def all_else_unresolved(fetch_all)
       if fetch_all
-        scoped
+        all
       else
         unresolved
       end
     end
 
     def in_env(env)
-      env.present? ? where(environment: env) : scoped
+      env.present? ? where(environment: env) : all
     end
 
     def ordered_by(sort, order)

@@ -7,7 +7,7 @@ module UserRepository
   end
 
   def available_apps
-    scope = admin? ? App.scoped : apps
+    scope = admin? ? App.all : apps
     scope.includes(:issue_tracker, :notification_service, :last_deploy)
   end
 end
