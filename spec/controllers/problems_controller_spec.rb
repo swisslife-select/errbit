@@ -101,6 +101,8 @@ describe ProblemsController do
   describe "GET /problems - previously all" do
     context 'when logged in as an admin' do
       it "gets a paginated list of all problems" do
+        pending 'remove or rewrite test without doubles'
+
         sign_in Fabricate(:admin)
         problems = Kaminari.paginate_array((1..30).to_a)
         3.times { problems << Fabricate(:err).problem }

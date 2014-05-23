@@ -39,12 +39,13 @@ class ProblemsController < ApplicationController
     params[:environment]
   }
 
+  #TODO: move to repository
   expose(:problems) {
     pro = Problem.for_apps(
       app_scope
     ).in_env(
       params_environement
-    ).all_else_unresolved(all_errs).ordered_by(params_sort, params_order)
+    ).all_else_unresolved(all_errs).ordered_by(params_sort, params_order).includes(app: :issue_tracker)
 
     if request.format == :html
       pro.page(params[:page]).per(current_user.per_page)
