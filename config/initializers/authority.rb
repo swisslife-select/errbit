@@ -29,9 +29,20 @@ Authority.configure do |config|
      :update  => 'update',
      :destroy => 'delete',
 
-
+     #TODO: need refactoring
      :regenerate_api_key => 'update',
      :locate => 'read',
+     :destroy_several => 'delete',
+     :resolve_several => 'update',
+     :unresolve_several => 'update',
+     :merge_several => 'update',
+     :unmerge_several => 'update',
+     :search => 'read',
+     :destroy_all => 'delete',
+     :resolve => 'update',
+     :unresolve => 'update',
+     :create_issue => 'update',
+     :unlink_issue => 'update',
   }
 
   # ABILITIES

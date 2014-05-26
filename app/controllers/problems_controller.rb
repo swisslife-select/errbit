@@ -5,9 +5,9 @@
 # MEMBER => :show, :edit, :update, :create, :destroy, :resolve, :unresolve, :create_issue, :unlink_issue
 # COLLECTION => :index, :all, :destroy_several, :resolve_several, :unresolve_several, :merge_several, :unmerge_several, :search
 class ProblemsController < ApplicationController
-
-
   include ProblemsSearcher
+
+  authorize_actions_for Problem
 
   before_filter :need_selected_problem, :only => [
     :resolve_several, :unresolve_several, :unmerge_several

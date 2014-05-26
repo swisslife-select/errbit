@@ -3,6 +3,7 @@
 # Errs together as belonging to the same problem.
 
 class Problem < ActiveRecord::Base
+  include Authority::Abilities
   include ProblemRepository
 
   serialize :messages, Hash
