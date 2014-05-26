@@ -180,18 +180,5 @@ describe App do
       end
     end
   end
-
-  describe ".find_by_api_key!" do
-    it 'return the app with api_key' do
-      app = Fabricate(:app)
-      expect(App.find_by_api_key!(app.api_key)).to eq app
-    end
-    it 'raise ActiveRecord::RecordNotFound if not found' do
-      expect {
-        App.find_by_api_key!('foo')
-      }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-  end
-
 end
 

@@ -54,7 +54,7 @@ describe DataMigration do
       @migrator.copy! :users
       @migrator.copy! :apps
       @mongo_app = @apps.last
-      @pg_app = App.find_by_api_key(@mongo_app["api_key"])
+      @pg_app = App.find_by(api_key: @mongo_app["api_key"])
     end
 
     it "should copy apps" do
@@ -92,7 +92,7 @@ describe DataMigration do
         @mongo_app["watchers"].each do |watcher|
           next unless watcher["email"]
           
-          @pg_app.watchers.find_by_email(watcher["email"]).should_not be_nil
+          @pg_app.watchers.find_by(email: watcher["email"]).should_not be_nil
         end
       end
 
@@ -100,9 +100,9 @@ describe DataMigration do
         @mongo_app["watchers"].each do |watcher|
           next unless watcher["user_id"]
           
-          user = User.find_by_remote_id watcher["user_id"].to_s
+          user = User.find_by remote_id: watcher["user_id"].to_s
           user.should_not be_nil
-          @pg_app.watchers.find_by_user_id(user.id).should_not be_nil
+          @pg_app.watchers.find_by(user_id: user.id).should_not be_nil
         end
       end
 
@@ -199,7 +199,7 @@ describe DataMigration do
     end
   
     it "should correct link to user" do
-      user = User.find_by_remote_id @mongo_comment["user_id"].to_s
+      user = User.find_by remote_id: @mongo_comment["user_id"].to_s
       user.should_not be_nil
       @pg_comment.user.should == user
     end

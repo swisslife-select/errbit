@@ -112,7 +112,7 @@ class AppsController < ApplicationController
     end
 
     def plug_params app
-      donor = App.find_by_id(params[:copy_attributes_from])
+      donor = App.find_by id: params[:copy_attributes_from]
       AppCopy.deep_copy_attributes(app, donor) if donor
 
       app.watchers.build if app.watchers.none?

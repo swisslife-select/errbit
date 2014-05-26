@@ -16,12 +16,12 @@ describe DeploysController do
     end
 
     it 'finds the app via the api key' do
-      expect(App).to receive(:find_by_api_key!).with('APIKEY').and_return(@app)
+      expect(App).to receive(:find_by!).with(api_key: 'APIKEY').and_return(@app)
       post :create, :deploy => @params, :api_key => 'APIKEY'
     end
 
     it 'creates a deploy' do
-      App.stub(:find_by_api_key!).and_return(@app)
+      App.stub(:find_by!).and_return(@app)
       expect(@app.deploys).to receive(:create!).
         with({
           :username     => 'john.doe',
