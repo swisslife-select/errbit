@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.0.0'
+gem 'rails', '~> 4.1.1'
 
 gem 'pg'
 gem 'counter_culture'
@@ -77,7 +77,7 @@ gem 'ri_cal'
 gem 'yajl-ruby', :require => "yajl"
 gem 'sidekiq'
 gem 'sinatra', :require => false
-gem 'state_machine'
+gem 'state_machine', github: 'seuros/state_machine'
 gem 'git'
 
 group :development, :test do
