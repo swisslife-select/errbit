@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  include Authority::UserAbilities
+  include Authority::Abilities
   include UserRepository
 
   PER_PAGE = 30
@@ -66,6 +68,10 @@ class User < ActiveRecord::Base
 
   def self.token_authentication_key
     :auth_token
+  end
+
+  def guest?
+    false
   end
 
   private

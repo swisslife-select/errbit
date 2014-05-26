@@ -48,6 +48,9 @@ GEM
       builder
       multi_json
     arel (5.0.1.20140414130214)
+    authority (3.0.0)
+      activesupport (>= 3.0.0)
+      rake (>= 0.8.7)
     bcrypt (3.1.7)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
@@ -375,6 +378,7 @@ PLATFORMS
 DEPENDENCIES
   actionmailer_inline_css
   airbrake (= 3.1.15)
+  authority
   better_errors
   binding_of_caller
   bitbucket_rest_api

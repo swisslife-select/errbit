@@ -7,8 +7,9 @@ gem 'counter_culture'
 gem 'ransack'
 gem 'rails-observers'
 
-
 gem 'devise'
+gem 'authority'
+
 gem 'haml'
 gem 'htmlentities'
 gem 'rack-ssl', :require => 'rack/ssl'   # force SSL

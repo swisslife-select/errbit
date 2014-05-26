@@ -1,9 +1,7 @@
 class UsersController < ApplicationController
   respond_to :html
 
-  before_filter :require_admin!, only: [:index, :show, :destroy]
-  before_filter :require_user_edit_priviledges, only: [:edit, :update]
-  skip_before_filter :authenticate_user!, only: [:new, :create]
+  authorize_actions_for User
 
   expose(:user, :attributes => :user_params)
 
@@ -13,6 +11,10 @@ class UsersController < ApplicationController
 
   def new; end
   def show; end
+
+  def edit
+    authorize_action_for(user)
+  end
 
   def create
     if user.save
@@ -25,7 +27,9 @@ class UsersController < ApplicationController
   end
 
   def update
-    if user.update_attributes(user_params)
+    user.assign_attributes(user_params)
+    authorize_action_for(user)
+    if user.save
       flash[:success] = I18n.t('controllers.users.flash.update.success', :name => user.name)
       redirect_to user_path(user)
     else
@@ -55,18 +59,13 @@ class UsersController < ApplicationController
 
   protected
 
-    def require_user_edit_priviledges
-      can_edit = current_user == user || current_user.admin?
-      redirect_to(root_path) and return(false) unless can_edit
-    end
-
   def user_params
     @user_params ||= params[:user] ? params.require(:user).permit(*user_permit_params) : {}
   end
 
   def user_permit_params
     @user_permit_params ||= [:name,:username, :email, :github_login, :per_page, :time_zone]
-    @user_permit_params << :admin if current_user.try(:admin?) && current_user.id != params[:id]
+    @user_permit_params << :admin if current_user_or_guest.can?(:edit_user_admin_field, user_id: params[:id])
     @user_permit_params |= [:password, :password_confirmation] if user_password_params.values.all?{|pa| !pa.blank? }
     @user_permit_params
   end
