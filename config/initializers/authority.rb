@@ -31,6 +31,7 @@ Authority.configure do |config|
 
 
      :regenerate_api_key => 'update',
+     :locate => 'read',
   }
 
   # ABILITIES

@@ -1,6 +1,7 @@
 require 'recurse'
 
 class Notice < ActiveRecord::Base
+  include Authority::Abilities
   include NoticeRepository
 
   serialize :server_environment, Hash
