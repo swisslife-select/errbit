@@ -1,9 +1,9 @@
 class DeploysController < ApplicationController
+  authorize_actions_for Deploy
 
   protect_from_forgery :except => :create
 
   skip_before_filter :verify_authenticity_token, :only => :create
-  skip_before_filter :authenticate_user!, :only => :create
 
   def create
     @app = App.find_by! api_key: params[:api_key]

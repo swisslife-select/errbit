@@ -1,4 +1,5 @@
 class Deploy < ActiveRecord::Base
+  include Authority::Abilities
   include DeployRepository
 
   serialize :vcs_changes, Hash
