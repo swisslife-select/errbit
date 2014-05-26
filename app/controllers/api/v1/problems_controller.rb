@@ -1,6 +1,8 @@
 class Api::V1::ProblemsController < ApplicationController
   respond_to :json, :xml
 
+  authorize_actions_for Problem
+
   def index
     problems = Problem.select %w{app_id app_name environment message problems.where first_notice_at last_notice_at resolved resolved_at notices_count}
 

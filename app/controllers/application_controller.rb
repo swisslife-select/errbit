@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  ensure_authorization_performed
+  ensure_authorization_performed unless: :devise_controller?
 
   before_filter :authenticate_user_from_token!
   before_filter :set_time_zone

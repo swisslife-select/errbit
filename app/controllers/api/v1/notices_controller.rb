@@ -1,6 +1,8 @@
 class Api::V1::NoticesController < ApplicationController
   respond_to :json, :xml
 
+  authorize_actions_for Notice
+
   def index
     fields = %w{created_at message error_class}
     notices = Notice.select(fields)
