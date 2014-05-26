@@ -23,11 +23,7 @@ class DeploysController < ApplicationController
 
   private
     def resource_app
-      return @resource_app if @resource_app
-      @resource_app = App.detect_by_param!(params[:app_id])
-      #TODO: use ACL
-      raise ActiveRecord::RecordNotFound unless current_user.admin? || current_user.watching?(@resource_app)
-      @resource_app
+      @resource_app ||= current_user_or_guest.available_apps.detect_by_param!(params[:app_id])
     end
 
     def default_deploy
