@@ -1,4 +1,5 @@
 class App < ActiveRecord::Base
+  include Authority::Abilities
   include AppRepository
 
   serialize :email_at_notices, Array

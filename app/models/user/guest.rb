@@ -8,4 +8,8 @@ class User::Guest
   def admin?
     false
   end
+
+  def available_apps
+    App.none
+  end
 end

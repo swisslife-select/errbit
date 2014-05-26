@@ -2,14 +2,15 @@ class AppsController < ApplicationController
 
   include ProblemsSearcher
 
-  before_filter :require_admin!, :except => [:index, :show]
+  authorize_actions_for App
+
   before_filter :parse_email_at_notices_or_set_default, :only => [:create, :update]
   before_filter :parse_notice_at_notices_or_set_default, :only => [:create, :update]
   respond_to :html
 
   #TODO: remove decent_exposure
   expose(:app_scope) {
-    current_user.available_apps
+    current_user_or_guest.available_apps
   }
 
   expose(:app, finder: :detect_by_param!, ancestor: :app_scope)
