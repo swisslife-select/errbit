@@ -35,8 +35,8 @@ Errbit::Application.routes.draw do
       end
 
       member do
-        put :resolve
-        put :unresolve
+        patch :resolve
+        patch :unresolve
         post :create_issue
         delete :unlink_issue
       end

@@ -4,7 +4,7 @@ describe UsersController do
 
   it_requires_authentication :for => {
       :edit    => :get,
-      :update     => :put,
+      :update     => :patch,
   }
 
   it_requires_admin_privileges :for => {
@@ -43,57 +43,57 @@ describe UsersController do
 
     end
 
-    context "PUT /users/:other_id" do
+    context "patch /users/:other_id" do
       it "redirects to the home page" do
-        put :update, :id => other_user.id
+        patch :update, :id => other_user.id
         expect(response).to redirect_to(root_path)
       end
     end
 
-    context "PUT /users/:my_id/id" do
+    context "patch /users/:my_id/id" do
       context "when the update is successful" do
         it "sets a message to display" do
-          put :update, :id => user.to_param, :user => {:name => 'Kermit'}
+          patch :update, :id => user.to_param, :user => {:name => 'Kermit'}
           expect(request.flash[:success]).to include('updated')
         end
 
         it "redirects to the user's page" do
-          put :update, :id => user.to_param, :user => {:name => 'Kermit'}
+          patch :update, :id => user.to_param, :user => {:name => 'Kermit'}
           expect(response).to redirect_to(user_path(user))
         end
 
         it "should not be able to become an admin" do
           expect {
-            put :update, :id => user.to_param, :user => {:admin => true}
+            patch :update, :id => user.to_param, :user => {:admin => true}
           }.to_not change {
             user.reload.admin
           }.from(false)
         end
 
         it "should be able to set per_page option" do
-          put :update, :id => user.to_param, :user => {:per_page => 555}
+          patch :update, :id => user.to_param, :user => {:per_page => 555}
           expect(user.reload.per_page).to eq 555
         end
 
         it "should be able to set time_zone option" do
-          put :update, :id => user.to_param, :user => {:time_zone => "Warsaw"}
+          patch :update, :id => user.to_param, :user => {:time_zone => "Warsaw"}
           expect(user.reload.time_zone).to eq "Warsaw"
         end
 
         it "should be able to not set github_login option" do
-          put :update, :id => user.to_param, :user => {:github_login => " "}
+          patch :update, :id => user.to_param, :user => {:github_login => " "}
           expect(user.reload.github_login).to eq nil
         end
 
         it "should be able to set github_login option" do
-          put :update, :id => user.to_param, :user => {:github_login => "awesome_name"}
+          patch :update, :id => user.to_param, :user => {:github_login => "awesome_name"}
           expect(user.reload.github_login).to eq "awesome_name"
         end
       end
 
       context "when the update is unsuccessful" do
         it "renders the edit page" do
-          put :update, :id => user.to_param, :user => {:name => nil}
+          patch :update, :id => user.to_param, :user => {:name => nil}
           expect(response).to render_template(:edit)
         end
       end
@@ -153,10 +153,10 @@ describe UsersController do
       end
     end
 
-    context "PUT /users/:id" do
+    context "patch /users/:id" do
       context "when the update is successful" do
         before {
-          put :update, :id => user.to_param, :user => user_params
+          patch :update, :id => user.to_param, :user => user_params
         }
 
         context "with normal params" do
@@ -170,7 +170,7 @@ describe UsersController do
       context "when the update is unsuccessful" do
 
         it "renders the edit page" do
-          put :update, :id => user.to_param, :user => {:name => nil}
+          patch :update, :id => user.to_param, :user => {:name => nil}
           expect(response).to render_template(:edit)
         end
       end

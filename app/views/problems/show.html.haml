@@ -13,7 +13,7 @@
   = problem.last_notice_at.to_s(:precise)
 - content_for :action_bar do
   - if problem.unresolved?
-    %span= link_to 'resolve', [:resolve, app, problem], :method => :put,
+    %span= link_to 'resolve', [:resolve, app, problem], :method => :patch,
       :data => { :confirm => problem_confirm('resolve_one') }, :class => 'resolve'
   - if current_user.authentication_token
     %span= link_to 'iCal', polymorphic_path([app, problem], :format => "ics",

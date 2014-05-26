@@ -3,7 +3,7 @@ require 'spec_helper'
 describe ProblemsController do
 
   it_requires_authentication :for => {
-    :index => :get, :show => :get, :resolve => :put, :search => :get
+    :index => :get, :show => :get, :resolve => :patch, :search => :get
   },
   :params => {:app_id => 'dummyid', :id => 'dummyid'}
 
@@ -195,7 +195,7 @@ describe ProblemsController do
     end
   end
 
-  describe "patch /apps/:app_id/problems/:id/resolve" do
+  describe "patch/apps/:app_id/problems/:id/resolve" do
     before do
       sign_in Fabricate(:admin)
 

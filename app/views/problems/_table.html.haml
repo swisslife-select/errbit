@@ -41,7 +41,7 @@
               - if problem.app.issue_tracker_configured? && problem.issue_link.present? && problem.issue_link != 'pending'
                 = link_to image_tag("#{problem.issue_type}_goto.png"), problem.issue_link, :target => "_blank"
           %td.resolve= link_to image_tag("thumbs-up.png"), resolve_app_problem_path(problem.app, problem),
-            :title => "Resolve", :method => :put, :data => { :confirm => problem_confirm('resolve_one') },
+            :title => "Resolve", :method => :patch, :data => { :confirm => problem_confirm('resolve_one') },
             :class => 'resolve' if problem.unresolved?
       - if problems.none?
         %tr
