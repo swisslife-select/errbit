@@ -49,8 +49,6 @@ class AppsController < ApplicationController
   end
 
   def create
-    initialize_subclassed_issue_tracker
-    initialize_subclassed_notification_service
     if app.save
       redirect_to app_url(app), :flash => { :success => I18n.t('controllers.apps.flash.create.success') }
     else
@@ -60,8 +58,6 @@ class AppsController < ApplicationController
   end
 
   def update
-    initialize_subclassed_issue_tracker
-    initialize_subclassed_notification_service
     if app.save
       redirect_to app_url(app), :flash => { :success => I18n.t('controllers.apps.flash.update.success') }
     else
@@ -89,29 +85,6 @@ class AppsController < ApplicationController
   end
 
   protected
-
-    def initialize_subclassed_issue_tracker
-      # set the app's issue tracker
-      if params[:app][:issue_tracker_attributes] && tracker_type = params[:app][:issue_tracker_attributes][:type]
-        available_tracker_classes = [IssueTracker] + IssueTracker.subclasses
-        tracker_class = available_tracker_classes.detect{|c| c.name == tracker_type}
-        if !tracker_class.nil?
-          app.issue_tracker = tracker_class.new(params[:app][:issue_tracker_attributes])
-        end
-      end
-    end
-
-    def initialize_subclassed_notification_service
-      # set the app's notification service
-      if params[:app][:notification_service_attributes] && notification_type = params[:app][:notification_service_attributes][:type]
-        available_notification_classes = [NotificationService] + NotificationService.subclasses
-        notification_class = available_notification_classes.detect{|c| c.name == notification_type}
-        if !notification_class.nil?
-          app.notification_service = notification_class.new(params[:app][:notification_service_attributes])
-        end
-      end
-    end
-
     def plug_params app
       donor = App.find_by id: params[:copy_attributes_from]
       AppCopy.deep_copy_attributes(app, donor) if donor
