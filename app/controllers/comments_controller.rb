@@ -1,4 +1,6 @@
 class CommentsController < ApplicationController
+  authorize_actions_for Comment
+
   before_filter :find_app
   before_filter :find_problem
 

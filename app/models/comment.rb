@@ -1,4 +1,6 @@
 class Comment < ActiveRecord::Base
+  include Authority::Abilities
+
   after_create :deliver_email, :if => :emailable?
 
   belongs_to :problem
