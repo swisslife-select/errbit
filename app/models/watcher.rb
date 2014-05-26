@@ -1,4 +1,5 @@
 class Watcher < ActiveRecord::Base
+  include Authority::Abilities
 
 
   belongs_to :app, :inverse_of => :watchers
