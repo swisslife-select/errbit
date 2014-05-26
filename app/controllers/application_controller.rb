@@ -33,20 +33,6 @@ protected
     @guest ||= User::Guest.new
   end
 
-  ##
-  # Check if the current_user is admin or not and redirect to root url if not
-  #
-  def require_admin!
-
-    raise 'require_admin!  AAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-
-
-    unless user_signed_in? && current_user.admin?
-      flash[:error] = "Sorry, you don't have permission to do that"
-      redirect_to_root
-    end
-  end
-
   def redirect_to_root
     redirect_to(root_path)
   end
