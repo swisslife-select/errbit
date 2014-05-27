@@ -25,22 +25,23 @@ Errbit::Application.routes.draw do
   end
 
   resources :apps do
-    resources :problems do
-      resources :notices
-      resources :comments, :only => [:create, :destroy]
-
-      collection do
-        post :destroy_all
-      end
-
-      member do
-        patch :resolve
-        patch :unresolve
-        post :create_issue
-        delete :unlink_issue
-      end
-    end
     scope module: :apps do
+      resources :problems do
+        scope module: :problems do
+          resources :comments, only: [:create, :destroy]
+        end
+
+        collection do
+          post :destroy_all
+        end
+
+        member do
+          patch :resolve
+          patch :unresolve
+          post :create_issue
+          delete :unlink_issue
+        end
+      end
       resources :deploys, only: [:index, :show]
       resources :watchers, only: [:destroy]
     end

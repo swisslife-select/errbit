@@ -13,26 +13,12 @@ class ProblemsController < ApplicationController
     :resolve_several, :unresolve_several, :unmerge_several
   ]
 
-  expose(:app) {
-    if current_user.admin?
-      App.detect_by_param!(params[:app_id])
-    else
-      current_user.apps.detect_by_param!(params[:app_id])
-    end
-  }
-
-  expose(:problem) {
-    app.problems.detect_by_param!(params[:id])
-  }
-
-
   expose(:all_errs) {
     params[:all_errs]
   }
 
   expose(:app_scope) {
-    apps = current_user.available_apps
-    params[:app_id] ? apps.where(:id => params[:app_id]) : apps
+    current_user.available_apps
   }
 
   expose(:params_environement) {
@@ -55,36 +41,6 @@ class ProblemsController < ApplicationController
   }
 
   def index; end
-
-  def show
-    @notices  = problem.notices.reverse_ordered.page(params[:notice]).per(1)
-    @notice   = @notices.first
-    @comment = Comment.new
-  end
-
-  def create_issue
-    IssueTracker.update_url_options(request)
-    issue_creation = IssueCreation.new(problem, current_user, params[:tracker])
-
-    unless issue_creation.execute
-      flash[:error] = issue_creation.errors.full_messages.join(', ')
-    end
-
-    redirect_to app_problem_path(app, problem)
-  end
-
-  def unlink_issue
-    problem.update_attribute :issue_link, nil
-    redirect_to app_problem_path(app, problem)
-  end
-
-  def resolve
-    problem.resolve!
-    flash[:success] = 'Great news everyone! The err has been resolved.'
-    redirect_to :back
-  rescue ActionController::RedirectBackError
-    redirect_to app_path(app)
-  end
 
   def resolve_several
     selected_problems.each(&:resolve!)
@@ -123,14 +79,6 @@ class ProblemsController < ApplicationController
     nb_problem_destroy = ProblemDestroy.execute(selected_problems)
     flash[:notice] = "#{I18n.t(:n_errs_have, :count => nb_problem_destroy)} been deleted."
     redirect_to :back
-  end
-
-  def destroy_all
-    nb_problem_destroy = ProblemDestroy.execute(app.problems)
-    flash[:success] = "#{I18n.t(:n_errs_have, :count => nb_problem_destroy)} been deleted."
-    redirect_to :back
-  rescue ActionController::RedirectBackError
-    redirect_to app_path(app)
   end
 
   def search
