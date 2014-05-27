@@ -77,6 +77,8 @@ gem 'sinatra', :require => false
 gem 'state_machine'
 gem 'git'
 
+gem 'rinku', require: 'rails_rinku'
+
 group :development, :test do
   gem 'rspec-rails'
   gem 'webmock', :require => false
