@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe "problems/show.html.haml" do
+describe "apps/problems/show.html.haml" do
   let(:problem) { Fabricate(:problem) }
   let(:comment) { Fabricate(:comment) }
 
   before do
-    view.stub(:app).and_return(problem.app)
+    view.stub(:resource_app).and_return(problem.app)
     view.stub(:problem).and_return(problem)
 
     assign :comment, comment
@@ -19,7 +19,7 @@ describe "problems/show.html.haml" do
     # problem with has_one and sti, cause reverse creating
     tracker.create :api_token => "token token token", :project_id => "1234", :app => problem.app
     view.stub(:problem).and_return(problem)
-    view.stub(:app).and_return(problem.app)
+    view.stub(:resource_app).and_return(problem.app)
   end
 
   describe "content_for :action_bar" do
@@ -55,10 +55,10 @@ describe "problems/show.html.haml" do
       controller.request.env['HTTP_REFERER'] = nil
       problem = Fabricate(:problem_with_comments)
       view.stub(:problem).and_return(problem)
-      view.stub(:app).and_return(problem.app)
+      view.stub(:resource_app).and_return(problem.app)
       render
 
-      expect(action_bar).to have_selector("span a.up[href='#{app_problems_path(problem.app)}']", :text => 'up')
+      expect(action_bar).to have_selector("span a.up[href='#{app_path(problem.app)}']", :text => 'up')
     end
 
     context 'create issue links' do
@@ -68,7 +68,7 @@ describe "problems/show.html.haml" do
 
         problem = Fabricate(:problem_with_comments, :app => Fabricate(:app, :repo_url => "https://github.com/test_user/test_repo"))
         view.stub(:problem).and_return(problem)
-        view.stub(:app).and_return(problem.app)
+        view.stub(:resource_app).and_return(problem.app)
         render
 
         expect(action_bar).to have_selector("span a.github_create.create-issue", :text => 'create issue')
@@ -78,7 +78,7 @@ describe "problems/show.html.haml" do
         problem = Fabricate(:problem_with_comments, :app => Fabricate(:app, :repo_url => "https://github.com/test_user/test_repo"))
         with_issue_tracker(GithubIssuesTracker, problem)
         view.stub(:problem).and_return(problem)
-        view.stub(:app).and_return(problem.app)
+        view.stub(:resource_app).and_return(problem.app)
         render
 
         expect(action_bar).to have_selector("span a.github_create.create-issue", :text => 'create issue')
@@ -90,7 +90,7 @@ describe "problems/show.html.haml" do
 
         it 'not see link to create issue' do
           view.stub(:problem).and_return(problem)
-          view.stub(:app).and_return(problem.app)
+          view.stub(:resource_app).and_return(problem.app)
           render
           expect(view.content_for(:action_bar)).to_not match(/create issue/)
         end
@@ -104,7 +104,7 @@ describe "problems/show.html.haml" do
           let(:problem) { Fabricate :problem, :app => app }
           it 'not see link if no issue tracker' do
             view.stub(:problem).and_return(problem)
-            view.stub(:app).and_return(problem.app)
+            view.stub(:resource_app).and_return(problem.app)
             render
             expect(view.content_for(:action_bar)).to match(/create issue/)
           end
@@ -116,7 +116,7 @@ describe "problems/show.html.haml" do
 
           it 'not see link if no issue tracker' do
             view.stub(:problem).and_return(problem)
-            view.stub(:app).and_return(problem.app)
+            view.stub(:resource_app).and_return(problem.app)
             render
             expect(view.content_for(:action_bar)).to_not match(/create issue/)
           end
@@ -135,7 +135,7 @@ describe "problems/show.html.haml" do
     it 'should display comments and new comment form when no issue tracker' do
       problem = Fabricate(:problem_with_comments)
       view.stub(:problem).and_return(problem)
-      view.stub(:app).and_return(problem.app)
+      view.stub(:resource_app).and_return(problem.app)
       render
 
       expect(view.content_for(:comments)).to include('Test comment')

@@ -1,6 +1,4 @@
 class Apps::ProblemsController < Apps::ApplicationController
-  include ProblemsSearcher
-
   authorize_actions_for Problem
 
   expose(:problem) {
