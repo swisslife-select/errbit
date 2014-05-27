@@ -1,10 +1,10 @@
 atom_feed do |feed|
-  feed.title("Deploys for #{@app.name}")
+  feed.title("Deploys for #{resource_app.name}")
   feed.updated @deploys.first.created_at if @deploys.any?
 
   @deploys.each do |deploy|
-    feed.entry deploy, url: app_deploy_url(@app, deploy) do |entry|
-      entry.title "#{@app.name} was deployed to #{deploy.environment} by #{deploy.username}."
+    feed.entry deploy, url: app_deploy_url(resource_app, deploy) do |entry|
+      entry.title "#{resource_app.name} was deployed to #{deploy.environment} by #{deploy.username}."
       entry.author do |author|
         author.name deploy.username
       end

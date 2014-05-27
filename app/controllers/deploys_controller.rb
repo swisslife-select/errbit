@@ -1,9 +1,7 @@
 class DeploysController < ApplicationController
   authorize_actions_for Deploy
-
-  protect_from_forgery :except => :create
-
-  skip_before_filter :verify_authenticity_token, :only => :create
+  protect_from_forgery except: :create
+  skip_before_filter :verify_authenticity_token, only: :create
 
   def create
     @app = App.find_by! api_key: params[:api_key]
@@ -11,21 +9,7 @@ class DeploysController < ApplicationController
     render :xml => @deploy
   end
 
-  def index
-    @app = resource_app
-    @deploys = @app.deploys.by_created_at.page(params[:page]).per(10)
-  end
-
-  def show
-    @app = resource_app
-    @deploy = @app.deploys.find params[:id]
-  end
-
   private
-    def resource_app
-      @resource_app ||= current_user_or_guest.available_apps.detect_by_param!(params[:app_id])
-    end
-
     def default_deploy
       if params[:deploy]
         {
