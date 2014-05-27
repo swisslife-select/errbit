@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include AclManagementConcern
+
   protect_from_forgery
   ensure_authorization_performed unless: :devise_controller?
 

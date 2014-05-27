@@ -4,4 +4,8 @@ class AppAuthorizer < ApplicationAuthorizer
       ! user.guest?
     end
   end
+
+  def readable_by?(user)
+    user.available_apps.exists?(resource)
+  end
 end

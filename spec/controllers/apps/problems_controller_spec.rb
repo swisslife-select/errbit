@@ -1,12 +1,6 @@
 require 'spec_helper'
 
 describe Apps::ProblemsController do
-
-  it_requires_authentication :for => {
-    :show => :get, :resolve => :patch
-  },
-  :params => {:app_id => 'dummyid', :id => 'dummyid'}
-
   let(:app) { Fabricate(:app) }
   let(:err) { Fabricate(:err, :problem => Fabricate(:problem, :app => app, :environment => "production")) }
 
@@ -64,10 +58,20 @@ describe Apps::ProblemsController do
         expect(controller.problem).to eq @watched_err.problem
       end
 
-      it 'raises a DocumentNotFound error if the user is not watching the app' do
-        expect {
-          get :show, :app_id => @unwatched_err.problem.app_id, :id => @unwatched_err.problem.id
-        }.to raise_error(ActiveRecord::RecordNotFound)
+      it 'redirect to root path if the user is not watching the app' do
+        get :show, :app_id => @unwatched_err.problem.app_id, :id => @unwatched_err.problem.id
+        expect(response).to redirect_to(root_path)
+      end
+    end
+
+    context 'when logged out' do
+      before do
+        sign_out :user
+      end
+
+      it "redirect to session path" do
+        get :show, app_id: app.id, id: err.problem.id
+        expect(response).to redirect_to(new_user_session_path)
       end
     end
   end
@@ -76,31 +80,42 @@ describe Apps::ProblemsController do
     before do
       sign_in Fabricate(:admin)
 
-      @problem = Fabricate(:err)
-      App.stub(:detect_by_param!).with(@problem.app.id.to_s).and_return(@problem.app)
-      @problem.app.problems.stub(:detect_by_param!).and_return(@problem.problem)
-      @problem.problem.stub(:resolve!)
+      @err = Fabricate(:err)
+      @err.app.problems.stub(:detect_by_param!).and_return(@err.problem)
+      @err.problem.stub(:resolve!)
     end
 
     it "should resolve the issue" do
-      expect(@problem.problem).to receive(:resolve!).and_return(true)
-      patch :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      patch :resolve, :app_id => @err.app.id, :id => @err.problem.id
+      @err.reload
+      expect(@err.problem.resolved).to be true
     end
 
     it "should display a message" do
-      patch :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      patch :resolve, :app_id => @err.app.id, :id => @err.problem.id
       expect(request.flash[:success]).to match(/Great news/)
     end
 
     it "should redirect to the app page" do
-      patch :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
-      expect(response).to redirect_to(app_path(@problem.app))
+      patch :resolve, :app_id => @err.app.id, :id => @err.problem.id
+      expect(response).to redirect_to(app_path(@err.app))
     end
 
     it "should redirect back to problems page" do
       request.env["HTTP_REFERER"] = problems_path
-      patch :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      patch :resolve, :app_id => @err.app.id, :id => @err.problem.id
       expect(response).to redirect_to(problems_path)
+    end
+
+    context 'when logged out' do
+      before do
+        sign_out :user
+      end
+
+      it 'should redirect' do
+        patch :resolve,  :app_id => @err.app.id, :id => @err.problem.id
+        response.should redirect_to(new_user_session_path)
+      end
     end
   end
 
