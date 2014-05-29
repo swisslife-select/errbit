@@ -203,24 +203,6 @@ describe Problem do
     end
   end
 
-  context "#app_name" do
-    let!(:app) { Fabricate(:app) }
-    let!(:problem) { Fabricate(:problem, :app => app) }
-
-    before { app.reload }
-
-    it "is set when a problem is created" do
-      assert_equal app.name, problem.app_name
-    end
-
-    it "is updated when an app is updated" do
-      expect {
-        app.update_attributes!(:name => "Bar App")
-        problem.reload
-      }.to change(problem, :app_name).to("Bar App")
-    end
-  end
-
   context "#last_deploy_at" do
     before do
       @app = Fabricate(:app)

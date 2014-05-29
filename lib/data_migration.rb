@@ -132,8 +132,7 @@ module DataMigration
       :resolved_at => :resolved_at,
       :issue_link => :issue_link,
       :issue_type => :issue_type,
-      
-      :app_name => :app_name,
+
       :notices_count => :notices_count,
       :message => :message,
       :environment => :environment,

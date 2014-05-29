@@ -57,7 +57,6 @@ class App < ActiveRecord::Base
 
 
   before_validation :generate_api_key, :on => :create
-  after_update :store_cached_attributes_on_problems
   after_initialize :default_values
 
   validates_presence_of :name, :api_key
@@ -155,11 +154,6 @@ class App < ActiveRecord::Base
   end
 
   protected
-
-    def store_cached_attributes_on_problems
-      problems.update_all(:app_name => name)
-    end
-
     def generate_api_key
       self.api_key ||= SecureRandom.hex
     end
