@@ -14,7 +14,7 @@ describe Apps::ProblemsController do
 
       it "finds the problem" do
         get :show, :app_id => app.id, :id => err.problem.id
-        expect(controller.problem).to eq err.problem
+        expect(assigns(:problem)).to eq err.problem
       end
 
       it "successfully render page" do
@@ -55,7 +55,7 @@ describe Apps::ProblemsController do
 
       it 'finds the problem if the user is watching the app' do
         get :show, :app_id => @watched_app.to_param, :id => @watched_err.problem.id
-        expect(controller.problem).to eq @watched_err.problem
+        expect(assigns(:problem)).to eq @watched_err.problem
       end
 
       it 'redirect to root path if the user is not watching the app' do

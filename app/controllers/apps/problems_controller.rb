@@ -1,34 +1,34 @@
 class Apps::ProblemsController < Apps::ApplicationController
   authorize_actions_for Problem
 
-  expose(:problem) {
-    resource_app.problems.detect_by_param!(params[:id])
-  }
-
   def show
-    @notices  = problem.notices.reverse_ordered.page(params[:notice]).per(1)
-    @notice   = @notices.first
+    @problem = resource_app.problems.detect_by_param!(params[:id])
+    @notices = @problem.notices.reverse_ordered.page(params[:notice]).per(1)
+    @notice = @notices.first
     @comment = Comment.new
   end
 
   def create_issue
+    @problem = resource_app.problems.detect_by_param!(params[:id])
     IssueTracker.update_url_options(request)
-    issue_creation = IssueCreation.new(problem, current_user, params[:tracker])
+    issue_creation = IssueCreation.new(@problem, current_user, params[:tracker])
 
     unless issue_creation.execute
       flash[:error] = issue_creation.errors.full_messages.join(', ')
     end
 
-    redirect_to app_problem_path(resource_app, problem)
+    redirect_to app_problem_path(resource_app, @problem)
   end
 
   def unlink_issue
-    problem.update_attribute :issue_link, nil
-    redirect_to app_problem_path(resource_app, problem)
+    @problem = resource_app.problems.detect_by_param!(params[:id])
+    @problem.update_attribute :issue_link, nil
+    redirect_to app_problem_path(resource_app, @problem)
   end
 
   def resolve
-    problem.resolve!
+    @problem = resource_app.problems.detect_by_param!(params[:id])
+    @problem.resolve!
     flash[:success] = 'Great news everyone! The err has been resolved.'
     redirect_to :back
   rescue ActionController::RedirectBackError
