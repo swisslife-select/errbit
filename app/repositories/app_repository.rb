@@ -43,4 +43,8 @@ module AppRepository
   def application_wide_recipients
     (User.with_not_blank_email.pluck(:email) + watchers.pluck(:email)).uniq
   end
+
+  def last_five_deploys
+    deploys.by_created_at.limit(5)
+  end
 end

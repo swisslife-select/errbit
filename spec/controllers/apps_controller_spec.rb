@@ -125,7 +125,7 @@ describe AppsController do
         watcher
         sign_in user
         get :show, :id => app.id
-        expect(controller.app).to eq app
+        expect(assigns(:app)).to eq app
       end
 
       it 'does not find the app if the user is not watching it' do
@@ -146,9 +146,9 @@ describe AppsController do
     describe "GET /apps/new" do
       it 'instantiates a new app with a prebuilt watcher' do
         get :new
-        expect(controller.app).to be_a(App)
-        expect(controller.app).to be_new_record
-        expect(controller.app.watchers).to_not be_empty
+        expect(assigns(:app)).to be_a(App)
+        expect(assigns(:app)).to be_new_record
+        expect(assigns(:app).watchers).to_not be_empty
       end
 
       it "should copy attributes from an existing app" do
@@ -156,11 +156,11 @@ describe AppsController do
         @app = Fabricate(:app_with_watcher, :name => "do not copy",
                              :repo_url => repo_url)
         get :new, :copy_attributes_from => @app.id
-        expect(controller.app).to be_a(App)
-        expect(controller.app).to be_new_record
-        expect(controller.app.name).to be_blank
-        expect(controller.app.repo_url).to eq repo_url
-        expect(controller.app.watchers.first.new_record?).to be true
+        expect(assigns(:app)).to be_a(App)
+        expect(assigns(:app)).to be_new_record
+        expect(assigns(:app).name).to be_blank
+        expect(assigns(:app).repo_url).to eq repo_url
+        expect(assigns(:app).watchers.first.new_record?).to be true
       end
     end
 
@@ -168,7 +168,7 @@ describe AppsController do
       it 'finds the correct app' do
         app = Fabricate(:app)
         get :edit, :id => app.id
-        expect(controller.app).to eq app
+        expect(assigns(:app)).to eq app
       end
     end
 
@@ -308,15 +308,9 @@ describe AppsController do
         @app = Fabricate(:app)
       end
 
-      it "should find the app" do
-        delete :destroy, :id => @app.id
-        expect(controller.app).to eq @app
-      end
-
       it "should destroy the app" do
-        controller.stub(:app).and_return(@app)
-        expect(@app).to receive(:destroy)
         delete :destroy, :id => @app.id
+        expect(App.exists?(@app.id)).to be false
       end
 
       it "should display a message" do

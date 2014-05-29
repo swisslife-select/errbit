@@ -8,39 +8,31 @@ class AppsController < ApplicationController
   before_filter :parse_notice_at_notices_or_set_default, :only => [:create, :update]
   respond_to :html
 
-  #TODO: remove decent_exposure
-  expose(:app_scope) {
-    current_user_or_guest.available_apps.includes(:issue_tracker, :notification_service, :last_deploy)
-  }
-
-  expose(:app, finder: :detect_by_param!, ancestor: :app_scope)
-
-  expose(:deploys) {
-    app.deploys.by_created_at.limit(5)
-  }
-
   def index
-    @q = app_scope.search(params[:q])
+    @q = current_user_or_guest.available_apps.search(params[:q])
     @q.sorts = 'unresolved_problems_count desc' if @q.sorts.empty?
-    @apps = @q.result(distinct: true)
+    @apps = @q.result(distinct: true).includes(:issue_tracker, :notification_service, :last_deploy)
   end
 
   def show
-    app
+    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
     params_q = params.fetch(:q, {}).reverse_merge resolved_eq: false
-    @q = app.problems.search(params_q)
+    @q = @app.problems.search(params_q)
     @problems = @q.result.page(params[:page]).per(current_user.per_page)
     #FIXME
-    @problems = app.problems.unresolved.ordered if request.format == :atom
+    @problems = @app.problems.unresolved.ordered if request.format == :atom
   end
 
   def new
-    plug_params(app)
+    @app = App.new
+    plug_params(@app)
   end
 
   def create
-    if app.save
-      redirect_to app_url(app), :flash => { :success => I18n.t('controllers.apps.flash.create.success') }
+    @app = current_user_or_guest.available_apps.new params[:app]
+
+    if @app.save
+      redirect_to app_url(@app), :flash => { :success => I18n.t('controllers.apps.flash.create.success') }
     else
       flash[:error] = I18n.t('controllers.apps.flash.create.error')
       render :new
@@ -48,8 +40,9 @@ class AppsController < ApplicationController
   end
 
   def update
-    if app.save
-      redirect_to app_url(app), :flash => { :success => I18n.t('controllers.apps.flash.update.success') }
+    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    if @app.update params[:app]
+      redirect_to app_url(@app), :flash => { :success => I18n.t('controllers.apps.flash.update.success') }
     else
       flash[:error] = I18n.t('controllers.apps.flash.update.error')
       render :edit
@@ -57,11 +50,13 @@ class AppsController < ApplicationController
   end
 
   def edit
-    plug_params(app)
+    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    plug_params(@app)
   end
 
   def destroy
-    if app.destroy
+    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    if @app.destroy
       redirect_to apps_url, :flash => { :success => I18n.t('controllers.apps.flash.destroy.success') }
     else
       flash[:error] = I18n.t('controllers.apps.flash.destroy.error')
@@ -70,8 +65,9 @@ class AppsController < ApplicationController
   end
 
   def regenerate_api_key
-    app.regenerate_api_key!
-    redirect_to edit_app_path(app)
+    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    @app.regenerate_api_key!
+    redirect_to edit_app_path(@app)
   end
 
   protected

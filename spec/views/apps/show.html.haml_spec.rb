@@ -9,8 +9,7 @@ describe "apps/show.html.haml" do
   end
 
   before do
-    view.stub(:app).and_return(app)
-    view.stub(:deploys).and_return([])
+    assign :app, app
     controller.stub(:current_user) { user }
   end
 
