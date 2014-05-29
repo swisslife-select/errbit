@@ -1,11 +1,12 @@
 class ProblemsController < ApplicationController
-  include ProblemsSearcher
-
   authorize_actions_for Problem
 
   before_filter :need_selected_problem, :only => [
     :resolve_several, :unresolve_several, :unmerge_several
   ]
+
+  helper_method :selected_problems
+
   def index
     params_q = params.fetch(:q, {}).reverse_merge resolved_eq: false
     @q = Problem.search(params_q)
@@ -51,6 +52,15 @@ class ProblemsController < ApplicationController
     nb_problem_destroy = ProblemDestroy.execute(selected_problems)
     flash[:notice] = "#{I18n.t(:n_errs_have, :count => nb_problem_destroy)} been deleted."
     redirect_to :back
+  end
+
+  #TODO: think about refactoring
+  def selected_problems
+    @selected_problems ||= Problem.find(err_ids)
+  end
+
+  def err_ids
+    params.fetch(:problems, []).compact
   end
 
   protected

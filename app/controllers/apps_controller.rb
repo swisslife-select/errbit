@@ -1,7 +1,4 @@
 class AppsController < ApplicationController
-
-  include ProblemsSearcher
-
   authorize_actions_for App
 
   before_filter :parse_email_at_notices_or_set_default, :only => [:create, :update]

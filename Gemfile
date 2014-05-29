@@ -15,7 +15,6 @@ gem 'htmlentities'
 gem 'rack-ssl', :require => 'rack/ssl'   # force SSL
 
 gem 'useragent'
-gem 'decent_exposure'
 gem 'actionmailer_inline_css'
 gem 'kaminari', '>= 0.14.1'
 gem 'rack-ssl-enforcer', :require => false

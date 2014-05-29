@@ -16,19 +16,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::RedirectBackError, :with => :redirect_to_root
 
-  class StrongParametersWithEagerAttributesStrategy < DecentExposure::StrongParametersStrategy
-    def attributes
-      super
-      @attributes ||= params[inflector.param_key] || {}
-    end
-  end
-
-  decent_configuration do
-    strategy StrongParametersWithEagerAttributesStrategy
-  end
-
 protected
-
 
   def current_user_or_guest
     return current_user if current_user.present?
