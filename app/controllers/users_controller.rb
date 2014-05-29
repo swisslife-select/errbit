@@ -51,7 +51,7 @@ class UsersController < ApplicationController
   def destroy
     @user = User.find(params[:id])
     authorize_action_for(@user)
-    UserDestroy.new(@user).destroy
+    @user.destroy
     flash[:success] = I18n.t('controllers.users.flash.destroy.success', name: @user.name)
     redirect_to users_path
   end

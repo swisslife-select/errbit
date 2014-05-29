@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :github_login, :allow_nil => true
 
   has_many :apps, through: :watchers
-  has_many :watchers
+  has_many :watchers, dependent: :destroy
 
   if Errbit::Config.user_has_username
     validates_presence_of :username

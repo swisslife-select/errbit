@@ -183,24 +183,24 @@ describe UsersController do
         let(:user_destroy) { double(:destroy => true) }
 
         before {
-          expect(UserDestroy).to receive(:new).with(user).and_return(user_destroy)
           delete :destroy, :id => user.id
         }
 
         it 'should destroy user' do
           expect(request.flash[:success]).to eq I18n.t('controllers.users.flash.destroy.success', :name => user.name)
           expect(response).to redirect_to(users_path)
+          expect(User.exists?(user.id)).to be false
         end
       end
 
       context "with trying destroy himself" do
         before {
-          expect(UserDestroy).to_not receive(:new)
           delete :destroy, :id => admin.id
         }
 
         it 'should not destroy user' do
           expect(response).to redirect_to(root_path)
+          expect(User.exists?(user.id)).to be true
         end
       end
     end
