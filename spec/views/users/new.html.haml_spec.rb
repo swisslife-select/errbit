@@ -4,7 +4,7 @@ describe 'users/new.html.haml' do
   let(:user) { stub_model(User) }
   before {
     view.stub(:current_user).and_return(user)
-    view.stub(:user).and_return(user)
+    assign :user, user
   }
   it 'should have per_page option' do
     render

@@ -10,6 +10,10 @@ class UserAuthorizer < ApplicationAuthorizer
   end
 
   def updatable_by?(user)
-    resource.id == user.id || user.admin?
+    (resource.id == user.id) || user.admin?
+  end
+
+  def deletable_by?(user)
+    (user != resource) && user.admin?
   end
 end

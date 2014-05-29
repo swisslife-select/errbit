@@ -9,7 +9,7 @@ describe 'users/show.html.haml' do
   before do
     Errbit::Config.stub(:github_authentication) { true }
     controller.stub(:current_user) { stub_model(User) }
-    view.stub(:user) { user }
+    assign :user, user
   end
 
   context 'with GitHub authentication' do

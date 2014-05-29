@@ -3,23 +3,28 @@ class UsersController < ApplicationController
 
   authorize_actions_for User
 
-  expose(:user, :attributes => :user_params)
-
   def index
     @users = User.page(params[:page]).per(current_user.per_page)
   end
 
-  def new; end
-  def show; end
+  def new
+    @user = User.new
+  end
+
+  def show
+    @user = User.find(params[:id])
+  end
 
   def edit
-    authorize_action_for(user)
+    @user = User.find(params[:id])
+    authorize_action_for(@user)
   end
 
   def create
-    if user.save
-      flash[:success] = "#{user.name} is now part of the team."
-      sign_in(user)
+    @user = User.new user_params
+    if @user.save
+      flash[:success] = "#{@user.name} is now part of the team."
+      sign_in(@user)
       redirect_to root_path
     else
       render :new
@@ -27,11 +32,12 @@ class UsersController < ApplicationController
   end
 
   def update
-    user.assign_attributes(user_params)
-    authorize_action_for(user)
-    if user.save
-      flash[:success] = I18n.t('controllers.users.flash.update.success', :name => user.name)
-      redirect_to user_path(user)
+    @user = User.find(params[:id])
+    @user.assign_attributes(user_params)
+    authorize_action_for(@user)
+    if @user.save
+      flash[:success] = I18n.t('controllers.users.flash.update.success', name: @user.name)
+      redirect_to user_path(@user)
     else
       render :edit
     end
@@ -43,12 +49,10 @@ class UsersController < ApplicationController
   # @param [ String ] id the id of user we want delete
   #
   def destroy
-    if user == current_user
-      flash[:error] = I18n.t('controllers.users.flash.destroy.error')
-    else
-      UserDestroy.new(user).destroy
-      flash[:success] = I18n.t('controllers.users.flash.destroy.success', :name => user.name)
-    end
+    @user = User.find(params[:id])
+    authorize_action_for(@user)
+    UserDestroy.new(@user).destroy
+    flash[:success] = I18n.t('controllers.users.flash.destroy.success', name: @user.name)
     redirect_to users_path
   end
 

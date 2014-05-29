@@ -37,7 +37,7 @@ describe UsersController do
     context "GET /users/:my_id/edit" do
       it 'finds the user' do
         get :edit, :id => user.id
-        expect(controller.user).to eq user
+        expect(assigns(:user)).to eq user
         expect(response).to render_template 'edit'
       end
 
@@ -121,15 +121,15 @@ describe UsersController do
     context "GET /users/:id" do
       it 'finds the user' do
         get :show, :id => user.id
-        expect(controller.user).to eq user
+        expect(assigns(:user)).to eq user
       end
     end
 
     context "GET /users/new" do
       it 'assigns a new user' do
         get :new
-        expect(controller.user).to be_a(User)
-        expect(controller.user).to be_new_record
+        expect(assigns(:user)).to be_a(User)
+        expect(assigns(:user)).to be_new_record
       end
     end
 
@@ -141,7 +141,8 @@ describe UsersController do
           attrs[:user][:admin] = true
           post :create, attrs
           expect(response).to be_redirect
-          expect(User.find(controller.user.to_param).admin).to be_true
+          created_user = User.find_by! attrs[:email]
+          expect(created_user.admin).to be_true
         end
       end
     end
@@ -149,7 +150,7 @@ describe UsersController do
     context "GET /users/:id/edit" do
       it 'finds the user' do
         get :edit, :id => user.id
-        expect(controller.user).to eq user
+        expect(assigns(:user)).to eq user
       end
     end
 
@@ -199,8 +200,7 @@ describe UsersController do
         }
 
         it 'should not destroy user' do
-          expect(response).to redirect_to(users_path)
-          expect(request.flash[:error]).to eq I18n.t('controllers.users.flash.destroy.error')
+          expect(response).to redirect_to(root_path)
         end
       end
     end
