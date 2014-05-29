@@ -10,19 +10,8 @@ describe "apps/show.html.haml" do
 
   before do
     view.stub(:app).and_return(app)
-    view.stub(:all_errs).and_return(false)
     view.stub(:deploys).and_return([])
     controller.stub(:current_user) { user }
-  end
-
-  describe "content_for :action_bar" do
-
-    it "should confirm the 'cancel' link" do
-      render
-
-      expect(action_bar).to have_selector('a.button', :text => 'all errs')
-    end
-
   end
 
   context "without errs" do
@@ -48,7 +37,8 @@ describe "apps/show.html.haml" do
     end
     it 'not see the unwatch button' do
       render
-      expect(action_bar).to_not include(I18n.t('apps.show.unwatch'))
+      content = action_bar || ''
+      expect(content).to_not include(I18n.t('apps.show.unwatch'))
     end
   end
 

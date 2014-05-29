@@ -58,11 +58,6 @@ describe AppsController do
         sign_in admin
       end
 
-      it 'finds the app' do
-        get :show, :id => app.id
-        expect(controller.app).to eq app
-      end
-
       it "should not raise errors for app with err without notices" do
         err
         expect{ get :show, :id => app.id }.to_not raise_error
@@ -78,15 +73,20 @@ describe AppsController do
           35.times { Fabricate(:err, :problem => Fabricate(:problem, :app => app)) }
         end
 
+        it 'success in js format' do
+          xhr :get, :show, id: app.id
+          expect(response).to be_success
+        end
+
         it "should have default per_page value for user" do
           get :show, :id => app.id
-          expect(controller.problems.to_a.size).to eq User::PER_PAGE
+          expect(assigns(:problems).to_a.size).to eq User::PER_PAGE
         end
 
         it "should be able to override default per_page value" do
           admin.update_attribute :per_page, 10
           get :show, :id => app.id
-          expect(controller.problems.to_a.size).to eq 10
+          expect(assigns(:problems).to_a.size).to eq 10
         end
       end
 
@@ -98,14 +98,7 @@ describe AppsController do
         context 'and no params' do
           it 'shows only unresolved problems' do
             get :show, :id => app.id
-            expect(controller.problems.size).to eq 1
-          end
-        end
-
-        context 'and all_problems=true params' do
-          it 'shows all errors' do
-            get :show, :id => app.id, :all_errs => true
-            expect(controller.problems.size).to eq 2
+            expect(assigns(:problems).size).to eq 1
           end
         end
       end
@@ -121,35 +114,7 @@ describe AppsController do
         context 'no params' do
           it 'shows errs for all environments' do
             get :show, :id => app.id
-            expect(controller.problems.size).to eq 20
-          end
-        end
-
-        context 'environment production' do
-          it 'shows errs for just production' do
-            get :show, :id => app.id, :environment => 'production'
-            expect(controller.problems.size).to eq 5
-          end
-        end
-
-        context 'environment staging' do
-          it 'shows errs for just staging' do
-            get :show, :id => app.id, :environment => 'staging'
-            expect(controller.problems.size).to eq 5
-          end
-        end
-
-        context 'environment development' do
-          it 'shows errs for just development' do
-            get :show, :id => app.id, :environment => 'development'
-            expect(controller.problems.size).to eq 5
-          end
-        end
-
-        context 'environment test' do
-          it 'shows errs for just test' do
-            get :show, :id => app.id, :environment => 'test'
-            expect(controller.problems.size).to eq 5
+            expect(assigns(:problems).size).to eq 20
           end
         end
       end

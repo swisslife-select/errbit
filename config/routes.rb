@@ -20,7 +20,6 @@ Errbit::Application.routes.draw do
       post :unresolve_several
       post :merge_several
       post :unmerge_several
-      get :search
     end
   end
 

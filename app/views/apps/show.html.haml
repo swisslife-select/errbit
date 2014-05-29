@@ -11,11 +11,6 @@
 - content_for :action_bar do
   - if current_user.admin?
     = link_to t('.edit'), edit_app_path(app), :class => 'button'
-  - if all_errs
-    = link_to t('.unresolved_errs'), app_path(app), :class => 'button'
-  - else
-    = link_to t('.all_errs'), app_path(app, :all_errs => true), :class => 'button'
-
   - if current_user.watching?(app)
     = link_to t('.unwatch'),  app_watcher_path({:app_id => app, :id => current_user.id}), method: :delete, class: 'button', data: { confirm: t('.are_you_sure') }
 %h3#watchers_toggle
@@ -78,13 +73,10 @@
 
 - if app.problems.any?
   %h3.clear=t('.errors')
-  %section
-    = form_tag search_problems_path(:all_errs => all_errs, :app_id => app.id), :method => :get, :remote => true do
-      = text_field_tag :search, params[:search], :placeholder => t('.search_placeholder')
-  %br
+  = render 'problems/search_form', q: @q, url: app_path(app)
   %section
     .problem_table{:id => 'problem_table'}
-      = render 'problems/table', :problems => problems
+      = render 'problems/table', problems: @problems, q: @q
 - else
   %h3.clear=t('.no_error_yet')
   = render 'configuration_instructions', :app => app

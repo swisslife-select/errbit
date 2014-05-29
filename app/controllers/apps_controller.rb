@@ -10,25 +10,10 @@ class AppsController < ApplicationController
 
   #TODO: remove decent_exposure
   expose(:app_scope) {
-    current_user_or_guest.available_apps
+    current_user_or_guest.available_apps.includes(:issue_tracker, :notification_service, :last_deploy)
   }
 
   expose(:app, finder: :detect_by_param!, ancestor: :app_scope)
-
-  expose(:all_errs) {
-    !!params[:all_errs]
-  }
-  expose(:problems) {
-    if request.format == :atom
-      app.problems.unresolved.ordered
-    else
-      pr = app.problems
-      pr = pr.unresolved unless all_errs
-      pr.in_env(
-        params[:environment]
-      ).ordered_by(params_sort, params_order).page(params[:page]).per(current_user.per_page)
-    end
-  }
 
   expose(:deploys) {
     app.deploys.by_created_at.limit(5)
@@ -42,6 +27,11 @@ class AppsController < ApplicationController
 
   def show
     app
+    params_q = params.fetch(:q, {}).reverse_merge resolved_eq: false
+    @q = app.problems.search(params_q)
+    @problems = @q.result.page(params[:page]).per(current_user.per_page)
+    #FIXME
+    @problems = app.problems.unresolved.ordered if request.format == :atom
   end
 
   def new

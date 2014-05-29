@@ -1,9 +1,3 @@
-##
-# Manage problems
-#
-# List of actions available :
-# MEMBER => :show, :edit, :update, :create, :destroy, :resolve, :unresolve, :create_issue, :unlink_issue
-# COLLECTION => :index, :all, :destroy_several, :resolve_several, :unresolve_several, :merge_several, :unmerge_several, :search
 class ProblemsController < ApplicationController
   include ProblemsSearcher
 
@@ -12,35 +6,13 @@ class ProblemsController < ApplicationController
   before_filter :need_selected_problem, :only => [
     :resolve_several, :unresolve_several, :unmerge_several
   ]
+  def index
+    params_q = params.fetch(:q, {}).reverse_merge resolved_eq: false
+    @q = Problem.search(params_q)
 
-  expose(:all_errs) {
-    params[:all_errs]
-  }
-
-  expose(:app_scope) {
-    current_user.available_apps
-  }
-
-  expose(:params_environement) {
-    params[:environment]
-  }
-
-  #TODO: move to repository
-  expose(:problems) {
-    pro = Problem.for_apps(
-      app_scope
-    ).in_env(
-      params_environement
-    ).all_else_unresolved(all_errs).ordered_by(params_sort, params_order).includes(app: :issue_tracker)
-
-    if request.format == :html
-      pro.page(params[:page]).per(current_user.per_page)
-    else
-      pro
-    end
-  }
-
-  def index; end
+    @problems = @q.result.for_apps(current_user.available_apps).includes(app: :issue_tracker)
+    @problems = @problems.page(params[:page]).per(current_user.per_page) if request.format != :atom
+  end
 
   def resolve_several
     selected_problems.each(&:resolve!)
@@ -79,16 +51,6 @@ class ProblemsController < ApplicationController
     nb_problem_destroy = ProblemDestroy.execute(selected_problems)
     flash[:notice] = "#{I18n.t(:n_errs_have, :count => nb_problem_destroy)} been deleted."
     redirect_to :back
-  end
-
-  def search
-    ps = Problem.search(params[:search]).for_apps(app_scope).in_env(params[:environment]).all_else_unresolved(params[:all_errs]).ordered_by(params_sort, params_order)
-    selected_problems = params[:problems] || []
-    self.problems = ps.page(params[:page]).per(current_user.per_page)
-    respond_to do |format|
-      format.html { render :index }
-      format.js
-    end
   end
 
   protected

@@ -175,21 +175,6 @@ describe Problem do
         expect(Problem.unresolved).to include(unresolved)
       end
     end
-
-    context "searching" do
-      it 'finds the correct record' do
-        find = Fabricate(:problem, :resolved => false, :error_class => 'theErrorclass::other',
-                         :message => "other", :where => 'errorclass', :environment => 'development', :app_name => 'other')
-        dont_find = Fabricate(:problem, :resolved => false, :error_class => "Batman",
-                              :message => 'todo', :where => 'classerror', :environment => 'development', :app_name => 'other')
-        expect(Problem.search("theErrorClass").unresolved).to include(find)
-        expect(Problem.search("theErrorClass").unresolved).to_not include(dont_find)
-      end
-      it 'find on where message' do
-        problem = Fabricate(:problem, :where => 'cyril')
-        expect(Problem.search('cyril').entries).to eq [problem]
-      end
-    end
   end
 
   context "notice counter cache" do
