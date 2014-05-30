@@ -10,7 +10,9 @@ class AppsController < ApplicationController
   def index
     @q = current_user_or_guest.available_apps.search(params[:q])
     @q.sorts = 'unresolved_problems_count desc' if @q.sorts.empty?
-    @apps = @q.result(distinct: true).includes(:issue_tracker, :notification_service, :last_deploy)
+    @apps = @q.result(distinct: true).includes(:issue_tracker, :notification_service)
+    #TODO: think about includes App#last_deploy. AR load unnecessary deploys to RAM in includes(:last_deploy) case.
+    #TODO: try fix N+1 with last_deploy
   end
 
   def show
