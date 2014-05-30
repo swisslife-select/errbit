@@ -10,7 +10,7 @@
 - Fix some N+1 problems
 - Move commits from errbit/errbit. Last commit at Apr 23, 2014
 
-By (@darkleaf)[https://github.com/darkleaf]
+By [@darkleaf](https://github.com/darkleaf)
 
 ## 0.4.0 - Not released Yet
 

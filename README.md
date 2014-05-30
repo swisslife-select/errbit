@@ -16,6 +16,18 @@
 * Run `rake errbit:db:migrate_from_mongo`. It read config from config/mongoid.yml or ENV.
 
 
+### TODO ###
+
+- name for this project
+- refactoring tests
+- [add permits](https://github.com/Undev/errbit/blob/master/config/application.rb#L15)
+- move datamigrator to separate gem
+- think about database structure
+- fix N+1
+- todos in code
+- further refactoring project
+- think about plugin system
+
 ### The open source, self-hosted error catcher
 
 
