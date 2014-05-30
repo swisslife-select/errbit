@@ -1,3 +1,17 @@
+## 0.5.0 - Not released Yet
+
+- Upgrade to rails 4.1.1
+- Add ransack
+- Add authority(ACL)
+- Counter cache by counter_culture gem
+- Gem decent_exposure is removed
+- Big refactoring for controllers: added inheritance hierarchy
+- Apps sorting made by ActiveRecord in AppsController
+- Fix some N+1 problems
+- Move commits from errbit/errbit. Last commit at Apr 23, 2014
+
+By (@darkleaf)[https://github.com/darkleaf]
+
 ## 0.4.0 - Not released Yet
 
 ### Improvements
