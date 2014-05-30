@@ -27,6 +27,19 @@
 - todos in code
 - further refactoring project
 - think about plugin system
+- update README
+
+### Related projects  ###
+
+-   [erl_proxy](https://github.com/av-ast/erl_proxy)
+
+    Forwarder launches Cowboy web-server which starts to accept HTTP requests.
+    Once it receives request it answers immediately with successful HTTP status (200 by default)
+    and stores full request (URL, headers, body) into storage (Redis).
+    In parallel with requests acceptor launches storage queue worker.
+    It monitors persisted requests and forwards them to original destination.
+    If forwarded request is failed (response status is 5xx) and a special setting was specified,
+    request will be pushed back to the end of storage queue.
 
 ### The open source, self-hosted error catcher
 
