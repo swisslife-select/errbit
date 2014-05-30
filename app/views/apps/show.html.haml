@@ -67,7 +67,7 @@
             %td.environment #{deploy.environment}
             %td.who #{deploy.username}
             %td.revision= link_to_commit deploy.repository, deploy.revision
-        = link_to t('.all_deploys', :count => app.deploys.count), app_deploys_path(@app), :class => 'button'
+        = link_to t('.all_deploys', :count => @app.deploys.count), app_deploys_path(@app), :class => 'button'
   - else
     %h3=t('.no_deploys')
 

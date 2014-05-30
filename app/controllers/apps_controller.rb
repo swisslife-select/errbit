@@ -5,6 +5,8 @@ class AppsController < ApplicationController
   before_filter :parse_notice_at_notices_or_set_default, :only => [:create, :update]
   respond_to :html
 
+  helper_method :selected_problems
+
   def index
     @q = current_user_or_guest.available_apps.search(params[:q])
     @q.sorts = 'unresolved_problems_count desc' if @q.sorts.empty?
@@ -65,6 +67,15 @@ class AppsController < ApplicationController
     @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
     @app.regenerate_api_key!
     redirect_to edit_app_path(@app)
+  end
+
+  #TODO: think about refactoring
+  def selected_problems
+    @selected_problems ||= Problem.find(err_ids)
+  end
+
+  def err_ids
+    params.fetch(:problems, []).compact
   end
 
   protected

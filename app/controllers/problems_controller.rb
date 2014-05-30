@@ -11,7 +11,7 @@ class ProblemsController < ApplicationController
     params_q = params.fetch(:q, {}).reverse_merge resolved_eq: false
     @q = Problem.search(params_q)
 
-    @problems = @q.result.for_apps(current_user.available_apps).includes(app: :issue_tracker)
+    @problems = @q.result.for_apps(current_user.available_apps).preload(app: :issue_tracker)
     @problems = @problems.page(params[:page]).per(current_user.per_page) if request.format != :atom
   end
 
