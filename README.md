@@ -22,11 +22,12 @@
 - refactoring tests
 - [add permits](https://github.com/Undev/errbit/blob/master/config/application.rb#L15)
 - move datamigrator to separate gem
-- think about database structure
+- database structure
 - fix N+1
+- use reform gem
 - todos in code
 - further refactoring project
-- think about plugin system
+- plugin system
 - update README
 
 ### Related projects  ###
