@@ -4,7 +4,9 @@ class UsersController < ApplicationController
   authorize_actions_for User
 
   def index
-    @users = User.page(params[:page]).per(current_user.per_page)
+    @q = User.search params[:q]
+    @q.sorts = 'name asc' if @q.sorts.empty?
+    @users = @q.result.page(params[:page]).per(current_user.per_page)
   end
 
   def new
