@@ -8,7 +8,7 @@ class ProblemsController < ApplicationController
   helper_method :selected_problems
 
   def index
-    params_q = params.fetch(:q, {}).reverse_merge resolved_eq: false
+    params_q = params.fetch(:q, {}).reverse_merge resolved_eq: false, s: 'last_notice_at desc'
     @q = Problem.search(params_q)
 
     @problems = @q.result.for_apps(current_user.available_apps).preload(app: :issue_tracker)
