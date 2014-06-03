@@ -24,10 +24,15 @@ class ErrorReport
     Fingerprint
   end
 
-  attr_reader :error_class, :message, :request, :server_environment, :api_key, :notifier, :user_attributes, :framework
+  attr_reader :message, :request, :server_environment, :api_key, :notifier, :user_attributes, :framework
 
   def initialize(attributes)
     attributes.each{ |k, v| instance_variable_set(:"@#{k}", v) }
+  end
+
+  #tmp fix: if <error><class/></error> then @error_class = {} and ActiveRecord can't save it in text field
+  def error_class
+    @error_class.to_s
   end
 
   def rails_env

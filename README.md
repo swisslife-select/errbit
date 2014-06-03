@@ -26,6 +26,7 @@
 - fix N+1
 - use reform gem
 - todos in code
+- add notice xml parser with [sax-machine](https://github.com/pauldix/sax-machine) or [happymapper](https://github.com/jnunemaker/happymapper)
 - further refactoring project
 - plugin system
 - update README
