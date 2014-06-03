@@ -4,7 +4,7 @@ describe UsersController do
 
   it_requires_authentication :for => {
       :edit    => :get,
-      :update     => :put,
+      :update     => :patch,
   }
 
   it_requires_admin_privileges :for => {
@@ -37,63 +37,63 @@ describe UsersController do
     context "GET /users/:my_id/edit" do
       it 'finds the user' do
         get :edit, :id => user.id
-        expect(controller.user).to eq user
+        expect(assigns(:user)).to eq user
         expect(response).to render_template 'edit'
       end
 
     end
 
-    context "PUT /users/:other_id" do
+    context "patch /users/:other_id" do
       it "redirects to the home page" do
-        put :update, :id => other_user.id
+        patch :update, :id => other_user.id
         expect(response).to redirect_to(root_path)
       end
     end
 
-    context "PUT /users/:my_id/id" do
+    context "patch /users/:my_id/id" do
       context "when the update is successful" do
         it "sets a message to display" do
-          put :update, :id => user.to_param, :user => {:name => 'Kermit'}
+          patch :update, :id => user.to_param, :user => {:name => 'Kermit'}
           expect(request.flash[:success]).to include('updated')
         end
 
         it "redirects to the user's page" do
-          put :update, :id => user.to_param, :user => {:name => 'Kermit'}
+          patch :update, :id => user.to_param, :user => {:name => 'Kermit'}
           expect(response).to redirect_to(user_path(user))
         end
 
         it "should not be able to become an admin" do
           expect {
-            put :update, :id => user.to_param, :user => {:admin => true}
+            patch :update, :id => user.to_param, :user => {:admin => true}
           }.to_not change {
             user.reload.admin
           }.from(false)
         end
 
         it "should be able to set per_page option" do
-          put :update, :id => user.to_param, :user => {:per_page => 555}
+          patch :update, :id => user.to_param, :user => {:per_page => 555}
           expect(user.reload.per_page).to eq 555
         end
 
         it "should be able to set time_zone option" do
-          put :update, :id => user.to_param, :user => {:time_zone => "Warsaw"}
+          patch :update, :id => user.to_param, :user => {:time_zone => "Warsaw"}
           expect(user.reload.time_zone).to eq "Warsaw"
         end
 
         it "should be able to not set github_login option" do
-          put :update, :id => user.to_param, :user => {:github_login => " "}
+          patch :update, :id => user.to_param, :user => {:github_login => " "}
           expect(user.reload.github_login).to eq nil
         end
 
         it "should be able to set github_login option" do
-          put :update, :id => user.to_param, :user => {:github_login => "awesome_name"}
+          patch :update, :id => user.to_param, :user => {:github_login => "awesome_name"}
           expect(user.reload.github_login).to eq "awesome_name"
         end
       end
 
       context "when the update is unsuccessful" do
         it "renders the edit page" do
-          put :update, :id => user.to_param, :user => {:name => nil}
+          patch :update, :id => user.to_param, :user => {:name => nil}
           expect(response).to render_template(:edit)
         end
       end
@@ -121,15 +121,15 @@ describe UsersController do
     context "GET /users/:id" do
       it 'finds the user' do
         get :show, :id => user.id
-        expect(controller.user).to eq user
+        expect(assigns(:user)).to eq user
       end
     end
 
     context "GET /users/new" do
       it 'assigns a new user' do
         get :new
-        expect(controller.user).to be_a(User)
-        expect(controller.user).to be_new_record
+        expect(assigns(:user)).to be_a(User)
+        expect(assigns(:user)).to be_new_record
       end
     end
 
@@ -141,7 +141,8 @@ describe UsersController do
           attrs[:user][:admin] = true
           post :create, attrs
           expect(response).to be_redirect
-          expect(User.find(controller.user.to_param).admin).to be_true
+          created_user = User.find_by! attrs[:email]
+          expect(created_user.admin).to be_true
         end
       end
     end
@@ -149,14 +150,14 @@ describe UsersController do
     context "GET /users/:id/edit" do
       it 'finds the user' do
         get :edit, :id => user.id
-        expect(controller.user).to eq user
+        expect(assigns(:user)).to eq user
       end
     end
 
-    context "PUT /users/:id" do
+    context "patch /users/:id" do
       context "when the update is successful" do
         before {
-          put :update, :id => user.to_param, :user => user_params
+          patch :update, :id => user.to_param, :user => user_params
         }
 
         context "with normal params" do
@@ -170,7 +171,7 @@ describe UsersController do
       context "when the update is unsuccessful" do
 
         it "renders the edit page" do
-          put :update, :id => user.to_param, :user => {:name => nil}
+          patch :update, :id => user.to_param, :user => {:name => nil}
           expect(response).to render_template(:edit)
         end
       end
@@ -182,25 +183,24 @@ describe UsersController do
         let(:user_destroy) { double(:destroy => true) }
 
         before {
-          expect(UserDestroy).to receive(:new).with(user).and_return(user_destroy)
           delete :destroy, :id => user.id
         }
 
         it 'should destroy user' do
           expect(request.flash[:success]).to eq I18n.t('controllers.users.flash.destroy.success', :name => user.name)
           expect(response).to redirect_to(users_path)
+          expect(User.exists?(user.id)).to be false
         end
       end
 
       context "with trying destroy himself" do
         before {
-          expect(UserDestroy).to_not receive(:new)
           delete :destroy, :id => admin.id
         }
 
         it 'should not destroy user' do
-          expect(response).to redirect_to(users_path)
-          expect(request.flash[:error]).to eq I18n.t('controllers.users.flash.destroy.error')
+          expect(response).to redirect_to(root_path)
+          expect(User.exists?(user.id)).to be true
         end
       end
     end

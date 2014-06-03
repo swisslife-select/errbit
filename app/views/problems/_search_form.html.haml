@@ -1,0 +1,15 @@
+%section
+  = search_form_for q, url: url, remote: true do |f|
+    %div
+      = f.label :search
+      = f.search_field :error_class_or_where_or_message_or_app_name_or_environment_cont,
+                       placeholder: 'Search for issues',
+                       value: q.error_class_or_where_or_message_or_app_name_or_environment_cont
+    %div
+      = f.label :resolved_status
+      = f.select :resolved_eq, [['unresolved', false], ['resolved', true ]], include_blank: true, selected: q.resolved_eq
+    %div
+      = f.label :environment
+      = f.select :environment_eq, %w[production staging development test], include_blank: true, selected: q.environment_eq
+    = f.submit
+%br

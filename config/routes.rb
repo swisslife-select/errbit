@@ -8,7 +8,6 @@ Errbit::Application.routes.draw do
   post '/deploys.txt' => 'deploys#create'
 
   resources :notices,   :only => [:show]
-  resources :deploys,   :only => [:show]
   resources :users do
     member do
       delete :unlink_github
@@ -21,28 +20,30 @@ Errbit::Application.routes.draw do
       post :unresolve_several
       post :merge_several
       post :unmerge_several
-      get :search
     end
   end
 
   resources :apps do
-    resources :problems do
-      resources :notices
-      resources :comments, :only => [:create, :destroy]
+    scope module: :apps do
+      resources :problems do
+        scope module: :problems do
+          resources :comments, only: [:create, :destroy]
+        end
 
-      collection do
-        post :destroy_all
-      end
+        collection do
+          post :destroy_all
+        end
 
-      member do
-        put :resolve
-        put :unresolve
-        post :create_issue
-        delete :unlink_issue
+        member do
+          patch :resolve
+          patch :unresolve
+          post :create_issue
+          delete :unlink_issue
+        end
       end
+      resources :deploys, only: [:index, :show]
+      resources :watchers, only: [:destroy]
     end
-    resources :deploys, :only => [:index, :show]
-    resources :watchers, :only => [:destroy]
     member do
       post :regenerate_api_key
     end

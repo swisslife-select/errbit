@@ -24,32 +24,6 @@ describe App do
     end
   end
 
-  describe '<=>' do
-    it 'is compared by unresolved count' do
-      app_0 = stub_model(App, :name => 'app', :unresolved_count => 1, :problem_count => 1)
-      app_1 = stub_model(App, :name => 'app', :unresolved_count => 0, :problem_count => 1)
-
-      expect(app_0).to be < app_1
-      expect(app_1).to be > app_0
-    end
-
-    it 'is compared by problem count' do
-      app_0 = stub_model(App, :name => 'app', :unresolved_count => 0, :problem_count => 1)
-      app_1 = stub_model(App, :name => 'app', :unresolved_count => 0, :problem_count => 0)
-
-      expect(app_0).to be < app_1
-      expect(app_1).to be > app_0
-    end
-
-    it 'is compared by name' do
-      app_0 = stub_model(App, :name => 'app_0', :unresolved_count => 0, :problem_count => 0)
-      app_1 = stub_model(App, :name => 'app_1', :unresolved_count => 0, :problem_count => 0)
-
-      expect(app_0).to be < app_1
-      expect(app_1).to be > app_0
-    end
-  end
-
   context 'being created' do
     it 'generates a new api-key' do
       app = Fabricate.build(:app)
@@ -206,18 +180,5 @@ describe App do
       end
     end
   end
-
-  describe ".find_by_api_key!" do
-    it 'return the app with api_key' do
-      app = Fabricate(:app)
-      expect(App.find_by_api_key!(app.api_key)).to eq app
-    end
-    it 'raise ActiveRecord::RecordNotFound if not found' do
-      expect {
-        App.find_by_api_key!('foo')
-      }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-  end
-
 end
 

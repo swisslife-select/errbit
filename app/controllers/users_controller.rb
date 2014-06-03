@@ -1,23 +1,32 @@
 class UsersController < ApplicationController
   respond_to :html
 
-  before_filter :require_admin!, only: [:index, :show, :destroy]
-  before_filter :require_user_edit_priviledges, only: [:edit, :update]
-  skip_before_filter :authenticate_user!, only: [:new, :create]
-
-  expose(:user, :attributes => :user_params)
+  authorize_actions_for User
 
   def index
-    @users = User.page(params[:page]).per(current_user.per_page)
+    @q = User.search params[:q]
+    @q.sorts = 'name asc' if @q.sorts.empty?
+    @users = @q.result.page(params[:page]).per(current_user.per_page)
   end
 
-  def new; end
-  def show; end
+  def new
+    @user = User.new
+  end
+
+  def show
+    @user = User.find(params[:id])
+  end
+
+  def edit
+    @user = User.find(params[:id])
+    authorize_action_for(@user)
+  end
 
   def create
-    if user.save
-      flash[:success] = "#{user.name} is now part of the team."
-      sign_in(user)
+    @user = User.new user_params
+    if @user.save
+      flash[:success] = "#{@user.name} is now part of the team."
+      sign_in(@user)
       redirect_to root_path
     else
       render :new
@@ -25,9 +34,12 @@ class UsersController < ApplicationController
   end
 
   def update
-    if user.update_attributes(user_params)
-      flash[:success] = I18n.t('controllers.users.flash.update.success', :name => user.name)
-      redirect_to user_path(user)
+    @user = User.find(params[:id])
+    @user.assign_attributes(user_params)
+    authorize_action_for(@user)
+    if @user.save
+      flash[:success] = I18n.t('controllers.users.flash.update.success', name: @user.name)
+      redirect_to user_path(@user)
     else
       render :edit
     end
@@ -39,12 +51,10 @@ class UsersController < ApplicationController
   # @param [ String ] id the id of user we want delete
   #
   def destroy
-    if user == current_user
-      flash[:error] = I18n.t('controllers.users.flash.destroy.error')
-    else
-      UserDestroy.new(user).destroy
-      flash[:success] = I18n.t('controllers.users.flash.destroy.success', :name => user.name)
-    end
+    @user = User.find(params[:id])
+    authorize_action_for(@user)
+    @user.destroy
+    flash[:success] = I18n.t('controllers.users.flash.destroy.success', name: @user.name)
     redirect_to users_path
   end
 
@@ -55,18 +65,13 @@ class UsersController < ApplicationController
 
   protected
 
-    def require_user_edit_priviledges
-      can_edit = current_user == user || current_user.admin?
-      redirect_to(root_path) and return(false) unless can_edit
-    end
-
   def user_params
     @user_params ||= params[:user] ? params.require(:user).permit(*user_permit_params) : {}
   end
 
   def user_permit_params
     @user_permit_params ||= [:name,:username, :email, :github_login, :per_page, :time_zone]
-    @user_permit_params << :admin if current_user.try(:admin?) && current_user.id != params[:id]
+    @user_permit_params << :admin if current_user_or_guest.can?(:edit_user_admin_field, user_id: params[:id])
     @user_permit_params |= [:password, :password_confirmation] if user_password_params.values.all?{|pa| !pa.blank? }
     @user_permit_params
   end

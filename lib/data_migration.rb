@@ -132,8 +132,7 @@ module DataMigration
       :resolved_at => :resolved_at,
       :issue_link => :issue_link,
       :issue_type => :issue_type,
-      
-      :app_name => :app_name,
+
       :notices_count => :notices_count,
       :message => :message,
       :environment => :environment,
@@ -142,8 +141,7 @@ module DataMigration
       :user_agents => lambda{|v| normalize_hash(v["user_agents"])},
       :messages => lambda{|v| normalize_hash(v["messages"])},
       :hosts => lambda{|v| normalize_hash(v["hosts"])},
-      :comments_count => :comments_count,
-      
+
       :created_at => :created_at,
       :updated_at => :updated_at
     }
@@ -319,7 +317,6 @@ module DataMigration
     def without_callbacks(&block)
       callbacks = %w{
         Comment#deliver_email
-        Comment#increase_counter_cache
         Deploy#resolve_app_errs
         Deploy#store_cached_attributes_on_problems
         Notice#cache_attributes_on_problem

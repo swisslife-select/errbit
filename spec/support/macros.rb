@@ -6,7 +6,7 @@ def it_requires_authentication(options = {})
       :new      => :get,
       :create   => :post,
       :edit     => :get,
-      :update   => :put,
+      :update   => :patch,
       :destroy  => :delete
     },
     :params => {:id => '4c6c760494df2a18cc000015'}
@@ -35,7 +35,7 @@ def  it_requires_admin_privileges(options = {})
       :new      => :get,
       :create   => :post,
       :edit     => :get,
-      :update   => :put,
+      :update   => :patch,
       :destroy  => :delete
     },
     :params => {:id => 'dummyid'}

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe LegacyFingerprint do
+describe Fingerprints::LegacyFingerprint do
   context 'being created' do
     let(:backtrace) do
       Backtrace.create(:raw => [
@@ -23,7 +23,7 @@ describe LegacyFingerprint do
       end
 
       it "normalizes the fingerprint of generated methods" do
-        expect(LegacyFingerprint.generate(notice1, "api key")).to eql LegacyFingerprint.generate(notice2, "api key")
+        expect(Fingerprints::LegacyFingerprint.generate(notice1, "api key")).to eql Fingerprints::LegacyFingerprint.generate(notice2, "api key")
       end
     end
 
@@ -36,7 +36,7 @@ describe LegacyFingerprint do
       end
 
       it "normalizes the fingerprint of generated methods" do
-        expect(LegacyFingerprint.generate(notice1, "api key")).to eql LegacyFingerprint.generate(notice2, "api key")
+        expect(Fingerprints::LegacyFingerprint.generate(notice1, "api key")).to eql Fingerprints::LegacyFingerprint.generate(notice2, "api key")
       end
     end
   end

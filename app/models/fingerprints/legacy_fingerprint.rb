@@ -1,6 +1,4 @@
-require 'digest/md5'
-
-class LegacyFingerprint < Fingerprint
+class Fingerprints::LegacyFingerprint < Fingerprint
   def to_s
     Digest::MD5.hexdigest(fingerprint_source)
   end

@@ -12,6 +12,6 @@ module BacktraceRepository
   end
 
   def similar
-    Backtrace.find_by_fingerprint fingerprint
+    Backtrace.find_by fingerprint: fingerprint
   end
 end

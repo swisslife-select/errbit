@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  include Authority::UserAbilities
+  include Authority::Abilities
   include UserRepository
 
   PER_PAGE = 30
@@ -12,7 +14,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :github_login, :allow_nil => true
 
   has_many :apps, through: :watchers
-  has_many :watchers
+  has_many :watchers, dependent: :destroy
 
   if Errbit::Config.user_has_username
     validates_presence_of :username
@@ -36,7 +38,7 @@ class User < ActiveRecord::Base
   end
 
   def watching?(app)
-    apps.all.include?(app)
+    apps.to_a.include?(app)
   end
 
   def password_required?
@@ -66,6 +68,10 @@ class User < ActiveRecord::Base
 
   def self.token_authentication_key
     :auth_token
+  end
+
+  def guest?
+    false
   end
 
   private

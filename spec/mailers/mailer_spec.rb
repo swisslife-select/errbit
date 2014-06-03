@@ -49,7 +49,7 @@ describe Mailer do
 
   context "Comment Notification" do
     let!(:notice) { Fabricate(:notice) }
-    let!(:comment) { Fabricate.build(:comment, :err => notice.problem) }
+    let!(:comment) { Fabricate.build(:comment, :problem => notice.problem) }
     let!(:watcher) { Fabricate(:watcher, :app => comment.app) }
     let(:recipients) { ['recipient@example.com', 'another@example.com']}
 

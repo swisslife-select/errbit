@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CommentsController do
+describe Apps::Problems::CommentsController do
   let(:app) { Fabricate(:app) }
   let(:err) { Fabricate(:err, :problem => Fabricate(:problem, :app => app, :environment => "production")) }
 

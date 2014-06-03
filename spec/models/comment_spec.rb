@@ -12,9 +12,9 @@ describe Comment do
   context 'notification_recipients' do
     let(:app) { Fabricate(:app) }
     let!(:watcher) { Fabricate(:watcher, :app => app) }
-    let(:err) { Fabricate(:problem, :app => app) }
+    let(:problem) { Fabricate(:problem, :app => app) }
     let(:comment_user) { Fabricate(:user, :email => 'author@example.com') }
-    let(:comment) { Fabricate.build(:comment, :err => err, :user => comment_user) }
+    let(:comment) { Fabricate.build(:comment, :problem => problem, :user => comment_user) }
 
     before do
       Fabricate(:user_watcher, :app => app, :user => comment_user)
@@ -29,9 +29,9 @@ describe Comment do
   context 'emailable?' do
     let(:app) { Fabricate(:app, :notify_on_errs => true) }
     let!(:watcher) { Fabricate(:watcher, :app => app) }
-    let(:err) { Fabricate(:problem, :app => app) }
+    let(:problem) { Fabricate(:problem, :app => app) }
     let(:comment_user) { Fabricate(:user, :email => 'author@example.com') }
-    let(:comment) { Fabricate.build(:comment, :err => err, :user => comment_user) }
+    let(:comment) { Fabricate.build(:comment, :problem => problem, :user => comment_user) }
 
     before do
       Fabricate(:user_watcher, :app => app, :user => comment_user)
@@ -50,7 +50,7 @@ describe Comment do
 
     it 'should be false if there are no notification recipients' do
       watcher.destroy
-      comment.err.reload
+      comment.problem.reload
       expect(app.emailable?).to be_true
       expect(comment.emailable?).to be_false
     end

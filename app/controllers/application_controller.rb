@@ -1,8 +1,10 @@
 class ApplicationController < ActionController::Base
+  include AclManagementConcern
+
   protect_from_forgery
+  ensure_authorization_performed unless: :devise_controller?
 
   before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!
   before_filter :set_time_zone
 
   # Devise override - After login, if there is only one app,
@@ -14,28 +16,11 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::RedirectBackError, :with => :redirect_to_root
 
-  class StrongParametersWithEagerAttributesStrategy < DecentExposure::StrongParametersStrategy
-    def attributes
-      super
-      @attributes ||= params[inflector.param_key] || {}
-    end
-  end
-
-  decent_configuration do
-    strategy StrongParametersWithEagerAttributesStrategy
-  end
-
 protected
 
-
-  ##
-  # Check if the current_user is admin or not and redirect to root url if not
-  #
-  def require_admin!
-    unless user_signed_in? && current_user.admin?
-      flash[:error] = "Sorry, you don't have permission to do that"
-      redirect_to_root
-    end
+  def current_user_or_guest
+    return current_user if current_user.present?
+    @guest ||= User::Guest.new
   end
 
   def redirect_to_root
@@ -48,10 +33,20 @@ protected
 
   def authenticate_user_from_token!
     user_token = params[User.token_authentication_key].presence
-    user       = user_token && User.find_by_authentication_token(user_token)
+    user       = user_token && User.find_by(authentication_token: user_token)
 
     if user
       sign_in user, store: false
+    end
+  end
+
+  def authority_forbidden(error)
+    Authority.logger.warn(error.message)
+    if current_user_or_guest.guest?
+      redirect_to new_user_session_path
+    else
+      flash[:error] = "Sorry, you don't have permission to do that"
+      redirect_to root_path
     end
   end
 end

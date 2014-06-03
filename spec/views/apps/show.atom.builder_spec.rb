@@ -7,8 +7,8 @@ describe "apps/show.atom.builder" do
   ]}
 
   before do
-    view.stub(:app).and_return(app)
-    view.stub(:problems).and_return(problems)
+    assign :app, app
+    assign :problems, problems
   end
 
   context "with errs" do

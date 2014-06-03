@@ -40,7 +40,7 @@ module AppsHelper
   def detect_any_apps_with_attributes
     @any_repo_urls = @any_issue_trackers = @any_deploys = @any_notification_services = false
 
-    apps.each do |app|
+    @apps.each do |app|
       @any_repo_urls ||= app.repo_url?
       @any_issue_trackers ||= app.issue_tracker_configured?
       @any_deploys        ||= !!app.last_deploy_at

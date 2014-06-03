@@ -1,35 +1,15 @@
 class DeploysController < ApplicationController
-
-  protect_from_forgery :except => :create
-
-  skip_before_filter :verify_authenticity_token, :only => :create
-  skip_before_filter :authenticate_user!, :only => :create
+  authorize_actions_for Deploy
+  protect_from_forgery except: :create
+  skip_before_filter :verify_authenticity_token, only: :create
 
   def create
-    @app = App.find_by_api_key!(params[:api_key])
+    @app = App.find_by! api_key: params[:api_key]
     @deploy = @app.deploys.create!(default_deploy || heroku_deploy)
     render :xml => @deploy
   end
 
-  def index
-    @app = resource_app
-    @deploys = @app.deploys.by_created_at.page(params[:page]).per(10)
-  end
-
-  def show
-    @app = resource_app
-    @deploy = @app.deploys.find params[:id]
-  end
-
   private
-    def resource_app
-      return @resource_app if @resource_app
-      @resource_app = App.detect_by_param!(params[:app_id])
-      #TODO: use ACL
-      raise ActiveRecord::RecordNotFound unless current_user.admin? || current_user.watching?(@resource_app)
-      @resource_app
-    end
-
     def default_deploy
       if params[:deploy]
         {

@@ -54,8 +54,8 @@ describe User do
       watched_app  = Fabricate(:app)
       unwatched_app = Fabricate(:app)
       watcher = Fabricate(:user_watcher, :app => watched_app, :user => user)
-      expect(user.apps.all).to include(watched_app)
-      expect(user.apps.all).to_not include(unwatched_app)
+      expect(user.apps).to include(watched_app)
+      expect(user.apps).to_not include(unwatched_app)
     end
 
   end

@@ -4,9 +4,9 @@ describe Problem do
 
   context 'validations' do
     it 'requires an environment' do
-      err = Fabricate.build(:problem, :environment => nil)
-      expect(err).to_not be_valid
-      expect(err.errors[:environment]).to include("can't be blank")
+      problem = Fabricate.build(:problem, :environment => nil)
+      expect(problem).to_not be_valid
+      expect(problem.errors[:environment]).to include("can't be blank")
     end
   end
 
@@ -162,8 +162,8 @@ describe Problem do
       it 'only finds resolved Problems' do
         resolved = Fabricate(:problem, :resolved => true)
         unresolved = Fabricate(:problem, :resolved => false)
-        expect(Problem.resolved.all).to include(resolved)
-        expect(Problem.resolved.all).to_not include(unresolved)
+        expect(Problem.resolved).to include(resolved)
+        expect(Problem.resolved).to_not include(unresolved)
       end
     end
 
@@ -171,23 +171,8 @@ describe Problem do
       it 'only finds unresolved Problems' do
         resolved = Fabricate(:problem, :resolved => true)
         unresolved = Fabricate(:problem, :resolved => false)
-        expect(Problem.unresolved.all).to_not include(resolved)
-        expect(Problem.unresolved.all).to include(unresolved)
-      end
-    end
-
-    context "searching" do
-      it 'finds the correct record' do
-        find = Fabricate(:problem, :resolved => false, :error_class => 'theErrorclass::other',
-                         :message => "other", :where => 'errorclass', :environment => 'development', :app_name => 'other')
-        dont_find = Fabricate(:problem, :resolved => false, :error_class => "Batman",
-                              :message => 'todo', :where => 'classerror', :environment => 'development', :app_name => 'other')
-        expect(Problem.search("theErrorClass").unresolved).to include(find)
-        expect(Problem.search("theErrorClass").unresolved).to_not include(dont_find)
-      end
-      it 'find on where message' do
-        problem = Fabricate(:problem, :where => 'cyril')
-        expect(Problem.search('cyril').entries).to eq [problem]
+        expect(Problem.unresolved).to_not include(resolved)
+        expect(Problem.unresolved).to include(unresolved)
       end
     end
   end
@@ -215,24 +200,6 @@ describe Problem do
         @err.notices.first.destroy
         @problem.reload
       }.to change(@problem, :notices_count).from(1).to(0)
-    end
-  end
-
-  context "#app_name" do
-    let!(:app) { Fabricate(:app) }
-    let!(:problem) { Fabricate(:problem, :app => app) }
-
-    before { app.reload }
-
-    it "is set when a problem is created" do
-      assert_equal app.name, problem.app_name
-    end
-
-    it "is updated when an app is updated" do
-      expect {
-        app.update_attributes!(:name => "Bar App")
-        problem.reload
-      }.to change(problem, :app_name).to("Bar App")
     end
   end
 
@@ -344,32 +311,5 @@ describe Problem do
       }).to({})
     end
   end
-
-  context "comment counter cache" do
-    before do
-      @app = Fabricate(:app)
-      @problem = Fabricate(:problem, :app => @app)
-    end
-
-    it "#comments_count returns 0 by default" do
-      expect(@problem.comments_count).to eq 0
-    end
-
-    it "adding a comment increases #comments_count by 1" do
-      expect {
-        Fabricate(:comment, :err => @problem)
-      }.to change(@problem, :comments_count).from(0).to(1)
-    end
-
-    it "removing a comment decreases #comments_count by 1" do
-      comment1 = Fabricate(:comment, :err => @problem)
-      expect {
-        @problem.reload.comments.first.destroy
-        @problem.reload
-      }.to change(@problem, :comments_count).from(1).to(0)
-    end
-  end
-
-
 end
 

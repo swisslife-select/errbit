@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "apps/new.html.haml" do
   let(:app) { stub_model(App, name: 'app') }
   before do
-    view.stub(:app).and_return(app)
+    assign :app, app
     controller.stub(:current_user) { stub_model(User) }
   end
 

@@ -1,5 +1,5 @@
 class App < ActiveRecord::Base
-  include Comparable
+  include Authority::Abilities
   include AppRepository
 
   serialize :email_at_notices, Array
@@ -10,6 +10,8 @@ class App < ActiveRecord::Base
 
   has_one :issue_tracker, inverse_of: :app, dependent: :destroy
   has_one :notification_service, inverse_of: :app, dependent: :destroy
+
+  has_one :last_deploy, -> { order('created_at DESC') }, class_name: 'Deploy'
 
   def issue_tracker
     return @tentative_issue_tracker if has_tentative_issue_tracker?
@@ -55,7 +57,6 @@ class App < ActiveRecord::Base
 
 
   before_validation :generate_api_key, :on => :create
-  after_update :store_cached_attributes_on_problems
   after_initialize :default_values
 
   validates_presence_of :name, :api_key
@@ -79,7 +80,8 @@ class App < ActiveRecord::Base
   end
 
   def last_deploy_at
-    (last_deploy = deploys.last) && last_deploy.created_at
+    #(last_deploy = deploys.last) && last_deploy.created_at
+    last_deploy.try(:created_at)
   end
 
   # Legacy apps don't have notify_on_errs and notify_on_deploys params
@@ -136,18 +138,7 @@ class App < ActiveRecord::Base
   end
 
   def unresolved_count
-    @unresolved_count ||= problems.unresolved.count
-  end
-
-  def problem_count
-    @problem_count ||= problems.count
-  end
-
-  # Compare by number of unresolved errs, then problem counts.
-  def <=>(other)
-    (other.unresolved_count <=> unresolved_count).nonzero? ||
-    (other.problem_count <=> problem_count).nonzero? ||
-    name <=> other.name
+    unresolved_problems_count
   end
 
   def email_at_notices
@@ -163,11 +154,6 @@ class App < ActiveRecord::Base
   end
 
   protected
-
-    def store_cached_attributes_on_problems
-      problems.update_all(:app_name => name)
-    end
-
     def generate_api_key
       self.api_key ||= SecureRandom.hex
     end

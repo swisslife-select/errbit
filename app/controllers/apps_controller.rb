@@ -1,56 +1,39 @@
 class AppsController < ApplicationController
+  authorize_actions_for App
 
-  include ProblemsSearcher
-
-  before_filter :require_admin!, :except => [:index, :show]
   before_filter :parse_email_at_notices_or_set_default, :only => [:create, :update]
   before_filter :parse_notice_at_notices_or_set_default, :only => [:create, :update]
   respond_to :html
 
-  #TODO: remove decent_exposure
-  expose(:app_scope) {
-    (current_user.admin? ? App : current_user.apps)
-  }
+  helper_method :selected_problems
 
-  expose(:apps) {
-    app_scope.all.sort.to_a
-  }
+  def index
+    @q = current_user_or_guest.available_apps.search(params[:q])
+    @q.sorts = 'unresolved_problems_count desc' if @q.sorts.empty?
+    @apps = @q.result(distinct: true).includes(:issue_tracker, :notification_service)
+    #TODO: think about includes App#last_deploy. AR load unnecessary deploys to RAM in includes(:last_deploy) case.
+    #TODO: try fix N+1 with last_deploy
+  end
 
-  expose(:app, finder: :detect_by_param!, ancestor: :app_scope)
-
-  expose(:all_errs) {
-    !!params[:all_errs]
-  }
-  expose(:problems) {
-    if request.format == :atom
-      app.problems.unresolved.ordered
-    else
-      pr = app.problems
-      pr = pr.unresolved unless all_errs
-      pr.in_env(
-        params[:environment]
-      ).ordered_by(params_sort, params_order).page(params[:page]).per(current_user.per_page)
-    end
-  }
-
-  expose(:deploys) {
-    app.deploys.by_created_at.limit(5)
-  }
-
-  def index; end
   def show
-    app
+    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    params_q = params.fetch(:q, {}).reverse_merge resolved_eq: false, s: 'last_notice_at desc'
+    @q = @app.problems.search(params_q)
+    @problems = @q.result.page(params[:page]).per(current_user.per_page)
+    #FIXME
+    @problems = @app.problems.unresolved.ordered if request.format == :atom
   end
 
   def new
-    plug_params(app)
+    @app = App.new
+    plug_params(@app)
   end
 
   def create
-    initialize_subclassed_issue_tracker
-    initialize_subclassed_notification_service
-    if app.save
-      redirect_to app_url(app), :flash => { :success => I18n.t('controllers.apps.flash.create.success') }
+    @app = current_user_or_guest.available_apps.new params[:app]
+
+    if @app.save
+      redirect_to app_url(@app), :flash => { :success => I18n.t('controllers.apps.flash.create.success') }
     else
       flash[:error] = I18n.t('controllers.apps.flash.create.error')
       render :new
@@ -58,10 +41,9 @@ class AppsController < ApplicationController
   end
 
   def update
-    initialize_subclassed_issue_tracker
-    initialize_subclassed_notification_service
-    if app.save
-      redirect_to app_url(app), :flash => { :success => I18n.t('controllers.apps.flash.update.success') }
+    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    if @app.update params[:app]
+      redirect_to app_url(@app), :flash => { :success => I18n.t('controllers.apps.flash.update.success') }
     else
       flash[:error] = I18n.t('controllers.apps.flash.update.error')
       render :edit
@@ -69,11 +51,13 @@ class AppsController < ApplicationController
   end
 
   def edit
-    plug_params(app)
+    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    plug_params(@app)
   end
 
   def destroy
-    if app.destroy
+    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    if @app.destroy
       redirect_to apps_url, :flash => { :success => I18n.t('controllers.apps.flash.destroy.success') }
     else
       flash[:error] = I18n.t('controllers.apps.flash.destroy.error')
@@ -82,36 +66,23 @@ class AppsController < ApplicationController
   end
 
   def regenerate_api_key
-    app.regenerate_api_key!
-    redirect_to edit_app_path(app)
+    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    @app.regenerate_api_key!
+    redirect_to edit_app_path(@app)
+  end
+
+  #TODO: think about refactoring
+  def selected_problems
+    @selected_problems ||= Problem.find(err_ids)
+  end
+
+  def err_ids
+    params.fetch(:problems, []).compact
   end
 
   protected
-
-    def initialize_subclassed_issue_tracker
-      # set the app's issue tracker
-      if params[:app][:issue_tracker_attributes] && tracker_type = params[:app][:issue_tracker_attributes][:type]
-        available_tracker_classes = [IssueTracker] + IssueTracker.subclasses
-        tracker_class = available_tracker_classes.detect{|c| c.name == tracker_type}
-        if !tracker_class.nil?
-          app.issue_tracker = tracker_class.new(params[:app][:issue_tracker_attributes])
-        end
-      end
-    end
-
-    def initialize_subclassed_notification_service
-      # set the app's notification service
-      if params[:app][:notification_service_attributes] && notification_type = params[:app][:notification_service_attributes][:type]
-        available_notification_classes = [NotificationService] + NotificationService.subclasses
-        notification_class = available_notification_classes.detect{|c| c.name == notification_type}
-        if !notification_class.nil?
-          app.notification_service = notification_class.new(params[:app][:notification_service_attributes])
-        end
-      end
-    end
-
     def plug_params app
-      donor = App.find_by_id(params[:copy_attributes_from])
+      donor = App.find_by id: params[:copy_attributes_from]
       AppCopy.deep_copy_attributes(app, donor) if donor
 
       app.watchers.build if app.watchers.none?

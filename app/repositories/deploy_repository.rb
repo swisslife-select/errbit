@@ -2,7 +2,7 @@ module DeployRepository
   extend ActiveSupport::Concern
 
   included do
-    scope :by_created_at, order("created_at DESC")
+    scope :by_created_at, -> { order("created_at DESC") }
   end
 
   def previous

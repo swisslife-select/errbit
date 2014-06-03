@@ -6,6 +6,7 @@ describe 'users/index.html.haml' do
     view.stub(:current_user).and_return(user)
     users = Kaminari.paginate_array([user], total_count: 1).page(1)
     assign :users, users
+    assign :q, User.search
   }
   it 'should see users option' do
     render

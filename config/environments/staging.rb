@@ -4,6 +4,7 @@ Errbit::Application.configure do
   # The production environment is meant for finished, "live" apps.
   # Code is not reloaded between requests
   config.cache_classes = true
+  config.eager_load = true
 
   # Shows or hides all error details if something goes wrong inside Errbit
   config.consider_all_requests_local       = false
@@ -23,7 +24,7 @@ Errbit::Application.configure do
   # config.log_level = :debug
 
   # Use a different logger for distributed setups
-  config.logger = ActiveSupport::BufferedLogger.new(STDOUT, 1)
+  config.logger = Logger.new(STDOUT)
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store

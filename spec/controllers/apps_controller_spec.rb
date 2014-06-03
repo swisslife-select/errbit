@@ -3,7 +3,7 @@ require 'spec_helper'
 describe AppsController do
 
   it_requires_authentication
-  it_requires_admin_privileges :for => {:new => :get, :edit => :get, :create => :post, :update => :put, :destroy => :delete}
+  it_requires_admin_privileges :for => {:new => :get, :edit => :get, :create => :post, :update => :patch, :destroy => :delete}
 
   let(:admin) { Fabricate(:admin) }
   let(:user) { Fabricate(:user) }
@@ -37,7 +37,7 @@ describe AppsController do
         sign_in admin
         unwatched_app && watched_app1 && watched_app2
         get :index
-        expect(controller.apps.entries).to eq App.all.sort.entries
+        expect(assigns(:apps).entries).to eq App.all.sort.entries
       end
     end
 
@@ -46,8 +46,8 @@ describe AppsController do
         sign_in(user)
         watched_app1 && watched_app2 && unwatched_app
         get :index
-        expect(controller.apps).to include(watched_app1, watched_app2)
-        expect(controller.apps).to_not include(unwatched_app)
+        expect(assigns(:apps)).to include(watched_app1, watched_app2)
+        expect(assigns(:apps)).to_not include(unwatched_app)
       end
     end
   end
@@ -56,11 +56,6 @@ describe AppsController do
     context 'logged in as an admin' do
       before(:each) do
         sign_in admin
-      end
-
-      it 'finds the app' do
-        get :show, :id => app.id
-        expect(controller.app).to eq app
       end
 
       it "should not raise errors for app with err without notices" do
@@ -78,15 +73,20 @@ describe AppsController do
           35.times { Fabricate(:err, :problem => Fabricate(:problem, :app => app)) }
         end
 
+        it 'success in js format' do
+          xhr :get, :show, id: app.id
+          expect(response).to be_success
+        end
+
         it "should have default per_page value for user" do
           get :show, :id => app.id
-          expect(controller.problems.to_a.size).to eq User::PER_PAGE
+          expect(assigns(:problems).to_a.size).to eq User::PER_PAGE
         end
 
         it "should be able to override default per_page value" do
           admin.update_attribute :per_page, 10
           get :show, :id => app.id
-          expect(controller.problems.to_a.size).to eq 10
+          expect(assigns(:problems).to_a.size).to eq 10
         end
       end
 
@@ -98,14 +98,7 @@ describe AppsController do
         context 'and no params' do
           it 'shows only unresolved problems' do
             get :show, :id => app.id
-            expect(controller.problems.size).to eq 1
-          end
-        end
-
-        context 'and all_problems=true params' do
-          it 'shows all errors' do
-            get :show, :id => app.id, :all_errs => true
-            expect(controller.problems.size).to eq 2
+            expect(assigns(:problems).size).to eq 1
           end
         end
       end
@@ -121,35 +114,7 @@ describe AppsController do
         context 'no params' do
           it 'shows errs for all environments' do
             get :show, :id => app.id
-            expect(controller.problems.size).to eq 20
-          end
-        end
-
-        context 'environment production' do
-          it 'shows errs for just production' do
-            get :show, :id => app.id, :environment => 'production'
-            expect(controller.problems.size).to eq 5
-          end
-        end
-
-        context 'environment staging' do
-          it 'shows errs for just staging' do
-            get :show, :id => app.id, :environment => 'staging'
-            expect(controller.problems.size).to eq 5
-          end
-        end
-
-        context 'environment development' do
-          it 'shows errs for just development' do
-            get :show, :id => app.id, :environment => 'development'
-            expect(controller.problems.size).to eq 5
-          end
-        end
-
-        context 'environment test' do
-          it 'shows errs for just test' do
-            get :show, :id => app.id, :environment => 'test'
-            expect(controller.problems.size).to eq 5
+            expect(assigns(:problems).size).to eq 20
           end
         end
       end
@@ -160,7 +125,7 @@ describe AppsController do
         watcher
         sign_in user
         get :show, :id => app.id
-        expect(controller.app).to eq app
+        expect(assigns(:app)).to eq app
       end
 
       it 'does not find the app if the user is not watching it' do
@@ -181,9 +146,9 @@ describe AppsController do
     describe "GET /apps/new" do
       it 'instantiates a new app with a prebuilt watcher' do
         get :new
-        expect(controller.app).to be_a(App)
-        expect(controller.app).to be_new_record
-        expect(controller.app.watchers).to_not be_empty
+        expect(assigns(:app)).to be_a(App)
+        expect(assigns(:app)).to be_new_record
+        expect(assigns(:app).watchers).to_not be_empty
       end
 
       it "should copy attributes from an existing app" do
@@ -191,11 +156,11 @@ describe AppsController do
         @app = Fabricate(:app_with_watcher, :name => "do not copy",
                              :repo_url => repo_url)
         get :new, :copy_attributes_from => @app.id
-        expect(controller.app).to be_a(App)
-        expect(controller.app).to be_new_record
-        expect(controller.app.name).to be_blank
-        expect(controller.app.repo_url).to eq repo_url
-        expect(controller.app.watchers.first.new_record?).to be true
+        expect(assigns(:app)).to be_a(App)
+        expect(assigns(:app)).to be_new_record
+        expect(assigns(:app).name).to be_blank
+        expect(assigns(:app).repo_url).to eq repo_url
+        expect(assigns(:app).watchers.first.new_record?).to be true
       end
     end
 
@@ -203,7 +168,7 @@ describe AppsController do
       it 'finds the correct app' do
         app = Fabricate(:app)
         get :edit, :id => app.id
-        expect(controller.app).to eq app
+        expect(assigns(:app)).to eq app
       end
     end
 
@@ -230,19 +195,19 @@ describe AppsController do
       end
     end
 
-    describe "PUT /apps/:id" do
+    describe "patch /apps/:id" do
       before do
         @app = Fabricate(:app)
       end
 
       context "when the update is successful" do
         it "should redirect to the app page" do
-          put :update, :id => @app.id, :app => {}
+          patch :update, :id => @app.id, :app => {}
           expect(response).to redirect_to(app_path(@app))
         end
 
         it "should display a message" do
-          put :update, :id => @app.id, :app => {}
+          patch :update, :id => @app.id, :app => {}
           expect(request.flash[:success]).to match(/success/)
         end
       end
@@ -250,7 +215,7 @@ describe AppsController do
       context "changing name" do
         it "should redirect to app page" do
           id = @app.id
-          put :update, :id => id, :app => {:name => "new name"}
+          patch :update, :id => id, :app => {:name => "new name"}
           @app.reload
           expect(response).to redirect_to(app_path(@app))
         end
@@ -258,7 +223,7 @@ describe AppsController do
 
       context "when the update is unsuccessful" do
         it "should render the edit page" do
-          put :update, :id => @app.id, :app => { :name => '' }
+          patch :update, :id => @app.id, :app => { :name => '' }
           expect(response).to render_template(:edit)
         end
       end
@@ -269,20 +234,20 @@ describe AppsController do
         end
 
         it "should parse legal csv values" do
-          put :update, :id => @app.id, :app => { :email_at_notices => '1,   4,      7,8,  10' }
+          patch :update, :id => @app.id, :app => { :email_at_notices => '1,   4,      7,8,  10' }
           @app.reload
           expect(@app.email_at_notices).to eq [1, 4, 7, 8, 10]
         end
         context "failed parsing of CSV" do
           it "should set the default value" do
             @app = Fabricate(:app, :email_at_notices => [1, 2, 3, 4])
-            put :update, :id => @app.id, :app => { :email_at_notices => 'asdf, -1,0,foobar,gd00,0,abc' }
+            patch :update, :id => @app.id, :app => { :email_at_notices => 'asdf, -1,0,foobar,gd00,0,abc' }
             @app.reload
             expect(@app.email_at_notices).to eq Errbit::Config.email_at_notices
           end
 
           it "should display a message" do
-            put :update, :id => @app.id, :app => { :email_at_notices => 'qwertyuiop' }
+            patch :update, :id => @app.id, :app => { :email_at_notices => 'qwertyuiop' }
             expect(request.flash[:error]).to match(/Couldn't parse/)
           end
         end
@@ -291,7 +256,7 @@ describe AppsController do
       context "setting up issue tracker", :cur => true do
         context "unknown tracker type" do
           before(:each) do
-            put :update, :id => @app.id, :app => { :issue_tracker_attributes => {
+            patch :update, :id => @app.id, :app => { :issue_tracker_attributes => {
               :type => 'unknown', :project_id => '1234', :api_token => '123123', :account => 'myapp'
             } }
             @app.reload
@@ -308,7 +273,7 @@ describe AppsController do
               params = tracker_klass::Fields.inject({}){|hash,f| hash[f[0]] = "test_value"; hash }
               params[:ticket_properties] = "card_type = defect" if tracker_klass == IssueTrackers::MingleTracker
               params[:type] = tracker_klass.to_s
-              put :update, :id => @app.id, :app => {:issue_tracker_attributes => params}
+              patch :update, :id => @app.id, :app => {:issue_tracker_attributes => params}
 
               @app.reload
 
@@ -328,7 +293,7 @@ describe AppsController do
               # Leave out one required param
               params = tracker_klass::Fields[1..-1].inject({}){|hash,f| hash[f[0]] = "test_value"; hash }
               params[:type] = tracker_klass.to_s
-              put :update, :id => @app.id, :app => {:issue_tracker_attributes => params}
+              patch :update, :id => @app.id, :app => {:issue_tracker_attributes => params}
 
               @app.reload
               expect(@app.issue_tracker_configured?).to eq false
@@ -343,15 +308,9 @@ describe AppsController do
         @app = Fabricate(:app)
       end
 
-      it "should find the app" do
-        delete :destroy, :id => @app.id
-        expect(controller.app).to eq @app
-      end
-
       it "should destroy the app" do
-        controller.stub(:app).and_return(@app)
-        expect(@app).to receive(:destroy)
         delete :destroy, :id => @app.id
+        expect(App.exists?(@app.id)).to be false
       end
 
       it "should display a message" do

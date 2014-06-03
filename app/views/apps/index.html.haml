@@ -5,18 +5,18 @@
 %table.apps
   %thead
     %tr
-      %th= t('.name')
+      %th= sort_link @q, :name, t('.name')
       - if any_repo_urls?
         %th= t('.repository')
       - if any_notification_services?
-        %th= t('.notify')
+        %th= t('.notify_html')
       - if any_issue_trackers?
         %th= t('.tracker')
       - if any_deploys?
         %th= t('.last_deploy')
-      %th=t('.errors')
+      %th= sort_link @q, :unresolved_problems_count, t('.errors')
   %tbody
-    - apps.each do |app|
+    - @apps.each do |app|
       %tr
         %td.name= link_to app.name, app_path(app)
         - if any_repo_urls?
@@ -41,13 +41,12 @@
         - if any_deploys?
           %td.deploy
             - if app.last_deploy_at
-              - revision = app.deploys.last.short_revision
+              - revision = app.last_deploy.short_revision
               = link_to( app.last_deploy_at.to_s(:micro) << (revision.present? ? " (#{revision})" : ""), app_deploys_path(app))
         %td.count
-          - if app.problem_count > 0
-            - unresolved = app.unresolved_count
-            = link_to unresolved, app_path(app), :class => (unresolved == 0 ? "resolved" : nil)
-    - if apps.none?
+          - if app.unresolved_problems_count > 0
+            = link_to app.unresolved_problems_count, app_path(app)
+    - if @apps.none?
       %tr
         %td{:colspan => 3}
           %em

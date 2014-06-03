@@ -3,8 +3,9 @@ require 'spec_helper'
 describe "apps/index.html.haml" do
   before do
     deploy = Fabricate(:deploy, :created_at => Time.now, :revision => "123456789abcdef")
-    app = Fabricate(:app_with_deploys, :deploys => [deploy])
-    view.stub(:apps).and_return([app])
+    app = Fabricate(:app, :deploys => [deploy])
+    assign :apps, [app]
+    assign :q , App.search
     controller.stub(:current_user) { stub_model(User) }
   end
 

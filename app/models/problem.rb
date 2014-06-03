@@ -3,6 +3,7 @@
 # Errs together as belonging to the same problem.
 
 class Problem < ActiveRecord::Base
+  include Authority::Abilities
   include ProblemRepository
 
   serialize :messages, Hash
@@ -11,7 +12,8 @@ class Problem < ActiveRecord::Base
 
   belongs_to :app, inverse_of: :problems
   has_many :errs, inverse_of: :problem, dependent: :destroy
-  has_many :comments, inverse_of: :err, dependent: :destroy
+  has_many :comments, inverse_of: :problem, dependent: :destroy
+  counter_culture :app, column_name: ->(model){ "unresolved_problems_count" if model.unresolved? }
 
   validates_presence_of :environment
 
@@ -24,7 +26,6 @@ class Problem < ActiveRecord::Base
     if self.new_record?
       self.user_agents ||= Hash.new
       self.hosts ||= Hash.new
-      self.comments_count ||= 0
       self.notices_count ||= 0
       self.resolved = false if self.resolved.nil?
       self.first_notice_at ||= Time.new
@@ -75,12 +76,10 @@ class Problem < ActiveRecord::Base
 
   def cache_app_attributes
     if app
-      self.app_name = app.name
       self.last_deploy_at = if (last_deploy = app.deploys.where(:environment => self.environment).last)
         last_deploy.created_at.utc
       end
       Problem.where(id: self).update_all(
-        app_name: self.app_name,
         last_deploy_at: self.last_deploy_at
       )
     end

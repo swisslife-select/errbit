@@ -20,7 +20,7 @@ describe "Self exceptions handling" do
   it "work" do
     expect { get '/test' }.to raise_error
 
-    app = App.find_by_name("Self.Errbit")
+    app = App.find_by name: "Self.Errbit"
     expect(app.problems.count).to be(1)
 
     problem = app.problems.last

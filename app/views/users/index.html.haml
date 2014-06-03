@@ -5,11 +5,11 @@
     %tr
       - if Errbit::Config.use_gravatar
         %th
-      %th Name
+      %th= sort_link @q, :name
       - if Errbit::Config.user_has_username
-        %th Username
-      %th.main Email
-      %th Admin?
+        %th= sort_link @q, :username
+      %th.main= sort_link @q, :email
+      %th= sort_link @q, :admin, 'Admin?'
   %tbody
     - @users.each do |user|
       %tr.user_list
