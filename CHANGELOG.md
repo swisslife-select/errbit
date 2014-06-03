@@ -9,6 +9,7 @@
 - Apps sorting made by ActiveRecord in AppsController
 - Fix some N+1 problems
 - Move commits from errbit/errbit. Last commit at Apr 23, 2014
+- Add user registration
 
 By [@darkleaf](https://github.com/darkleaf)
 
