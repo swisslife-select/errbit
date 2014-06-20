@@ -26,11 +26,6 @@ describe ProblemsController do
         expect(response).to be_success
         expect(assigns(:problems).count).to be 1
       end
-
-      it 'get in js format' do
-        xhr :get, :index, format: :js
-        expect(response).to be_success
-      end
     end
 
     context 'when logged in as a user' do

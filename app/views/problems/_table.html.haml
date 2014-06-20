@@ -4,11 +4,11 @@
     %thead
       %tr
         %th= check_box_tag "toggle_problems_checkboxes"
-        %th= sort_link q, :app_name, "App", {}, remote: true
-        %th= sort_link q, :message, "What &amp; Where".html_safe, {}, remote: true
-        %th= sort_link q, :last_notice_at, "Latest", {}, remote: true
-        %th= sort_link q, :last_deploy_at, "Deploy", {}, remote: true
-        %th= sort_link q, :notices_count, "Count", {}, remote: true
+        %th= sort_link q, :app_name, "App"
+        %th= sort_link q, :message, "What &amp; Where".html_safe
+        %th= sort_link q, :last_notice_at, "Latest"
+        %th= sort_link q, :last_deploy_at, "Deploy"
+        %th= sort_link q, :notices_count, "Count"
         - if any_issue_links
           %th Issue
         %th Resolve

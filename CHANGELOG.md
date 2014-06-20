@@ -1,3 +1,9 @@
+## 0.6.0 - Not released Yet
+
+- Add turbolinks
+
+By [@darkleaf](https://github.com/darkleaf)
+
 ## 0.5.0 - Not released Yet
 
 - Upgrade to rails 4.1.1

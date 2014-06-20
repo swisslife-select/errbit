@@ -28,17 +28,6 @@ $(function() {
     $('input[type=submit][data-action]').live('click', function() {
       $(this).closest('form').attr('action', $(this).attr('data-action'));
     });
-
-    $('.notice-pagination').each(function() {
-      $.pjax.defaults = {timeout: 2000};
-
-      $('#content').pjax('.notice-pagination a').on('pjax:start', function() {
-        $('.notice-pagination-loader').css("visibility", "visible");
-        currentTab = $('.tab-bar ul li a.button.active').attr('rel');
-      }).on('pjax:end', function() {
-        activateTabbedPanels();
-      });
-    });
   }
 
   function activateTabbedPanels() {

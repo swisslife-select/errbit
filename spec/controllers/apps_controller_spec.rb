@@ -73,11 +73,6 @@ describe AppsController do
           35.times { Fabricate(:err, :problem => Fabricate(:problem, :app => app)) }
         end
 
-        it 'success in js format' do
-          xhr :get, :show, id: app.id
-          expect(response).to be_success
-        end
-
         it "should have default per_page value for user" do
           get :show, :id => app.id
           expect(assigns(:problems).to_a.size).to eq User::PER_PAGE
