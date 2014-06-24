@@ -1,9 +1,6 @@
 // App JS
 
 $(function() {
-
-  var currentTab = "summary";
-
   function init() {
 
     activateTabbedPanels();
@@ -30,6 +27,10 @@ $(function() {
     });
   }
 
+  function currentTabName(){
+    return window.location.hash.slice(1) || 'summary'
+  }
+
   function activateTabbedPanels() {
     $('.tab-bar a').each(function(){
       var tab = $(this);
@@ -42,21 +43,35 @@ $(function() {
       activateTab($(this));
       return(false);
     });
+    var currentTab = currentTabName();
     activateTab($('.tab-bar ul li a.button[rel=' + currentTab + ']'));
   }
 
   function activateTab(tab) {
+    var rel = tab.attr('rel');
+    history.pushState(null, null, '#' + rel);
     tab = $(tab);
-    var panel = $('#'+tab.attr('rel'));
+    var panel = $('#'+rel);
 
     tab.closest('.tab-bar').find('a.active').removeClass('active');
     tab.addClass('active');
 
     // If clicking into 'backtrace' tab, hide external backtrace
-    if (tab.attr('rel') == "backtrace") { hide_external_backtrace(); }
+    if (rel == "backtrace") { hide_external_backtrace(); }
+
+    setAnchorForPaginationLinks();
 
     $('.panel').hide();
     panel.show();
+  }
+
+  function setAnchorForPaginationLinks(){
+    var links = $('.notice-pagination a');
+    links.each(function(){
+      var link = $(this);
+      var new_href = link.attr('href').replace(/#.*/, '') + '#' + currentTabName();
+      link.attr('href', new_href);
+    });
   }
 
   window.toggleProblemsCheckboxes = function() {
