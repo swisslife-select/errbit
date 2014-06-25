@@ -55,6 +55,8 @@ $(function() {
   }
 
   function activateTab(tab) {
+    if(tab.length == 0) return;
+
     var rel = tab.attr('rel');
     history.pushState(null, null, '#' + rel);
     tab = $(tab);
