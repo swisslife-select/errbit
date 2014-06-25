@@ -2,6 +2,7 @@
 
 $(function() {
   function init() {
+    disableScrollToBottom();
 
     activateTabbedPanels();
 
@@ -25,6 +26,12 @@ $(function() {
     $('input[type=submit][data-action]').live('click', function() {
       $(this).closest('form').attr('action', $(this).attr('data-action'));
     });
+  }
+
+  function disableScrollToBottom(){
+    if (location.hash) {
+      window.scrollTo(0, 0);
+    }
   }
 
   function currentTabName(){
