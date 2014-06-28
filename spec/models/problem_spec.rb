@@ -311,5 +311,36 @@ describe Problem do
       }).to({})
     end
   end
+
+  context "app unresolved_problems_count cache" do
+    before do
+      @app = Fabricate(:app)
+      @problem = Fabricate(:problem, :app => @app)
+      @err = Fabricate(:err, :problem => @problem)
+      notice = Fabricate(:notice, :err => @err)
+    end
+
+    it "setting count to 1 when adding first problem" do
+      expect(@app.reload.unresolved_problems_count).to eq 1
+    end
+
+    it "setting count to 0 when all problems are resolved" do
+      @problem.resolve!
+      expect(@app.reload.unresolved_problems_count).to eq 0
+    end
+
+    it "increasing count after adding notice to existing error for resolved problem" do
+      @problem.resolve!
+      Fabricate(:notice, :err => @err)
+      expect(@app.reload.unresolved_problems_count).to eq 1
+    end
+
+    it "increasing count after adding new error to resolved problem" do
+      @problem.resolve!
+      err = Fabricate(:err, :problem => @problem)
+      Fabricate(:notice, :err => err)
+      expect(@app.reload.unresolved_problems_count).to eq 1
+    end
+  end
 end
 

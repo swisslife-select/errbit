@@ -16,7 +16,7 @@ class Notice < ActiveRecord::Base
   belongs_to :err
   belongs_to :backtrace
 
-  after_create :cache_attributes_on_problem, :unresolve_problem
+  after_create :unresolve_problem, :cache_attributes_on_problem
   before_save :sanitize
   before_destroy :decrease_counter_cache, :remove_cached_attributes_from_problem
   after_initialize :default_values
@@ -138,7 +138,7 @@ class Notice < ActiveRecord::Base
   end
 
   def unresolve_problem
-    problem.update_attributes!(:resolved => false, :resolved_at => nil, :notices_count => 1) if problem.resolved?
+    problem.update_attributes!(:resolved => false, :resolved_at => nil, :notices_count => 0) if problem.resolved?
   end
 
   def cache_attributes_on_problem
