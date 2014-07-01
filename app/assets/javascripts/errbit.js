@@ -1,10 +1,8 @@
 // App JS
 
 $(function() {
-
-  var currentTab = "summary";
-
   function init() {
+    disableScrollToBottom();
 
     activateTabbedPanels();
 
@@ -28,17 +26,16 @@ $(function() {
     $('input[type=submit][data-action]').live('click', function() {
       $(this).closest('form').attr('action', $(this).attr('data-action'));
     });
+  }
 
-    $('.notice-pagination').each(function() {
-      $.pjax.defaults = {timeout: 2000};
+  function disableScrollToBottom(){
+    if (location.hash) {
+      window.scrollTo(0, 0);
+    }
+  }
 
-      $('#content').pjax('.notice-pagination a').on('pjax:start', function() {
-        $('.notice-pagination-loader').css("visibility", "visible");
-        currentTab = $('.tab-bar ul li a.button.active').attr('rel');
-      }).on('pjax:end', function() {
-        activateTabbedPanels();
-      });
-    });
+  function currentTabName(){
+    return window.location.hash.slice(1) || 'summary'
   }
 
   function activateTabbedPanels() {
@@ -53,21 +50,37 @@ $(function() {
       activateTab($(this));
       return(false);
     });
+    var currentTab = currentTabName();
     activateTab($('.tab-bar ul li a.button[rel=' + currentTab + ']'));
   }
 
   function activateTab(tab) {
+    if(tab.length == 0) return;
+
+    var rel = tab.attr('rel');
+    history.pushState(null, null, '#' + rel);
     tab = $(tab);
-    var panel = $('#'+tab.attr('rel'));
+    var panel = $('#'+rel);
 
     tab.closest('.tab-bar').find('a.active').removeClass('active');
     tab.addClass('active');
 
     // If clicking into 'backtrace' tab, hide external backtrace
-    if (tab.attr('rel') == "backtrace") { hide_external_backtrace(); }
+    if (rel == "backtrace") { hide_external_backtrace(); }
+
+    setAnchorForPaginationLinks();
 
     $('.panel').hide();
     panel.show();
+  }
+
+  function setAnchorForPaginationLinks(){
+    var links = $('.notice-pagination a');
+    links.each(function(){
+      var link = $(this);
+      var new_href = link.attr('href').replace(/#.*/, '') + '#' + currentTabName();
+      link.attr('href', new_href);
+    });
   }
 
   window.toggleProblemsCheckboxes = function() {

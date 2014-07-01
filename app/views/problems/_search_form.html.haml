@@ -1,5 +1,5 @@
 %section
-  = search_form_for q, url: url, remote: true do |f|
+  = search_form_for q, url: url do |f|
     %div
       = f.label :search
       = f.search_field :error_class_or_where_or_message_or_app_name_or_environment_cont,

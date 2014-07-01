@@ -126,5 +126,5 @@ gem 'uglifier',     '>= 1.0.3'
 # To do that, we need fix the rails.js
 gem 'jquery-rails', '~> 2.1.4'
 gem 'underscore-rails'
-
-gem 'pjax_rails'
+gem 'turbolinks'
+gem 'jquery-turbolinks'
