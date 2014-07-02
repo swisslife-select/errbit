@@ -3,8 +3,7 @@ class Apps::ProblemsController < Apps::ApplicationController
 
   def show
     @problem = resource_app.problems.detect_by_param!(params[:id])
-    @notices = @problem.notices.reverse_ordered.page(params[:notice]).per(1)
-    @notice = @notices.first
+    @notice = @problem.notices.for_show(params[:notice_id])
     @comment = Comment.new
   end
 

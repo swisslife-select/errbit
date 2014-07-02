@@ -31,14 +31,12 @@ describe Apps::ProblemsController do
 
         it "paginates the notices 1 at a time, starting with the most recent" do
           get :show, :app_id => app.id, :id => err.problem.id
-          expect(assigns(:notices).entries.count).to eq 1
-          expect(assigns(:notices)).to include(notices.last)
+          expect(assigns(:notice)).to eq(notices.last)
         end
 
-        it "paginates the notices 1 at a time, based on then notice param" do
-          get :show, :app_id => app.id, :id => err.problem.id, :notice => 3
-          expect(assigns(:notices).entries.count).to eq 1
-          expect(assigns(:notices)).to include(notices.first)
+        it "paginates the notices 1 at a time, based on then notice_id param" do
+          get :show, :app_id => app.id, :id => err.problem.id, :notice_id => notices.first
+          expect(assigns(:notice)).to eq(notices.first)
         end
       end
 
