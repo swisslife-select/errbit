@@ -2,14 +2,14 @@
   .notice-pagination
     ~ link_to_if notice.previous, raw('← Older'), {notice_id: notice.previous.try(:id)} do |name|
       ~ content_tag :span, name, class: 'next_page disabled'
-    = '|'
+    = ' | '
     ~ link_to_if notice.next, raw('Newer →'), {notice_id: notice.next.try(:id)}  do |name|
       ~ content_tag :span, name, class: 'previous_page disabled'
 
   .notice-pagination
     ~ link_to_if notice.previous, raw('← First'), {notice_id: problem.notices.first.try(:id)} do |name|
       ~ content_tag :span, name, class: 'next_page disabled'
-    = '|'
+    = ' | '
     ~ link_to_if notice.next, raw('Last →'), {notice_id: problem.notices.last.try(:id)}  do |name|
       ~ content_tag :span, name, class: 'previous_page disabled'
   %div viewing occurrence #{notice.index_number + 1} of #{problem.notices_count}
