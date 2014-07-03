@@ -7,6 +7,8 @@ class IssueTracker < ActiveRecord::Base
 
   belongs_to :app, :inverse_of => :issue_tracker
 
+  store :payload
+
   validate :check_params
 
   # Subclasses are responsible for overwriting this method.

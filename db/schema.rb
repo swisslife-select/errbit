@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140529135123) do
+ActiveRecord::Schema.define(version: 20140703150600) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,8 +26,8 @@ ActiveRecord::Schema.define(version: 20140529135123) do
     t.boolean  "notify_on_errs",            default: true
     t.boolean  "notify_on_deploys",         default: false
     t.text     "email_at_notices"
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "repo_url"
     t.integer  "unresolved_problems_count", default: 0,     null: false
   end
@@ -38,16 +38,16 @@ ActiveRecord::Schema.define(version: 20140529135123) do
     t.integer  "number"
     t.text     "file"
     t.text     "method"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "backtrace_lines", ["backtrace_id"], name: "index_backtrace_lines_on_backtrace_id", using: :btree
 
   create_table "backtraces", force: true do |t|
     t.string   "fingerprint"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "backtraces", ["fingerprint"], name: "index_backtraces_on_fingerprint", using: :btree
@@ -56,8 +56,8 @@ ActiveRecord::Schema.define(version: 20140529135123) do
     t.integer  "user_id"
     t.integer  "problem_id"
     t.text     "body"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "comments", ["problem_id"], name: "index_comments_on_problem_id", using: :btree
@@ -70,8 +70,8 @@ ActiveRecord::Schema.define(version: 20140529135123) do
     t.string   "revision"
     t.string   "message"
     t.integer  "app_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.text     "vcs_changes"
     t.string   "notice_state"
   end
@@ -81,8 +81,8 @@ ActiveRecord::Schema.define(version: 20140529135123) do
   create_table "errs", force: true do |t|
     t.integer  "problem_id"
     t.string   "fingerprint"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "errs", ["fingerprint"], name: "index_errs_on_fingerprint", using: :btree
@@ -105,8 +105,9 @@ ActiveRecord::Schema.define(version: 20140529135123) do
     t.string   "issue_type"
     t.string   "issue_component"
     t.string   "issue_priority"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "payload"
   end
 
   add_index "issue_trackers", ["app_id"], name: "index_issue_trackers_on_app_id", using: :btree
@@ -122,8 +123,8 @@ ActiveRecord::Schema.define(version: 20140529135123) do
     t.string   "framework"
     t.text     "current_user"
     t.text     "error_class"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "notices", ["backtrace_id"], name: "index_notices_on_backtrace_id", using: :btree
@@ -140,8 +141,8 @@ ActiveRecord::Schema.define(version: 20140529135123) do
     t.string   "sender_name"
     t.string   "type"
     t.text     "notify_at_notices"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "notification_services", ["app_id"], name: "index_notification_services_on_app_id", using: :btree
@@ -164,8 +165,8 @@ ActiveRecord::Schema.define(version: 20140529135123) do
     t.text     "user_agents"
     t.text     "messages"
     t.text     "hosts"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "problems", ["app_id"], name: "index_problems_on_app_id", using: :btree
@@ -184,8 +185,8 @@ ActiveRecord::Schema.define(version: 20140529135123) do
     t.boolean  "admin"
     t.integer  "per_page"
     t.string   "time_zone"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
@@ -207,8 +208,8 @@ ActiveRecord::Schema.define(version: 20140529135123) do
     t.integer  "app_id"
     t.integer  "user_id"
     t.string   "email"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.boolean  "watching_errors"
     t.boolean  "watching_deploys"
   end

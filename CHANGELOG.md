@@ -1,6 +1,7 @@
 ## 0.6.0 - Not released Yet
 
 - Add turbolinks
+- Add tags and category_id for redmine
 
 By [@darkleaf](https://github.com/darkleaf)
 
