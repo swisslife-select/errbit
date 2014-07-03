@@ -1,8 +1,10 @@
 - if notice
   .notice-pagination
-    ~ link_to_if notice.previous, raw('← Older'), {notice_id: notice.previous.try(:id)}, {class: "next_page", rel: "next"} do |name|
+    ~ link_to_if notice.previous, '← First', {notice_id: problem.notices.first.try(:id) }
+    ~ link_to_if notice.previous, 'Older', {notice_id: notice.previous.try(:id)} do |name|
       ~ content_tag :span, name, class: 'next_page disabled'
     = '|'
-    ~ link_to_if notice.next, raw('Newer →'), {notice_id: notice.next.try(:id)}, {class: "previous_page", rel: "prev"} do |name|
+    ~ link_to_if notice.next, 'Newer', {notice_id: notice.next.try(:id)}  do |name|
       ~ content_tag :span, name, class: 'previous_page disabled'
-  %div viewing occurrence #{notice.index_number + 1} of #{notices_count}
+    ~ link_to_if notice.next, 'Last →', {notice_id: problem.notices.last.try(:id) }
+  %div viewing occurrence #{notice.index_number + 1} of #{problem.notices_count}

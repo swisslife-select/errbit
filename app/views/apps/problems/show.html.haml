@@ -51,7 +51,7 @@
 
 %h4= @notice.try(:message)
 
-= render 'notice_pagination', notice: @notice, notices_count: @problem.notices_count
+= render 'notice_pagination', notice: @notice, problem: @problem
 
 .tab-bar
   %ul
