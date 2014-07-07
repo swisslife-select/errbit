@@ -1,6 +1,7 @@
 ## 0.6.0 - Not released Yet
 
 - Add turbolinks
+- Save back url when user login
 
 By [@darkleaf](https://github.com/darkleaf)
 

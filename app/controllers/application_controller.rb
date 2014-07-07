@@ -43,6 +43,7 @@ protected
   def authority_forbidden(error)
     Authority.logger.warn(error.message)
     if current_user_or_guest.guest?
+      store_location_for :user, request.fullpath
       redirect_to new_user_session_path
     else
       flash[:error] = "Sorry, you don't have permission to do that"
