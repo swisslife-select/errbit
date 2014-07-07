@@ -10,6 +10,12 @@
 [gemnasium-url]:https://gemnasium.com/Undev/errbit
 
 
+### Discussion ###
+
+[![Gitter chat](https://badges.gitter.im/Undev/errbit-channel.png)](https://gitter.im/Undev/errbit-channel)
+
+If you have any questions you can ask them [here](https://gitter.im/Undev/errbit-channel).
+
 ### Migrate data from MongoDB
 
 * Create postgres database
