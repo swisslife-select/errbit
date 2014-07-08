@@ -2,6 +2,7 @@
 
 - Add turbolinks
 - Save back url when user login
+- Add tags and category_id for redmine
 
 By [@darkleaf](https://github.com/darkleaf)
 

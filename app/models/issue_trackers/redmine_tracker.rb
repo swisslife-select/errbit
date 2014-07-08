@@ -25,8 +25,20 @@ if defined? RedmineClient
         :optional    => true,
         :label       => "App Project",
         :placeholder => "Where app's files & revisions can be viewed. (Leave blank to use the above project by default)"
+      }],
+      [:tags, {
+        :optional    => true,
+        :label       => "Tags",
+        :placeholder => "Tags separated by spaces"
+      }],
+      [:category_id, {
+        :optional    => true,
+        :label       => "Category ID",
+        :placeholder => "Identifier"
       }]
     ]
+
+    store_accessor :payload, :tags, :category_id
 
     def check_params
       if Fields.detect {|f| self[f[0]].blank? && !f[1][:optional]}
@@ -49,6 +61,8 @@ if defined? RedmineClient
       issue = RedmineClient::Issue.new(:project_id => project_id.to_s)
       issue.subject = issue_title problem
       issue.description = body_template.result(binding)
+      issue.tags = tags
+      issue.category_id = category_id
       issue.save!
       problem.update_attributes(
         :issue_link => "#{RedmineClient::Issue.site.to_s.sub(/#{RedmineClient::Issue.site.path}$/, '')}#{RedmineClient::Issue.element_path(issue.id, :project_id => project_id)}".sub(/\.xml\?project_id=#{project_id}$/, "\?project_id=#{project_id}"),
