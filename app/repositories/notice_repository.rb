@@ -21,9 +21,4 @@ module NoticeRepository
   def next
     problem.notices.ordered.where("id > ?", id).first
   end
-
-  # from zero
-  def index_number
-    problem.notices.where("id < ?", id).count
-  end
 end

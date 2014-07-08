@@ -12,4 +12,4 @@
     = ' | '
     ~ link_to_if notice.next, raw('Last →'), {notice_id: problem.notices.last.try(:id)}  do |name|
       ~ content_tag :span, name, class: 'previous_page disabled'
-  %div viewing occurrence #{notice.index_number + 1} of #{problem.notices_count}
+  %div total occurrences: #{problem.notices_count}
