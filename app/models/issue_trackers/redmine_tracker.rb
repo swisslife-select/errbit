@@ -35,10 +35,15 @@ if defined? RedmineClient
         :optional    => true,
         :label       => "Category ID",
         :placeholder => "Identifier"
+      }],
+      [:assigned_to_id, {
+          :optional    => true,
+          :label       => "Assigned to ID",
+          :placeholder => "User Identifier"
       }]
     ]
 
-    store_accessor :payload, :tags, :category_id
+    store_accessor :payload, :tags, :category_id, :assigned_to_id
 
     def check_params
       if Fields.detect {|f| self[f[0]].blank? && !f[1][:optional]}
@@ -63,6 +68,7 @@ if defined? RedmineClient
       issue.description = body_template.result(binding)
       issue.tags = tags
       issue.category_id = category_id
+      issue.assigned_to_id = assigned_to_id
       issue.save!
       problem.update_attributes(
         :issue_link => "#{RedmineClient::Issue.site.to_s.sub(/#{RedmineClient::Issue.site.path}$/, '')}#{RedmineClient::Issue.element_path(issue.id, :project_id => project_id)}".sub(/\.xml\?project_id=#{project_id}$/, "\?project_id=#{project_id}"),
