@@ -27,6 +27,8 @@ namespace :errbit do
   task :bootstrap do
     Rake::Task['errbit:copy_configs'].execute
     puts "\n"
+    Rake::Task['db:create'].invoke
+    Rake::Task['db:migrate'].invoke
     Rake::Task['db:seed'].invoke
   end
 

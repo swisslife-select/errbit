@@ -165,8 +165,13 @@ gem install bundler
 ```bash
 bundle install
 ```
+  * Add errbit user to postgresql
 
-  * Bootstrap Errbit. This will copy over config.yml and also seed the database.
+```bash
+createuser errbit -dr
+```
+
+* Bootstrap Errbit. This will copy over config.yml and also seed the database.
 
 ```bash
 rake errbit:bootstrap
