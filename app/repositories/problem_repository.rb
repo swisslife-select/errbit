@@ -29,8 +29,4 @@ module ProblemRepository
       where(["first_notice_at <= ? AND (resolved_at IS NULL OR resolved_at >= ?)", date_range.end, date_range.begin])
     end
   end
-
-  def notices
-    Notice.for_errs(errs).ordered
-  end
 end

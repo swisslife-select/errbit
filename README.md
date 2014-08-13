@@ -122,6 +122,7 @@ The list of requirement to install Errbit is :
 
  * Ruby 1.9.3 or higher
  * Postgres
+ * Redis
 
 By default it's the Ruby 2.0.0 to use. But you can define your own ruby
 version with RUBY_VERSION variable between :

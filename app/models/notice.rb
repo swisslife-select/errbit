@@ -17,8 +17,10 @@ class Notice < ActiveRecord::Base
   belongs_to :backtrace
 
   after_create :unresolve_problem, :cache_attributes_on_problem
+  after_commit :update_problem_distributions, on: :create
+
   before_save :sanitize
-  before_destroy :decrease_counter_cache, :remove_cached_attributes_from_problem
+  before_destroy :decrease_counter_cache
   after_initialize :default_values
 
   validates_presence_of :backtrace, :server_environment, :notifier
@@ -31,6 +33,10 @@ class Notice < ActiveRecord::Base
       self.user_attributes ||= Hash.new
       self.current_user ||= Hash.new
     end
+  end
+
+  def message_signature
+    message.to_s.gsub(/(0x\h+)|(\d+)/, '%NUM%').truncate(150)
   end
 
   def user_agent
@@ -129,12 +135,14 @@ class Notice < ActiveRecord::Base
 
   protected
 
-  def decrease_counter_cache
-    problem.inc(:notices_count, -1) if err
+  def update_problem_distributions
+    problem.register_in_message_distribution message_signature
+    problem.register_in_host_distribution host
+    problem.register_in_user_agent_distribution user_agent_string
   end
 
-  def remove_cached_attributes_from_problem
-    problem.remove_cached_notice_attributes(self) if err
+  def decrease_counter_cache
+    problem.inc(:notices_count, -1) if err
   end
 
   def unresolve_problem

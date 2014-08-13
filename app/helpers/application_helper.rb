@@ -1,8 +1,4 @@
 module ApplicationHelper
-  def message_graph(problem)
-    create_percentage_table_for(problem.messages)
-  end
-
   def generate_problem_ical(notices)
     RiCal.Calendar do |cal|
       notices.each_with_index do |notice,idx|
@@ -32,33 +28,6 @@ module ApplicationHelper
         end
       end
     }.to_s
-  end
-
-  def user_agent_graph(problem)
-    create_percentage_table_for(problem.user_agents)
-  end
-
-  def tenant_graph(problem)
-    create_percentage_table_for(problem.hosts)
-  end
-
-  def create_percentage_table_for(collection)
-    create_percentage_table_from_tallies(tally(collection))
-  end
-
-  def tally(collection)
-    collection.values.inject({}) do |tallies, tally|
-      tallies[tally['value']] = tally['count']
-      tallies
-    end
-  end
-
-  def create_percentage_table_from_tallies(tallies, options={})
-    total   = (options[:total] || total_from_tallies(tallies))
-    percent = 100.0 / total.to_f
-    rows    = tallies.map {|value, count| [(count.to_f * percent), value]} \
-                     .sort {|a, b| b[0] <=> a[0]}
-    render "problems/tally_table", :rows => rows
   end
 
   def head(collection)

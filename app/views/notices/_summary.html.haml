@@ -2,7 +2,9 @@
   %table.summary
     %tr
       %th Message
-      %td.main.nowrap= message_graph(problem)
+      -#%td.main.nowrap= message_graph(problem)
+      %td.main.nowrap
+        = render "problems/tally_table", rows: problem.message_distribution
     %tr
       %th Error Class
       %td= notice.error_class
@@ -21,10 +23,12 @@
       %td= problem.notices_count - 1
     %tr
       %th Browser
-      %td= user_agent_graph(problem)
+      %td
+        = render "problems/tally_table", rows: problem.user_agent_distribution
     %tr
       %th Tenant
-      %td= tenant_graph(problem)
+      %td
+        = render "problems/tally_table", rows: problem.host_distribution
     - if notice.server_environment && notice.server_environment["hostname"]
       %tr
         %th App Server

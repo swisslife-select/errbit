@@ -43,7 +43,7 @@
                   = link_to @notice.request['url'], @notice.request['url']
               %p.heading BROWSER:
               %p.monospace
-                = user_agent_graph(@notice.problem)
+                = @notice.user_agent_string
               %br
               - if @notice.user_attributes.present?
                 %p.heading USER:
