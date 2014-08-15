@@ -37,7 +37,12 @@ class Notice < ActiveRecord::Base
   end
 
   def message_signature
-    message.to_s.gsub(/(0x\h+)|(\d+)/, '%NUM%').truncate(150)
+    m = message.clone
+    m.gsub!(/".*?"/, '"%STR%"')
+    m.gsub!(/'.*?'/, '\'%STR%\'')
+    m.gsub!(/0x\h+/, '%HEX%')
+    m.gsub!(/-?\d+/, '%NUM%')
+    m.truncate(150)
   end
 
   def user_agent
