@@ -72,6 +72,9 @@ class Notice < ActiveRecord::Base
 
   def request
     super || {}
+  rescue Psych::SyntaxError
+    # some notices may have incorrect yaml inside request field
+    {}
   end
 
   def url
