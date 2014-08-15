@@ -17,7 +17,8 @@ class Notice < ActiveRecord::Base
   belongs_to :backtrace
 
   after_create :unresolve_problem, :cache_attributes_on_problem
-  after_commit :update_problem_distributions, on: :create
+  after_commit :increase_in_distributions, on: :create
+  after_commit :decrease_in_distributions, on: :destroy
 
   before_save :sanitize
   before_destroy :decrease_counter_cache
@@ -138,10 +139,16 @@ class Notice < ActiveRecord::Base
 
   protected
 
-  def update_problem_distributions
-    problem.register_in_message_distribution message_signature
-    problem.register_in_host_distribution host
-    problem.register_in_user_agent_distribution user_agent_string
+  def increase_in_distributions
+    problem.increase_in_message_distribution message_signature
+    problem.increase_in_host_distribution host
+    problem.increase_in_user_agent_distribution user_agent_string
+  end
+
+  def decrease_in_distributions
+    problem.decrease_in_message_distribution message_signature
+    problem.decrease_in_host_distribution host
+    problem.decrease_in_user_agent_distribution user_agent_string
   end
 
   def decrease_counter_cache

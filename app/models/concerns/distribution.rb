@@ -13,8 +13,12 @@ module Distribution
 
         sorted_set(sorted_set_name)
 
-        define_method "register_in_#{name}_distribution" do |value, count = 1|
+        define_method "increase_in_#{name}_distribution" do |value, count = 1|
           send(sorted_set_name).incr(value, count)
+        end
+
+        define_method "decrease_in_#{name}_distribution" do |value, count = 1|
+          send(sorted_set_name).decr(value, count)
         end
 
         define_method "#{name}_distribution" do
