@@ -17,6 +17,7 @@ module DistributionFiller
 
     def reindex_all(problem_scope)
       problem_scope.find_each do |problem|
+        puts "Problem id: #{problem.id}"
         reindex(problem)
       end
     end

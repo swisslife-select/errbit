@@ -37,6 +37,10 @@ If you have any questions you can ask them [here](https://gitter.im/Undev/errbit
 - plugin system
 - update README
 
+### FAQ ###
+
+- I see empty messages, hosts, user_agents blocks: run `rake errbit:fill_problem_distributions`
+
 ### Related projects  ###
 
 -   [erl_proxy](https://github.com/av-ast/erl_proxy)
