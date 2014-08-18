@@ -255,5 +255,28 @@ describe Problem do
       expect(@app.reload.unresolved_problems_count).to eq 1
     end
   end
+
+  context "distributions" do
+    before do
+      @problem = Fabricate(:problem)
+      @err = Fabricate(:err, problem: @problem)
+      @notice1 = Fabricate(:notice, message: "mistake", err: @err)
+      @notice2 = Fabricate(:notice, message: "error", err: @err)
+    end
+
+    it "correct" do
+      messages = @problem.message_distribution.map(&:first)
+      percents = @problem.message_distribution.map(&:last)
+
+      expect(@problem.message_distribution.length).to be(2)
+      expect(messages).to include(@notice1.message_signature, @notice2.message_signature)
+      expect(percents.sum).to be(100.0)
+    end
+
+    it "remove redis key after problem destroy" do
+      @problem.destroy
+      expect(@problem.message_distribution.none?).to be(true)
+    end
+  end
 end
 

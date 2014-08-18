@@ -36,6 +36,8 @@ module Distribution
         define_method "fill_#{name}_distribution" do |values|
           send(sorted_set_name).add_all values
         end
+
+        after_commit "clear_#{name}_distribution", on: :destroy
       end
     end
 
