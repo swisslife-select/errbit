@@ -11,14 +11,6 @@ describe ProblemUpdaterCache do
         problem.update_attribute(:notices_count, 0)
       end
 
-      it 'update the notice_count' do
-        expect {
-          ProblemUpdaterCache.new(problem).update
-        }.to change{
-          problem.notices_count
-        }.from(0).to(1)
-      end
-
       context "with only one notice" do
         before do
           problem.update_attributes!(:messages => {})
@@ -102,14 +94,6 @@ describe ProblemUpdaterCache do
 
       before do
         ProblemUpdaterCache.new(problem, notice).update
-      end
-
-      it 'increase notices_count by 1' do
-        expect {
-          ProblemUpdaterCache.new(problem, notice).update
-        }.to change{
-          problem.notices_count
-        }.by(1)
       end
 
       it 'update information about this notice' do

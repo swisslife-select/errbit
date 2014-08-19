@@ -49,13 +49,14 @@ describe Mailer do
 
   context "Comment Notification" do
     let!(:notice) { Fabricate(:notice) }
-    let!(:comment) { Fabricate.build(:comment, :problem => notice.problem) }
+    let!(:comment) { Fabricate(:comment, :problem => notice.problem) }
     let!(:watcher) { Fabricate(:watcher, :app => comment.app) }
     let(:recipients) { ['recipient@example.com', 'another@example.com']}
 
     before do
-      comment.stub(:notification_recipients).and_return(recipients)
       Fabricate(:notice, :err => notice.err)
+      comment.reload #for counter_cache
+      comment.stub(:notification_recipients).and_return(recipients)
       @email = Mailer.comment_notification(comment).deliver
     end
 

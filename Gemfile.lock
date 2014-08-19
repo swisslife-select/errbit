@@ -386,6 +386,7 @@ PLATFORMS
 
 DEPENDENCIES
   actionmailer_inline_css
+  after_commit_action
   airbrake (= 3.1.15)
   authority
   better_errors

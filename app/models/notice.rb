@@ -16,9 +16,11 @@ class Notice < ActiveRecord::Base
   belongs_to :err
   belongs_to :backtrace
 
+  counter_culture [:err, :problem]
+
   after_create :unresolve_problem, :cache_attributes_on_problem
   before_save :sanitize
-  before_destroy :decrease_counter_cache, :remove_cached_attributes_from_problem
+  before_destroy :remove_cached_attributes_from_problem
   after_initialize :default_values
 
   validates_presence_of :backtrace, :server_environment, :notifier
@@ -129,15 +131,12 @@ class Notice < ActiveRecord::Base
 
   protected
 
-  def decrease_counter_cache
-    problem.inc(:notices_count, -1) if err
-  end
-
   def remove_cached_attributes_from_problem
     problem.remove_cached_notice_attributes(self) if err
   end
 
   def unresolve_problem
+    #TODO: WTF? O_o notices_count: 0
     problem.update_attributes!(:resolved => false, :resolved_at => nil, :notices_count => 0) if problem.resolved?
   end
 

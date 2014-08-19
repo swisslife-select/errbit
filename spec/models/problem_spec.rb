@@ -43,10 +43,10 @@ describe Problem do
       expect(problem).to_not be_nil
 
       notice1 = Fabricate(:notice, :err => err)
-      expect(problem.last_notice_at).to eq notice1.created_at
+      expect(problem.last_notice_at).to be_within(1).of(notice1.created_at)
 
       notice2 = Fabricate(:notice, :err => err)
-      expect(problem.last_notice_at).to eq notice2.created_at
+      expect(problem.last_notice_at).to be_within(1).of(notice2.created_at)
     end
   end
 
@@ -174,32 +174,6 @@ describe Problem do
         expect(Problem.unresolved).to_not include(resolved)
         expect(Problem.unresolved).to include(unresolved)
       end
-    end
-  end
-
-  context "notice counter cache" do
-    before do
-      @app = Fabricate(:app)
-      @problem = Fabricate(:problem, :app => @app)
-      @err = Fabricate(:err, :problem => @problem)
-    end
-
-    it "#notices_count returns 0 by default" do
-      expect(@problem.notices_count).to eq 0
-    end
-
-    it "adding a notice increases #notices_count by 1" do
-      expect {
-        Fabricate(:notice, :err => @err, :message => 'ERR 1')
-      }.to change(@problem.reload, :notices_count).from(0).to(1)
-    end
-
-    it "removing a notice decreases #notices_count by 1" do
-      notice1 = Fabricate(:notice, :err => @err, :message => 'ERR 1')
-      expect {
-        @err.notices.first.destroy
-        @problem.reload
-      }.to change(@problem, :notices_count).from(1).to(0)
     end
   end
 

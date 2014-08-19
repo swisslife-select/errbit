@@ -13,22 +13,12 @@ class ProblemUpdaterCache
   # @return [ Problem ] the problem with this update
   #
   def update
-    update_notices_count
+    #update_notices_count ## Problem merging are deprecated
     update_notices_cache
     problem
   end
 
   private
-
-  def update_notices_count
-    if @notice
-      problem.inc(:notices_count, 1)
-    else
-      problem.update_attribute(
-        :notices_count, problem.notices.count
-      )
-    end
-  end
 
   ##
   # Update problem statistique from some notice information

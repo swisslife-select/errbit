@@ -133,7 +133,6 @@ module DataMigration
       :issue_link => :issue_link,
       :issue_type => :issue_type,
 
-      :notices_count => :notices_count,
       :message => :message,
       :environment => :environment,
       :error_class => :error_class,

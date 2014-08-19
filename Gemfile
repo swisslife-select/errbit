@@ -4,6 +4,7 @@ gem 'rails', '~> 4.1.1'
 
 gem 'pg'
 gem 'counter_culture'
+gem 'after_commit_action'
 gem 'ransack'
 gem 'rails-observers'
 
