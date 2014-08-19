@@ -17,8 +17,11 @@ class Notice < ActiveRecord::Base
   belongs_to :backtrace
 
   after_create :unresolve_problem, :cache_attributes_on_problem
+  after_commit :increase_in_distributions, on: :create
+  after_commit :decrease_in_distributions, on: :destroy
+
   before_save :sanitize
-  before_destroy :decrease_counter_cache, :remove_cached_attributes_from_problem
+  before_destroy :decrease_counter_cache
   after_initialize :default_values
 
   validates_presence_of :backtrace, :server_environment, :notifier
@@ -31,6 +34,15 @@ class Notice < ActiveRecord::Base
       self.user_attributes ||= Hash.new
       self.current_user ||= Hash.new
     end
+  end
+
+  def message_signature
+    m = message.clone
+    m.gsub!(/".*?"/, '"%STR%"')
+    m.gsub!(/'.*?'/, '\'%STR%\'')
+    m.gsub!(/0x\h+/, '%HEX%')
+    m.gsub!(/-?\d+/, '%NUM%')
+    m.truncate(150)
   end
 
   def user_agent
@@ -66,6 +78,9 @@ class Notice < ActiveRecord::Base
 
   def request
     super || {}
+  rescue Psych::SyntaxError
+    # some notices may have incorrect yaml inside request field
+    {}
   end
 
   def url
@@ -129,12 +144,20 @@ class Notice < ActiveRecord::Base
 
   protected
 
-  def decrease_counter_cache
-    problem.inc(:notices_count, -1) if err
+  def increase_in_distributions
+    problem.increase_in_message_distribution message_signature
+    problem.increase_in_host_distribution host
+    problem.increase_in_user_agent_distribution user_agent_string
   end
 
-  def remove_cached_attributes_from_problem
-    problem.remove_cached_notice_attributes(self) if err
+  def decrease_in_distributions
+    problem.decrease_in_message_distribution message_signature
+    problem.decrease_in_host_distribution host
+    problem.decrease_in_user_agent_distribution user_agent_string
+  end
+
+  def decrease_counter_cache
+    problem.inc(:notices_count, -1) if err
   end
 
   def unresolve_problem

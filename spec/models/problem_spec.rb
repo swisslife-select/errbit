@@ -225,93 +225,6 @@ describe Problem do
     end
   end
 
-  context "notice messages cache" do
-    before do
-      @app = Fabricate(:app)
-      @problem = Fabricate(:problem, :app => @app)
-      @err = Fabricate(:err, :problem => @problem)
-    end
-
-    it "#messages should be empty by default" do
-      expect(@problem.messages).to eq ({})
-    end
-
-    it "adding a notice adds a string to #messages" do
-      expect {
-        Fabricate(:notice, :err => @err, :message => 'ERR 1')
-      }.to change(@problem, :messages).from({}).to({Digest::MD5.hexdigest('ERR 1') => {'value' => 'ERR 1', 'count' => 1}})
-    end
-
-    it "removing a notice removes string from #messages" do
-      notice1 = Fabricate(:notice, :err => @err, :message => 'ERR 1')
-      expect {
-        @err.notices.first.destroy
-        @problem.reload
-      }.to change(@problem, :messages).from({Digest::MD5.hexdigest('ERR 1') => {'value' => 'ERR 1', 'count' => 1}}).to({})
-    end
-
-    it "removing a notice from the problem with broken counter should not raise an error" do
-      notice1 = Fabricate(:notice, :err => @err, :message => 'ERR 1')
-      @problem.messages = {}
-      @problem.save!
-      expect {@err.notices.first.destroy}.not_to raise_error
-    end
-  end
-
-  context "notice hosts cache" do
-    before do
-      @app = Fabricate(:app)
-      @problem = Fabricate(:problem, :app => @app)
-      @err = Fabricate(:err, :problem => @problem)
-    end
-
-    it "#hosts should be empty by default" do
-      expect(@problem.hosts).to eq ({})
-    end
-
-    it "adding a notice adds a string to #hosts" do
-      expect {
-        Fabricate(:notice, :err => @err, :request => {'url' => "http://example.com/resource/12"})
-      }.to change(@problem, :hosts).from({}).to({Digest::MD5.hexdigest('example.com') => {'value' => 'example.com', 'count' => 1}})
-    end
-
-    it "removing a notice removes string from #hosts" do
-      notice1 = Fabricate(:notice, :err => @err, :request => {'url' => "http://example.com/resource/12"})
-      expect {
-        @err.notices.first.destroy
-        @problem.reload
-      }.to change(@problem, :hosts).from({Digest::MD5.hexdigest('example.com') => {'value' => 'example.com', 'count' => 1}}).to({})
-    end
-  end
-
-  context "notice user_agents cache" do
-    before do
-      @app = Fabricate(:app)
-      @problem = Fabricate(:problem, :app => @app)
-      @err = Fabricate(:err, :problem => @problem)
-    end
-
-    it "#user_agents should be empty by default" do
-      expect(@problem.user_agents).to eq ({})
-    end
-
-    it "adding a notice adds a string to #user_agents" do
-      expect {
-        Fabricate(:notice, :err => @err, :request => {'cgi-data' => {'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_7; en-US) AppleWebKit/534.16 (KHTML, like Gecko) Chrome/10.0.648.204 Safari/534.16'}})
-      }.to change(@problem, :user_agents).from({}).to({Digest::MD5.hexdigest('Chrome 10.0.648.204 (OS X 10.6.7)') => {'value' => 'Chrome 10.0.648.204 (OS X 10.6.7)', 'count' => 1}})
-    end
-
-    it "removing a notice removes string from #user_agents" do
-      notice1 = Fabricate(:notice, :err => @err, :request => {'cgi-data' => {'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_7; en-US) AppleWebKit/534.16 (KHTML, like Gecko) Chrome/10.0.648.204 Safari/534.16'}})
-      expect {
-        @err.notices.first.destroy
-        @problem.reload
-      }.to change(@problem, :user_agents).from({
-        Digest::MD5.hexdigest('Chrome 10.0.648.204 (OS X 10.6.7)') => {'value' => 'Chrome 10.0.648.204 (OS X 10.6.7)', 'count' => 1}
-      }).to({})
-    end
-  end
-
   context "app unresolved_problems_count cache" do
     before do
       @app = Fabricate(:app)
@@ -340,6 +253,29 @@ describe Problem do
       err = Fabricate(:err, :problem => @problem)
       Fabricate(:notice, :err => err)
       expect(@app.reload.unresolved_problems_count).to eq 1
+    end
+  end
+
+  context "distributions" do
+    before do
+      @problem = Fabricate(:problem)
+      @err = Fabricate(:err, problem: @problem)
+      @notice1 = Fabricate(:notice, message: "mistake", err: @err)
+      @notice2 = Fabricate(:notice, message: "error", err: @err)
+    end
+
+    it "correct" do
+      messages = @problem.message_distribution.map(&:first)
+      percents = @problem.message_distribution.map(&:last)
+
+      expect(@problem.message_distribution.length).to be(2)
+      expect(messages).to include(@notice1.message_signature, @notice2.message_signature)
+      expect(percents.sum).to be(100.0)
+    end
+
+    it "remove redis key after problem destroy" do
+      @problem.destroy
+      expect(@problem.message_distribution.none?).to be(true)
     end
   end
 end

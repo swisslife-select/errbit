@@ -7,6 +7,10 @@ gem 'counter_culture'
 gem 'ransack'
 gem 'rails-observers'
 
+gem 'redis-objects'
+gem "redis", require: ["redis", "redis/connection/hiredis"]
+gem 'hiredis'
+
 gem 'devise'
 gem 'authority'
 
@@ -112,7 +116,8 @@ group :test do
   gem 'test_after_commit'
   gem 'email_spec'
   gem 'timecop'
-  gem 'coveralls', :require => false
+  gem 'coveralls', require: false
+  gem "fakeredis", require: 'fakeredis/rspec'
 end
 
 group :heroku, :production do
