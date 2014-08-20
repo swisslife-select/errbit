@@ -15,10 +15,10 @@ module NoticeRepository
   end
 
   def previous
-    problem.notices.reverse_ordered.where("notices.id < ?", id).first
+    problem.notices.order(id: :desc).where("notices.id < ?", id).first
   end
 
   def next
-    problem.notices.ordered.where("notices.id > ?", id).first
+    problem.notices.order(id: :asc).where("notices.id > ?", id).first
   end
 end
