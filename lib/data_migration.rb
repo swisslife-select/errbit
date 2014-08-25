@@ -128,7 +128,7 @@ module DataMigration
       :last_notice_at => :last_notice_at,
       :first_notice_at => :first_notice_at,
       :last_deploy_at => :last_deploy_at,
-      :resolved => :resolved,
+      :state => lambda{ |v| v['resolved'] ? :resolved : :unresolved },
       :resolved_at => :resolved_at,
       :issue_link => :issue_link,
       :issue_type => :issue_type,

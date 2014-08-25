@@ -157,8 +157,10 @@ class Notice < ActiveRecord::Base
   end
 
   def unresolve_problem
+    return if problem.unresolved?
     #TODO: WTF? O_o notices_count: 0
-    problem.update_attributes!(:resolved => false, :resolved_at => nil, :notices_count => 0) if problem.resolved?
+    problem.notices_count = 0
+    problem.unresolve!
   end
 
   def cache_attributes_on_problem

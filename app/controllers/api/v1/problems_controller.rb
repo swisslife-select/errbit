@@ -4,7 +4,7 @@ class Api::V1::ProblemsController < ApplicationController
   authorize_actions_for Problem
 
   def index
-    problems = Problem.select %w{app_id environment message problems.where first_notice_at last_notice_at resolved resolved_at notices_count}
+    problems = Problem.select %w{app_id environment message problems.where first_notice_at last_notice_at state resolved_at notices_count}
 
     if params.key?(:start_date) && params.key?(:end_date)
       start_date = Time.parse(params[:start_date]).utc

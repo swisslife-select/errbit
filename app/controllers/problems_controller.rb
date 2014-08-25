@@ -8,7 +8,7 @@ class ProblemsController < ApplicationController
   helper_method :selected_problems
 
   def index
-    params_q = params.fetch(:q, {}).reverse_merge resolved_eq: false, s: 'last_notice_at desc'
+    params_q = params.fetch(:q, {}).reverse_merge state_eq: 'unresolved', s: 'last_notice_at desc'
     @q = Problem.search(params_q)
 
     @problems = @q.result.for_apps(current_user.available_apps).preload(app: :issue_tracker)
@@ -16,13 +16,13 @@ class ProblemsController < ApplicationController
   end
 
   def resolve_several
-    selected_problems.each(&:resolve!)
+    selected_problems.each(&:resolve)
     flash[:success] = "Great news everyone! #{I18n.t(:n_errs_have, :count => selected_problems.count)} been resolved."
     redirect_to :back
   end
 
   def unresolve_several
-    selected_problems.each(&:unresolve!)
+    selected_problems.each(&:unresolve)
     flash[:success] = "#{I18n.t(:n_errs_have, :count => selected_problems.count)} been unresolved."
     redirect_to :back
   end

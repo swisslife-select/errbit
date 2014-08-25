@@ -35,9 +35,9 @@ describe ProblemsController do
         Fabricate(:user_watcher, user: user, app: app)
         app.watchers(true)
         
-        watched_unresolved_err = Fabricate(:err, problem: Fabricate(:problem, app: app, resolved: false))
-        watched_resolved_err = Fabricate(:err, problem: Fabricate(:problem, app: app, resolved: true))
-        unwatched_unresolved_err = Fabricate(:err, problem: Fabricate(:problem, resolved: false))
+        watched_unresolved_err = Fabricate(:err, problem: Fabricate(:problem, app: app))
+        watched_resolved_err = Fabricate(:err, problem: Fabricate(:problem_resolved, app: app))
+        unwatched_unresolved_err = Fabricate(:err, problem: Fabricate(:problem))
         get :index
         expect(response).to be_success
         expect(assigns(:problems)).to include(watched_unresolved_err.problem)
@@ -50,8 +50,8 @@ describe ProblemsController do
   describe "Bulk Actions" do
     before(:each) do
       sign_in Fabricate(:admin)
-      @problem1 = Fabricate(:err, :problem => Fabricate(:problem, :resolved => true)).problem
-      @problem2 = Fabricate(:err, :problem => Fabricate(:problem, :resolved => false)).problem
+      @problem1 = Fabricate(:err, :problem => Fabricate(:problem_resolved)).problem
+      @problem2 = Fabricate(:err, :problem => Fabricate(:problem)).problem
     end
 
     context "POST /problems/merge_several" do

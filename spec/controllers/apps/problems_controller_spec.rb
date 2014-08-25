@@ -86,7 +86,7 @@ describe Apps::ProblemsController do
     it "should resolve the issue" do
       patch :resolve, :app_id => @err.app.id, :id => @err.problem.id
       @err.reload
-      expect(@err.problem.resolved).to be true
+      expect(@err.problem.resolved?).to be true
     end
 
     it "should display a message" do
@@ -224,8 +224,8 @@ describe Apps::ProblemsController do
   describe "Bulk Actions" do
     before(:each) do
       sign_in Fabricate(:admin)
-      @problem1 = Fabricate(:err, :problem => Fabricate(:problem, :resolved => true)).problem
-      @problem2 = Fabricate(:err, :problem => Fabricate(:problem, :resolved => false)).problem
+      @problem1 = Fabricate(:err, :problem => Fabricate(:problem_resolved)).problem
+      @problem2 = Fabricate(:err, :problem => Fabricate(:problem)).problem
     end
 
     describe "POST /apps/:app_id/problems/destroy_all" do

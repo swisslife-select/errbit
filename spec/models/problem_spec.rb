@@ -84,60 +84,14 @@ describe Problem do
     end
   end
 
-  context "#resolved?" do
-    it "should start out as unresolved" do
-      problem = Problem.new
-      expect(problem).to_not be_resolved
-      expect(problem).to be_unresolved
-    end
-
-    it "should be able to be resolved" do
-      problem = Fabricate(:problem)
-      expect(problem).to_not be_resolved
-      problem.resolve!
-      expect(problem.reload).to be_resolved
-    end
-  end
-
-  context "resolve!" do
-    it "marks the problem as resolved" do
-      problem = Fabricate(:problem)
-      expect(problem).to_not be_resolved
-      problem.resolve!
-      expect(problem).to be_resolved
-    end
-
+  context "resolve" do
     it "should record the time when it was resolved" do
       problem = Fabricate(:problem)
-      expected_resolved_at = Time.zone.now
+      expected_resolved_at = Time.current
       Timecop.freeze(expected_resolved_at) do
         problem.resolve!
       end
-      expect(problem.resolved_at.to_s).to eq expected_resolved_at.to_s
-    end
-
-    it "should not reset notice count" do
-      problem = Fabricate(:problem, :notices_count => 1)
-      original_notices_count = problem.notices_count
-      expect(original_notices_count).to be > 0
-
-      problem.resolve!
-      expect(problem.notices_count).to eq original_notices_count
-    end
-
-    it "should throw an err if it's not successful" do
-      problem = Fabricate(:problem)
-      expect(problem).to_not be_resolved
-      problem.stub(:valid?).and_return(false)
-      ## update_attributes not test #valid? but #errors.any?
-      # https://github.com/mongoid/mongoid/blob/master/lib/mongoid/persistence.rb#L137
-      er = ActiveModel::Errors.new(problem)
-      er.add_on_blank(:resolved)
-      problem.stub(:errors).and_return(er)
-      expect(problem).to_not be_valid
-      expect {
-        problem.resolve!
-      }.to raise_error(ActiveRecord::RecordInvalid)
+      expect(problem.resolved_at).to eq expected_resolved_at
     end
   end
 
@@ -154,26 +108,6 @@ describe Problem do
 
     it "runs smoothly for problem without errs" do
       expect { Fabricate(:problem).unmerge! }.not_to raise_error
-    end
-  end
-
-  context "Scopes" do
-    context "resolved" do
-      it 'only finds resolved Problems' do
-        resolved = Fabricate(:problem, :resolved => true)
-        unresolved = Fabricate(:problem, :resolved => false)
-        expect(Problem.resolved).to include(resolved)
-        expect(Problem.resolved).to_not include(unresolved)
-      end
-    end
-
-    context "unresolved" do
-      it 'only finds unresolved Problems' do
-        resolved = Fabricate(:problem, :resolved => true)
-        unresolved = Fabricate(:problem, :resolved => false)
-        expect(Problem.unresolved).to_not include(resolved)
-        expect(Problem.unresolved).to include(unresolved)
-      end
     end
   end
 

@@ -23,9 +23,26 @@ class Problem < ActiveRecord::Base
 
   validates_presence_of :last_notice_at, :first_notice_at
 
+  state_machine initial: :unresolved do
+    event :resolve do
+      transition :unresolved => :resolved
+    end
+
+    event :unresolve do
+      transition :resolved => :unresolved
+    end
+
+    before_transition any => :resolved do |problem|
+      problem.resolved_at = Time.current
+    end
+
+    before_transition any => :unresolved do |problem|
+      problem.resolved_at = nil
+    end
+  end
+
   def default_values
     if self.new_record?
-      self.resolved = false if self.resolved.nil?
       self.first_notice_at ||= Time.new
       self.last_notice_at ||= Time.new
     end
@@ -33,18 +50,6 @@ class Problem < ActiveRecord::Base
 
   def comments_allowed?
     Errbit::Config.allow_comments_with_issue_tracker || !app.issue_tracker_configured?
-  end
-
-  def resolve!
-    self.update_attributes!(:resolved => true, :resolved_at => Time.now)
-  end
-
-  def unresolve!
-    self.update_attributes!(:resolved => false, :resolved_at => nil)
-  end
-
-  def unresolved?
-    !resolved?
   end
 
   def self.merge!(*problems)

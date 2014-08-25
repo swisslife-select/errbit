@@ -17,7 +17,7 @@ class AppsController < ApplicationController
 
   def show
     @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
-    params_q = params.fetch(:q, {}).reverse_merge resolved_eq: false, s: 'last_notice_at desc'
+    params_q = params.fetch(:q, {}).reverse_merge state_eq: 'unresolved', s: 'last_notice_at desc'
     @q = @app.problems.search(params_q)
     @problems = @q.result.page(params[:page]).per(current_user.per_page)
     #FIXME

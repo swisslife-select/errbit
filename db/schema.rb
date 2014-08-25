@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140818132313) do
+ActiveRecord::Schema.define(version: 20140825093058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -152,7 +152,6 @@ ActiveRecord::Schema.define(version: 20140818132313) do
     t.datetime "last_notice_at"
     t.datetime "first_notice_at"
     t.datetime "last_deploy_at"
-    t.boolean  "resolved"
     t.datetime "resolved_at"
     t.string   "issue_link"
     t.string   "issue_type"
@@ -164,6 +163,7 @@ ActiveRecord::Schema.define(version: 20140818132313) do
     t.string   "where"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "state"
   end
 
   add_index "problems", ["app_id"], name: "index_problems_on_app_id", using: :btree
