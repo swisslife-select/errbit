@@ -6,8 +6,8 @@ class Deploy < ActiveRecord::Base
 
   belongs_to :app, :inverse_of => :deploys
 
-  after_create :resolve_app_errs, :if => :should_resolve_app_errs?
-  after_create :store_cached_attributes_on_problems
+  after_commit :resolve_app_errs, on: :create, if: :should_resolve_app_errs?
+  after_commit :store_cached_attributes_on_problems, on: :create
 
   validates_presence_of :username, :environment
 
@@ -21,7 +21,7 @@ class Deploy < ActiveRecord::Base
   end
 
   def resolve_app_errs
-    app.problems.unresolved.in_env(environment).each {|problem| problem.resolve!}
+    app.problems.unresolved.in_env(environment).find_each { |problem| problem.resolve! }
   end
 
   def short_revision
