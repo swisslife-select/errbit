@@ -162,9 +162,6 @@ ActiveRecord::Schema.define(version: 20140818132313) do
     t.string   "environment"
     t.text     "error_class"
     t.string   "where"
-    t.text     "user_agents"
-    t.text     "messages"
-    t.text     "hosts"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

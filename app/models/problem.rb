@@ -5,15 +5,16 @@
 class Problem < ActiveRecord::Base
   include Authority::Abilities
   include ProblemRepository
-
-  serialize :messages, Hash
-  serialize :user_agents, Hash
-  serialize :hosts, Hash
+  include Distribution
 
   belongs_to :app, inverse_of: :problems
   has_many :errs, inverse_of: :problem, dependent: :destroy
   has_many :comments, inverse_of: :problem, dependent: :destroy
+  has_many :notices, through: :errs
+
   counter_culture :app, column_name: ->(model){ "unresolved_problems_count" if model.unresolved? }
+
+  distribution :message, :host, :user_agent
 
   validates_presence_of :environment
 
@@ -24,8 +25,6 @@ class Problem < ActiveRecord::Base
 
   def default_values
     if self.new_record?
-      self.user_agents ||= Hash.new
-      self.hosts ||= Hash.new
       self.resolved = false if self.resolved.nil?
       self.first_notice_at ||= Time.new
       self.last_notice_at ||= Time.new
@@ -84,24 +83,6 @@ class Problem < ActiveRecord::Base
     end
   end
 
-  def remove_cached_notice_attributes(notice)
-    update_attributes!(
-      :hosts       => attribute_count_descrease(:hosts, notice.host),
-      :user_agents => attribute_count_descrease(:user_agents, notice.user_agent_string)
-    )
-  end
-
-  #FIXME: Problem with different error messages (PID, Time, etc.). They become too much and errbit slow write them.
-  def messages
-    m = notices.except(:order).group(:message).count
-    @messages = {}
-    m.each_pair do |key, value|
-      index = attribute_index(key)
-      @messages[index] = {'count' => value, 'value' => key}
-    end
-    @messages
-  end
-
   def issue_type
     # Return issue_type if configured, but fall back to detecting app's issue tracker
     attributes['issue_type'] ||=
@@ -111,21 +92,5 @@ class Problem < ActiveRecord::Base
   def inc(attr, increment_by)
     self.update_attribute(attr, self.send(attr) + increment_by)
   end
-
-  private
-
-    def attribute_count_descrease(name, value)
-      counter, index = send(name), attribute_index(value)
-      if counter[index] && counter[index]['count'] > 1
-        counter[index]['count'] -= 1
-      else
-        counter.delete(index)
-      end
-      counter
-    end
-
-    def attribute_index(value)
-      Digest::MD5.hexdigest(value.to_s)
-    end
 end
 

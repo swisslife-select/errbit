@@ -46,5 +46,5 @@
                   = link_to @notice.request['url'], @notice.request['url']
               %p.heading BROWSER:
               %p.monospace
-                = user_agent_graph(@problem)
+                = @notice.user_agent_string
               %br

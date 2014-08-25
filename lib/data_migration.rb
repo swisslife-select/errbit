@@ -137,9 +137,6 @@ module DataMigration
       :environment => :environment,
       :error_class => :error_class,
       :where => :where,
-      :user_agents => lambda{|v| normalize_hash(v["user_agents"])},
-      :messages => lambda{|v| normalize_hash(v["messages"])},
-      :hosts => lambda{|v| normalize_hash(v["hosts"])},
 
       :created_at => :created_at,
       :updated_at => :updated_at
