@@ -1,21 +1,6 @@
 require 'spec_helper'
 
 describe Deploy do
-
-  context 'validations' do
-    it 'requires a username' do
-      deploy = Fabricate.build(:deploy, :username => nil)
-      expect(deploy).to_not be_valid
-      expect(deploy.errors[:username]).to include("can't be blank")
-    end
-
-    it 'requires an environment' do
-      deploy = Fabricate.build(:deploy, :environment => nil)
-      expect(deploy).to_not be_valid
-      expect(deploy.errors[:environment]).to include("can't be blank")
-    end
-  end
-
   context 'being created' do
     context 'when the app has resolve_errs_on_deploy set to false' do
       it 'should not resolve the apps errs' do

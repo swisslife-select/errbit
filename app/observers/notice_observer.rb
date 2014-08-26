@@ -1,6 +1,4 @@
 class NoticeObserver < ActiveRecord::Observer
-  observe :notice
-
   def after_create(notice)
     # for correct after_commit callbacks priority
     notice.execute_after_commit do

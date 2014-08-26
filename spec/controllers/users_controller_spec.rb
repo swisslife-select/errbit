@@ -52,11 +52,6 @@ describe UsersController do
 
     context "patch /users/:my_id/id" do
       context "when the update is successful" do
-        it "sets a message to display" do
-          patch :update, :id => user.to_param, :user => {:name => 'Kermit'}
-          expect(request.flash[:success]).to include('updated')
-        end
-
         it "redirects to the user's page" do
           patch :update, :id => user.to_param, :user => {:name => 'Kermit'}
           expect(response).to redirect_to(user_path(user))
@@ -107,13 +102,10 @@ describe UsersController do
 
     context "GET /users" do
 
-      it 'paginates all users' do
-        admin.update_attribute :per_page, 2
-        users = 3.times {
-          Fabricate(:user)
-        }
+      it 'respond success' do
+        Fabricate(:user)
         get :index
-        expect(assigns(:users).count).to eq 2
+        expect(response).to be_success
       end
 
     end
@@ -122,6 +114,7 @@ describe UsersController do
       it 'finds the user' do
         get :show, :id => user.id
         expect(assigns(:user)).to eq user
+        expect(response).to be_success
       end
     end
 
@@ -130,6 +123,7 @@ describe UsersController do
         get :new
         expect(assigns(:user)).to be_a(User)
         expect(assigns(:user)).to be_new_record
+        expect(response).to be_success
       end
     end
 
@@ -151,6 +145,7 @@ describe UsersController do
       it 'finds the user' do
         get :edit, :id => user.id
         expect(assigns(:user)).to eq user
+        expect(response).to be_success
       end
     end
 
@@ -187,7 +182,6 @@ describe UsersController do
         }
 
         it 'should destroy user' do
-          expect(request.flash[:success]).to eq I18n.t('controllers.users.flash.destroy.success', :name => user.name)
           expect(response).to redirect_to(users_path)
           expect(User.exists?(user.id)).to be false
         end

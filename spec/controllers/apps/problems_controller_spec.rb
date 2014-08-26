@@ -89,11 +89,6 @@ describe Apps::ProblemsController do
       expect(@err.problem.resolved?).to be true
     end
 
-    it "should display a message" do
-      patch :resolve, :app_id => @err.app.id, :id => @err.problem.id
-      expect(request.flash[:success]).to match(/Great news/)
-    end
-
     it "should redirect to the app page" do
       patch :resolve, :app_id => @err.app.id, :id => @err.problem.id
       expect(response).to redirect_to(app_path(@err.app))
@@ -157,10 +152,6 @@ describe Apps::ProblemsController do
       it "should redirect to problem page" do
         expect(response).to redirect_to( app_problem_path(problem.app, problem) )
       end
-
-      it "should set flash error message telling issue tracker of the app doesn't exist" do
-        expect(flash[:error]).to eq "This app has no issue tracker setup."
-      end
     end
 
     context "error during request to a tracker" do
@@ -176,10 +167,6 @@ describe Apps::ProblemsController do
 
         it "should redirect to problem page" do
           expect(response).to redirect_to( app_problem_path(err.app, err.problem) )
-        end
-
-        it "should notify of connection error" do
-          expect(flash[:error]).to include("There was an error during issue creation:")
         end
       end
     end
@@ -240,11 +227,6 @@ describe Apps::ProblemsController do
         expect {
           post :destroy_all, :app_id => @app.id
         }.to change(Problem, :count).by(-2)
-      end
-
-      it "should display a message" do
-        patch :destroy_all, :app_id => @app.id
-        expect(request.flash[:success]).to match(/been deleted/)
       end
 
       it "should redirect back to the app page" do

@@ -1,14 +1,6 @@
 require 'spec_helper'
 
 describe Comment do
-  context 'validations' do
-    it 'should require a body' do
-      comment = Fabricate.build(:comment, :body => nil)
-      expect(comment).to_not be_valid
-      expect(comment.errors[:body]).to include("can't be blank")
-    end
-  end
-
   context 'notification_recipients' do
     let(:app) { Fabricate(:app) }
     let!(:watcher) { Fabricate(:watcher, :app => app) }

@@ -24,7 +24,7 @@ describe ProblemsController do
       it 'get correct result' do
         get :index
         expect(response).to be_success
-        expect(assigns(:problems).count).to be 1
+        expect(assigns(:problems).any?).to be_true
       end
     end
 
