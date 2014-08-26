@@ -18,7 +18,8 @@ class Notice < ActiveRecord::Base
 
   counter_culture [:err, :problem]
 
-  after_create :unresolve_problem, :cache_attributes_on_problem
+  after_commit :unresolve_problem, on: :create
+  after_commit :cache_attributes_on_problem, on: :create
   after_commit :increase_in_distributions, on: :create
   after_commit :decrease_in_distributions, on: :destroy
 
