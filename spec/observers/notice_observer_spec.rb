@@ -38,11 +38,8 @@ describe "Callback on Notice" do
 
     it "should send email notification after 1 notice since an error has been resolved" do
       @err.problem.resolve!
-      expect(Mailer).to receive(:err_notification).
-        and_return(double('email', :deliver => true))
-
+      expect(Mailer).to receive(:err_notification).and_return(double('email', :deliver => true))
       Fabricate(:notice, :err => @err)
-
     end
   end
 

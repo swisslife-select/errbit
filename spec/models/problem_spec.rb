@@ -95,6 +95,15 @@ describe Problem do
     end
   end
 
+  context "unresolve" do
+    it "should record notices_count when it was unresolved" do
+      problem = Fabricate(:problem_resolved, notices_count: 100)
+      notices_count = problem.notices_count
+      problem.unresolve!
+      expect(problem.notices_count_before_unresolve).to eq notices_count
+    end
+  end
+
   context "#unmerge!" do
     it "creates a separate problem for each err" do
       problem1 = Fabricate(:notice).problem

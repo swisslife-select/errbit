@@ -116,7 +116,7 @@ class Notice < ActiveRecord::Base
   end
 
   def emailable?
-    app.email_at_notices.include?(similar_count)
+    app.email_at_notices.include?(problem.notices_count_since_unresolve)
   end
 
   def should_email?
@@ -125,7 +125,7 @@ class Notice < ActiveRecord::Base
 
   def should_notify?
     app.notification_service_configured? &&
-    (app.notification_service.notify_at_notices.include?(0) || app.notification_service.notify_at_notices.include?(similar_count))
+    (app.notification_service.notify_at_notices.include?(0) || app.notification_service.notify_at_notices.include?(problem.notices_count_since_unresolve))
   end
 
   ##
@@ -158,8 +158,6 @@ class Notice < ActiveRecord::Base
 
   def unresolve_problem
     return if problem.unresolved?
-    #TODO: WTF? O_o notices_count: 0
-    problem.notices_count = 0
     problem.unresolve!
   end
 

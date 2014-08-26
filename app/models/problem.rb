@@ -38,6 +38,7 @@ class Problem < ActiveRecord::Base
 
     before_transition any => :unresolved do |problem|
       problem.resolved_at = nil
+      problem.notices_count_before_unresolve = problem.notices_count
     end
   end
 
@@ -71,6 +72,10 @@ class Problem < ActiveRecord::Base
         new_problem.reset_cached_attributes
       end
     end
+  end
+
+  def notices_count_since_unresolve
+    notices_count - notices_count_before_unresolve
   end
 
   def reset_cached_attributes
