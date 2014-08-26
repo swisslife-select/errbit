@@ -2,7 +2,7 @@ require 'digest/sha1'
 
 namespace :errbit do
   namespace :db do
-    desc "Magick data migrate from. Read data from config/mongoid.yml or Heroku ENV"
+    desc "Magick data migrate from. Read data from config/mongoid.yml"
     task :migrate_from_mongo => :environment do
       require 'data_migration'
       configuration = DataMigration::MagickConfig.read_configuration
