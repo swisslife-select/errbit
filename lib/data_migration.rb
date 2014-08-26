@@ -29,19 +29,9 @@ module DataMigration
     def change
       add_column :users, :remote_id, :string
       add_column :apps, :remote_id, :string
-      add_column :backtraces, :remote_id, :string
-      add_column :errs, :remote_id, :string
-      add_column :problems, :remote_id, :string
-      add_column :comments, :remote_id, :string
-      add_column :notices, :remote_id, :string
 
       add_index :users, :remote_id
       add_index :apps, :remote_id
-      add_index :backtraces, :remote_id
-      add_index :errs, :remote_id
-      add_index :problems, :remote_id
-      add_index :comments, :remote_id
-      add_index :notices, :remote_id
     end
   end
 
@@ -120,88 +110,6 @@ module DataMigration
       :updated_at => :updated_at
     }
 
-    PROBLEM_FIELDS_MAPPING = {
-      :remote_id => lambda{|v| v["_id"].to_s},
-      
-      :app_id => lambda{|v| App.where(:remote_id => v["app_id"].to_s).pluck(:id).first},
-      
-      :last_notice_at => :last_notice_at,
-      :first_notice_at => :first_notice_at,
-      :last_deploy_at => :last_deploy_at,
-      :state => lambda{ |v| v['resolved'] ? :resolved : :unresolved },
-      :resolved_at => :resolved_at,
-      :issue_link => :issue_link,
-      :issue_type => :issue_type,
-
-      :message => :message,
-      :environment => :environment,
-      :error_class => :error_class,
-      :where => :where,
-
-      :created_at => :created_at,
-      :updated_at => :updated_at
-    }
-
-    COMMENT_FIELDS_MAPPING = {
-      :remote_id => lambda{|v| v["_id"].to_s},
-      
-      :user_id => lambda{|v| User.where(:remote_id => v["user_id"].to_s).pluck(:id).first},
-      :problem_id => lambda{|v| Problem.where(:remote_id => v["err_id"].to_s).pluck(:id).first},
-      
-      :body => :body,
-      
-      :created_at => :created_at,
-      :updated_at => :updated_at
-    }
-
-    ERR_FIELDS_MAPPING = {
-      :remote_id => lambda{|v| v["_id"].to_s},
-      
-      :problem_id => lambda{|v| Problem.where(:remote_id => v["problem_id"].to_s).pluck(:id).first},
-      
-      :fingerprint => :fingerprint,
-      
-      :created_at => :created_at,
-      :updated_at => :updated_at
-    }
-
-    BACKTRACE_FIELDS_MAPPING = {
-      :remote_id => lambda{|v| v["_id"].to_s},
-      
-      :fingerprint => :fingerprint,
-      
-      :created_at => :created_at,
-      :updated_at => :updated_at
-    }
-
-    BACKTRACE_LINE_FIELDS_MAPPING = {
-      :number => :number,
-      :column => :column,
-      :file => :file,
-      :method => :method,
-      
-      :created_at => :created_at,
-      :updated_at => :updated_at
-    }
-
-    NOTICE_FIELDS_MAPPING = {
-      :remote_id => lambda{|v| v["_id"].to_s},
-      
-      :message => :message,
-      :server_environment => lambda{|v| normalize_hash(v["server_environment"])},
-      :request => lambda{|v| normalize_hash(v["request"])},
-      :notifier => lambda{|v| normalize_hash(v["notifier"])},
-      :user_attributes => lambda{|v| normalize_hash(v["user_attributes"])},
-      :framework => :framework,
-      :error_class => :error_class,
-      
-      :err_id => lambda{|v| Err.where(:remote_id => v["err_id"].to_s).pluck(:id).first},
-      :backtrace_id => lambda{|v| Backtrace.where(:remote_id => v["backtrace_id"].to_s).pluck(:id).first},
-      
-      :created_at => :created_at,
-      :updated_at => :updated_at
-    }
-
     ISSUE_TRACKER_FIELDS_MAPPING = {
       :project_id => :project_id,
       :alt_project_id => :alt_project_id,
@@ -228,7 +136,7 @@ module DataMigration
     }
 
     # The collections to be copied in the order in which they should copied
-    COLLECTIONS = [:users, :apps, :problems, :comments, :errs, :backtraces, :notices].freeze
+    COLLECTIONS = [:users, :apps].freeze
 
     # get instance of Hash class from BSON::OrderedHash
     def self.normalize_hash(hash)
@@ -270,24 +178,20 @@ module DataMigration
     end
 
     def app_prepare
-      Notice.observers.disable :all
-      Deploy.observers.disable :all
     end
 
     def db_prepare
-      return if Notice.column_names.include? "remote_id"
+      return if User.column_names.include? "remote_id"
       DBPrepareMigration.migrate :up
-      [User, App, Deploy, Comment, Problem, Err, Notice, Backtrace].each(&:reset_column_information)
+      [User, App].each(&:reset_column_information)
     end
 
     def db_teardown
       DBPrepareMigration.migrate :down
-      [User, App, Deploy, Comment, Problem, Err, Notice, Backtrace].each(&:reset_column_information)
+      [User, App].each(&:reset_column_information)
     end
     
     def app_teardown
-      Notice.observers.enable :all
-      Deploy.observers.enable :all
     end
     
     def copy_all!
@@ -311,12 +215,8 @@ module DataMigration
     end
     
     def without_callbacks(&block)
+      # %w{Comment#deliver_email}
       callbacks = %w{
-        Comment#deliver_email
-        Deploy#resolve_app_errs
-        Deploy#store_cached_attributes_on_problems
-        Notice#cache_attributes_on_problem
-        Notice#unresolve_problem
       }
       without_callbacks_recursive(callbacks, &block)
     end
@@ -348,41 +248,7 @@ module DataMigration
       app.save!
       copy_issue_tracker(app, old_app)
       copy_notification_service(app, old_app)
-      copy_deploys(old_app, app)
       copy_watchers(old_app, app)
-    end
-    
-    def save_problem!(problem, _)
-      problem.save!
-    end
-    
-    def save_comment!(comment, _)
-      comment.save!
-    end
-    
-    def save_err!(err, _)
-      err.save!
-    end
-    
-    def save_backtrace!(backtrace, old_backtrace)
-      copy_backtrace_lines(backtrace, old_backtrace)
-      backtrace.save!
-    end
-    
-    def save_notice!(notice, _)
-      notice.save!
-    end
-    
-    
-    
-    
-    def copy_deploys(old_app, app)
-      return unless old_app["deploys"]
-      
-      old_app["deploys"].each do |deploy|
-        deploy = copy_deploy(app, deploy)
-        deploy.save!
-      end
     end
 
     def copy_watchers(old_app, app)
@@ -431,22 +297,6 @@ module DataMigration
         copy_attributes_with_mapping(WATCHER_FIELDS_MAPPING, old_watcher, watcher)
         watcher.save!
         watcher
-      end
-
-      def copy_deploy(app, old_deploy)
-        # not app.deploys.new, cause it's reason for memory leak (if you has many deploys)
-        deploy = Deploy.new(:app_id => app.id)
-        copy_attributes_with_mapping(DEPLOY_FIELDS_MAPPING, old_deploy, deploy)
-        deploy
-      end
-
-      def copy_backtrace_lines(backtrace, old_backtrace)
-        if old_backtrace["lines"]
-          old_backtrace["lines"].each do |old_line|
-            line = backtrace.lines.build
-            copy_attributes_with_mapping(BACKTRACE_LINE_FIELDS_MAPPING, old_line, line)
-          end
-        end
       end
 
       def find_each(collection, options = {})
