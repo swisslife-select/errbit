@@ -27,27 +27,6 @@ class ProblemsController < ApplicationController
     redirect_to :back
   end
 
-  ##
-  # Action to merge several Problem in One problem
-  #
-  # @param [ Array<String> ] :problems the list of problem ids
-  #
-  def merge_several
-    if selected_problems.length < 2
-      flash[:notice] = I18n.t('controllers.problems.flash.need_two_errors_merge')
-    else
-      ProblemMerge.new(selected_problems).merge
-      flash[:notice] = I18n.t('controllers.problems.flash.merge_several.success', :nb => selected_problems.count)
-    end
-    redirect_to :back
-  end
-
-  def unmerge_several
-    all = selected_problems.map(&:unmerge!).flatten
-    flash[:success] = "#{I18n.t(:n_errs_have, :count => all.length)} been unmerged."
-    redirect_to :back
-  end
-
   def destroy_several
     nb_problem_destroy = ProblemDestroy.execute(selected_problems)
     flash[:notice] = "#{I18n.t(:n_errs_have, :count => nb_problem_destroy)} been deleted."

@@ -9,14 +9,6 @@ namespace :errbit do
       DataMigration.start(configuration) if configuration && configuration.fetch("sessions", {}).key?("default")
     end
 
-    desc "Updates cached attributes on Problem"
-    task :update_problem_attrs => :environment do
-      puts "Updating problems"
-      Problem.no_timeout.all.each do |problem|
-        ProblemUpdaterCache.new(problem).update
-      end
-    end
-
     desc "Updates Problem#notices_count"
     task :update_notices_count => :environment do
       puts "Updating problem.notices_count"

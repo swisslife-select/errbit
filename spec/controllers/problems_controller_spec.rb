@@ -54,36 +54,6 @@ describe ProblemsController do
       @problem2 = Fabricate(:err, :problem => Fabricate(:problem)).problem
     end
 
-    context "POST /problems/merge_several" do
-      it "should require at least two problems" do
-        post :merge_several, :problems => [@problem1.id.to_s]
-        expect(request.flash[:notice]).to eql I18n.t('controllers.problems.flash.need_two_errors_merge')
-      end
-
-      it "should merge the problems" do
-        expect(ProblemMerge).to receive(:new).and_return(double(:merge => true))
-        post :merge_several, :problems => [@problem1.id.to_s, @problem2.id.to_s]
-      end
-    end
-
-    context "POST /problems/unmerge_several" do
-
-      it "should require at least one problem" do
-        post :unmerge_several, :problems => []
-        expect(request.flash[:notice]).to eql I18n.t('controllers.problems.flash.no_select_problem')
-      end
-
-      it "should unmerge a merged problem" do
-        merged_problem = Problem.merge!(@problem1, @problem2)
-        expect(merged_problem.errs.length).to eq 2
-        expect{
-          post :unmerge_several, :problems => [merged_problem.id.to_s]
-          expect(merged_problem.reload.errs.length).to eq 1
-        }.to change(Problem, :count).by(1)
-      end
-
-    end
-
     context "POST /problems/resolve_several" do
 
       it "should require at least one problem" do

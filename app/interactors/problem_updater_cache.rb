@@ -1,9 +1,9 @@
 class ProblemUpdaterCache
-  def initialize(problem, notice=nil)
+  def initialize(problem, notice)
     @problem = problem
     @notice = notice
   end
-  attr_reader :problem
+  attr_reader :problem, :notice
 
   ##
   # Update cache information about child associate to this problem
@@ -24,21 +24,11 @@ class ProblemUpdaterCache
   # Update problem statistique from some notice information
   #
   def update_notices_cache
-    first_notice = notices.first
-    last_notice = notices.last
-    notice ||= @notice || first_notice
-
-    attrs = {}
-    attrs[:first_notice_at] = first_notice.created_at if first_notice
-    attrs[:last_notice_at] = last_notice.created_at if last_notice
-    attrs.merge!(
+    attrs = {
+      :last_notice_at => notice.created_at,
       :message     => notice.message,
       :where       => notice.where
-    ) if notice
+    }
     problem.update_attributes!(attrs)
-  end
-
-  def notices
-    @notices ||= @notice ? [@notice].sort(&:created_at) : problem.notices.order("created_at ASC")
   end
 end
