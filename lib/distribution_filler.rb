@@ -1,16 +1,14 @@
 module DistributionFiller
   SAMPLE_SIZE = 100
 
-  # Algorithm uses a samples, so problems having several errs will have inaccurate distribution.
+  # Algorithm uses a samples.
 
   class << self
     def perform
       puts Benchmark.measure {
-        relation = Problem.preload(:errs)
-
-        new_problems = relation.where("created_at >= ?", 1.month.ago)
+        new_problems = Problem.where("created_at >= ?", 1.month.ago)
         reindex_all(new_problems)
-        old_problems = relation.where("created_at < ?",  1.month.ago)
+        old_problems = Problem.where("created_at < ?",  1.month.ago)
         reindex_all(old_problems)
       }
     end
@@ -27,13 +25,11 @@ module DistributionFiller
       hosts = {}
       user_agents = {}
 
-      problem.errs.each do |err|
-        notices = err.notices.limit(SAMPLE_SIZE)
-        notices.each do |n|
-          inc_count_in_hash_for(n.message_signature, messages)
-          inc_count_in_hash_for(n.host, hosts)
-          inc_count_in_hash_for(n.user_agent_string, user_agents)
-        end
+      notices = problem.notices.limit(SAMPLE_SIZE)
+      notices.each do |n|
+        inc_count_in_hash_for(n.message_signature, messages)
+        inc_count_in_hash_for(n.host, hosts)
+        inc_count_in_hash_for(n.user_agent_string, user_agents)
       end
 
       fill_distribution(problem, :message, messages)

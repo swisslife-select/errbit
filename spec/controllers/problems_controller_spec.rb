@@ -8,7 +8,7 @@ describe ProblemsController do
   :params => {:app_id => 'dummyid', :id => 'dummyid'}
 
   let(:app) { Fabricate(:app) }
-  let(:err) { Fabricate(:err, :problem => Fabricate(:problem, :app => app, :environment => "production")) }
+  let(:problem) { Fabricate(:problem, :app => app, :environment => "production") }
 
 
   describe "GET /problems" do
@@ -18,7 +18,7 @@ describe ProblemsController do
       before(:each) do
         @user = Fabricate(:admin)
         sign_in @user
-        @problem = Fabricate(:notice, :err => Fabricate(:err, :problem => Fabricate(:problem, :app => app, :environment => "production"))).problem
+        @problem = Fabricate(:notice, :problem => Fabricate(:problem, :app => app, :environment => "production")).problem
       end
 
       it 'get correct result' do
@@ -31,17 +31,17 @@ describe ProblemsController do
     context 'when logged in as a user' do
       it 'gets a list of unresolved problems for the users apps' do
         sign_in(user = Fabricate(:user))
-        unwatched_err = Fabricate(:err)
+        unwatched_problem = Fabricate(:problem)
         Fabricate(:user_watcher, user: user, app: app)
         app.watchers(true)
         
-        watched_unresolved_err = Fabricate(:err, problem: Fabricate(:problem, app: app))
-        watched_resolved_err = Fabricate(:err, problem: Fabricate(:problem_resolved, app: app))
-        unwatched_unresolved_err = Fabricate(:err, problem: Fabricate(:problem))
+        watched_unresolved_problem = Fabricate(:problem, app: app)
+        watched_resolved_problem = Fabricate(:problem_resolved, app: app)
+        unwatched_unresolved_problem = Fabricate(:problem)
         get :index
         expect(response).to be_success
-        expect(assigns(:problems)).to include(watched_unresolved_err.problem)
-        expect(assigns(:problems)).to_not include(unwatched_err.problem, watched_resolved_err.problem, unwatched_unresolved_err.problem)
+        expect(assigns(:problems)).to include(watched_unresolved_problem)
+        expect(assigns(:problems)).to_not include(unwatched_problem, watched_resolved_problem, unwatched_unresolved_problem)
       end
     end
   end
@@ -50,8 +50,8 @@ describe ProblemsController do
   describe "Bulk Actions" do
     before(:each) do
       sign_in Fabricate(:admin)
-      @problem1 = Fabricate(:err, :problem => Fabricate(:problem_resolved)).problem
-      @problem2 = Fabricate(:err, :problem => Fabricate(:problem)).problem
+      @problem1 = Fabricate(:problem_resolved)
+      @problem2 = Fabricate(:problem)
     end
 
     context "POST /problems/resolve_several" do

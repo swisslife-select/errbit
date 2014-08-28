@@ -8,7 +8,7 @@ describe "notices/_user_attributes.html.haml" do
     end
 
     it "renders table with user attributes" do
-      assign :app, notice.err.app
+      assign :app, notice.app
 
       render "notices/user_attributes", :user => notice.user_attributes
       expect(rendered).to have_link('http://example.com')

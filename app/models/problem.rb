@@ -1,23 +1,18 @@
-# Represents a single Problem. The problem may have been
-# reported as various Errs, but the user has grouped the
-# Errs together as belonging to the same problem.
-
 class Problem < ActiveRecord::Base
   include Authority::Abilities
   include ProblemRepository
   include Distribution
 
   belongs_to :app, inverse_of: :problems
-  has_many :errs, inverse_of: :problem, dependent: :destroy
-  has_many :comments, inverse_of: :problem, dependent: :destroy
-  has_many :notices, through: :errs
+  has_many :comments, inverse_of: :problem, dependent: :delete_all
+  has_many :notices, inverse_of: :problem, dependent: :delete_all
 
   counter_culture :app, column_name: ->(model){ "unresolved_problems_count" if model.unresolved? },
                         column_names: { ["problems.state = ?", 'unresolved'] => 'unresolved_problems_count' }
 
   distribution :message, :host, :user_agent
 
-  validates_presence_of :environment
+  validates_presence_of :environment, :fingerprint
 
   before_create :cache_app_attributes
   after_initialize :default_values
@@ -52,14 +47,6 @@ class Problem < ActiveRecord::Base
 
   def comments_allowed?
     Errbit::Config.allow_comments_with_issue_tracker || !app.issue_tracker_configured?
-  end
-
-  def self.merge!(*problems)
-    ProblemMerge.new(problems).merge
-  end
-
-  def merged?
-    errs.length > 1
   end
 
   def notices_count_since_unresolve

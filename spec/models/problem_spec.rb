@@ -26,50 +26,36 @@ describe Problem do
         }.to change(Comment, :count).by(3)
       end
     end
-
-    context "Fabricate(:problem_with_errs)" do
-      it 'should have 3 errs' do
-        expect{
-          Fabricate(:problem_with_errs)
-        }.to change(Err, :count).by(3)
-      end
-    end
   end
 
   context '#last_notice_at' do
     it "returns the created_at timestamp of the latest notice" do
-      err = Fabricate(:err)
-      problem = err.problem
-      expect(problem).to_not be_nil
-
-      notice1 = Fabricate(:notice, :err => err)
+      problem = Fabricate(:problem)
+      notice1 = Fabricate(:notice, :problem => problem)
       expect(problem.last_notice_at).to be_within(1).of(notice1.created_at)
 
-      notice2 = Fabricate(:notice, :err => err)
+      notice2 = Fabricate(:notice, :problem => problem)
       expect(problem.last_notice_at).to be_within(1).of(notice2.created_at)
     end
   end
 
   context '#first_notice_at' do
     it "returns the created_at timestamp of the first notice" do
-      err = Fabricate(:err)
-      problem = err.problem
-      expect(problem).to_not be_nil
+      problem = Fabricate(:problem)
 
-      notice1 = Fabricate(:notice, :err => err)
+      notice1 = Fabricate(:notice, :problem => problem)
       expect(problem.first_notice_at.to_i).to be_within(1).of(notice1.created_at.to_i)
 
-      notice2 = Fabricate(:notice, :err => err)
+      notice2 = Fabricate(:notice, :problem => problem)
       expect(problem.first_notice_at.to_i).to be_within(1).of(notice1.created_at.to_i)
     end
   end
 
   context '#message' do
     it "adding a notice caches its message" do
-      err = Fabricate(:err)
-      problem = err.problem
+      problem = Fabricate(:problem)
       expect {
-        Fabricate(:notice, :err => err, :message => 'ERR 1')
+        Fabricate(:notice, :problem => problem, :message => 'ERR 1')
       }.to change(problem, :message).from(nil).to('ERR 1')
     end
   end
@@ -130,8 +116,7 @@ describe Problem do
     before do
       @app = Fabricate(:app)
       @problem = Fabricate(:problem, :app => @app)
-      @err = Fabricate(:err, :problem => @problem)
-      notice = Fabricate(:notice, :err => @err)
+      notice = Fabricate(:notice, :problem => @problem)
     end
 
     it "setting count to 1 when adding first problem" do
@@ -145,14 +130,13 @@ describe Problem do
 
     it "increasing count after adding notice to existing error for resolved problem" do
       @problem.resolve!
-      Fabricate(:notice, :err => @err)
+      Fabricate(:notice, :problem => @problem)
       expect(@app.reload.unresolved_problems_count).to eq 1
     end
 
     it "increasing count after adding new error to resolved problem" do
       @problem.resolve!
-      err = Fabricate(:err, :problem => @problem)
-      Fabricate(:notice, :err => err)
+      Fabricate(:notice, :problem => @problem)
       expect(@app.reload.unresolved_problems_count).to eq 1
     end
   end
@@ -160,9 +144,8 @@ describe Problem do
   context "distributions" do
     before do
       @problem = Fabricate(:problem)
-      @err = Fabricate(:err, problem: @problem)
-      @notice1 = Fabricate(:notice, message: "mistake", err: @err)
-      @notice2 = Fabricate(:notice, message: "error", err: @err)
+      @notice1 = Fabricate(:notice, message: "mistake", problem: @problem)
+      @notice2 = Fabricate(:notice, message: "error", problem: @problem)
     end
 
     it "correct" do

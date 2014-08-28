@@ -115,7 +115,7 @@ describe App do
     end
   end
 
-  context '#find_or_create_err!' do
+  context '#find_or_create_problem!' do
     let(:app) { Fabricate(:app) }
     let(:conditions) { {
         :error_class  => 'Whoops',
@@ -125,22 +125,22 @@ describe App do
     }
 
     it 'returns the correct err if one already exists' do
-      existing = Fabricate(:err, {
-        :problem => Fabricate(:problem, :app => app),
+      existing = Fabricate(:problem, 
+        :app => app,
         :fingerprint => conditions[:fingerprint]
-      })
-      expect(Err.where(conditions.slice(:fingerprint)).first).to eq existing
-      expect(app.find_or_create_err!(conditions)).to eq existing
+      )
+      expect(Problem.where(conditions.slice(:fingerprint)).first).to eq existing
+      expect(app.find_or_create_problem!(conditions)).to eq existing
     end
 
     it 'assigns the returned err to the given app' do
-      expect(app.find_or_create_err!(conditions).app).to eq app
+      expect(app.find_or_create_problem!(conditions).app).to eq app
     end
 
     it 'creates a new problem if a matching one does not already exist' do
-      expect(Err.where(conditions.slice(:fingerprint)).first).to be_nil
+      expect(Problem.where(conditions.slice(:fingerprint)).first).to be_nil
       expect {
-        app.find_or_create_err!(conditions)
+        app.find_or_create_problem!(conditions)
       }.to change(Problem,:count).by(1)
     end
 
@@ -151,9 +151,9 @@ describe App do
       }
       }
       it 'save the err' do
-        expect(Err.where(conditions.slice(:fingerprint)).first).to be_nil
+        expect(Problem.where(conditions.slice(:fingerprint)).first).to be_nil
         expect {
-          app.find_or_create_err!(conditions)
+          app.find_or_create_problem!(conditions)
         }.to change(Problem,:count).by(1)
       end
     end

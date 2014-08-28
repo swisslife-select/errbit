@@ -54,7 +54,7 @@ describe Mailer do
     let(:recipients) { ['recipient@example.com', 'another@example.com']}
 
     before do
-      Fabricate(:notice, :err => notice.err)
+      Fabricate(:notice, :problem => notice.problem)
       comment.reload #for counter_cache
       comment.stub(:notification_recipients).and_return(recipients)
       @email = Mailer.comment_notification(comment).deliver

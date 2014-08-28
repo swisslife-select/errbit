@@ -5,7 +5,7 @@ describe Deploy do
     context 'when the app has resolve_errs_on_deploy set to false' do
       it 'should not resolve the apps errs' do
         app = Fabricate(:app, :resolve_errs_on_deploy => false)
-        @problems = 3.times.map{Fabricate(:err, :problem => Fabricate(:problem, :app => app))}
+        3.times.each{Fabricate(:problem, :app => app)}
         Fabricate(:deploy, :app => app)
         expect(app.reload.problems.none?{|problem| problem.resolved?}).to eq true
       end

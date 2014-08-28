@@ -62,20 +62,14 @@ class ErrorReport
       :user_attributes => user_attributes,
       :framework => framework
     )
-    @notice.err = error
+    @notice.problem = problem
     @notice.save
     @notice
   end
   attr_reader :notice
 
-  ##
-  # Error associate to this error_report
-  #
-  # Can already exist or not
-  #
-  # @return [ Error ]
-  def error
-    @error ||= app.find_or_create_err!(
+  def problem
+    @problem ||= app.find_or_create_problem!(
       :error_class => error_class,
       :environment => rails_env,
       :fingerprint => fingerprint

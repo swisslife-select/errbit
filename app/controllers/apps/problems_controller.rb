@@ -35,8 +35,8 @@ class Apps::ProblemsController < Apps::ApplicationController
   end
 
   def destroy_all
-    nb_problem_destroy = ProblemDestroy.execute(resource_app.problems)
-    flash[:success] = "#{I18n.t(:n_errs_have, :count => nb_problem_destroy)} been deleted."
+    destroyed = resource_app.problems.destroy_all
+    flash[:success] = "#{I18n.t(:n_errs_have, :count => destroyed.length)} been deleted."
     redirect_to :back
   rescue ActionController::RedirectBackError
     redirect_to app_path(resource_app)
