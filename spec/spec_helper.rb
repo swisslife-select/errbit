@@ -40,10 +40,8 @@ RSpec.configure do |config|
   config.filter_run :focused => true
   config.run_all_when_everything_filtered = true
   config.alias_example_to :fit, :focused => true
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
 
-  DatabaseCleaner[:active_record].strategy = :truncation
-  DatabaseCleaner.clean
   config.include WebMock::API
   Sidekiq::Testing.inline!
 
@@ -55,6 +53,16 @@ RSpec.configure do |config|
 
   config.after(:all) do
     WebMock.disable_net_connect! :allow => /coveralls\.io/
+  end
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :deletion
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 end
 

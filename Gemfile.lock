@@ -350,7 +350,6 @@ GEM
       sprockets (~> 2.8)
     term-ansicolor (1.3.0)
       tins (~> 1.0)
-    test_after_commit (0.2.3)
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
       ref
@@ -391,6 +390,7 @@ PLATFORMS
 
 DEPENDENCIES
   actionmailer_inline_css
+  after_commit_action
   airbrake (= 3.1.15)
   authority
   better_errors
@@ -450,7 +450,6 @@ DEPENDENCIES
   sidekiq
   sinatra
   state_machine!
-  test_after_commit
   therubyracer
   timecop
   turbolinks

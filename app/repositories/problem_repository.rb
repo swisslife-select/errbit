@@ -2,8 +2,8 @@ module ProblemRepository
   extend ActiveSupport::Concern
 
   included do
-    scope :resolved, -> { where(resolved: true) }
-    scope :unresolved, -> { where(resolved: false) }
+    scope :resolved, -> { where(state: :resolved) }
+    scope :unresolved, -> { where(state: :unresolved) }
     scope :ordered, -> { order("last_notice_at desc") }
   end
 

@@ -4,6 +4,7 @@ gem 'rails', '~> 4.1.1'
 
 gem 'pg'
 gem 'counter_culture'
+gem 'after_commit_action'
 gem 'ransack'
 gem 'rails-observers'
 
@@ -113,7 +114,6 @@ group :test do
   gem 'capybara'
   gem 'launchy'
   gem 'database_cleaner'
-  gem 'test_after_commit'
   gem 'email_spec'
   gem 'timecop'
   gem 'coveralls', require: false

@@ -6,8 +6,8 @@
                        placeholder: 'Search for issues',
                        value: q.error_class_or_where_or_message_or_app_name_or_environment_cont
     %div
-      = f.label :resolved_status
-      = f.select :resolved_eq, [['unresolved', false], ['resolved', true ]], include_blank: true, selected: q.resolved_eq
+      = f.label :state
+      = f.select :state_eq, states(Problem), include_blank: true, selected: q.state_eq
     %div
       = f.label :environment
       = f.select :environment_eq, %w[production staging development test], include_blank: true, selected: q.environment_eq

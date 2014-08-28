@@ -154,7 +154,7 @@ describe ErrorReport do
       end
 
       it 'find the correct err for the notice' do
-        err = Fabricate(:err, :problem => Fabricate(:problem, :resolved => true))
+        err = Fabricate(:err, :problem => Fabricate(:problem_resolved))
 
         ErrorReport.any_instance.stub(:fingerprint).and_return(err.fingerprint)
 

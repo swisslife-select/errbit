@@ -12,7 +12,8 @@ class Problem < ActiveRecord::Base
   has_many :comments, inverse_of: :problem, dependent: :destroy
   has_many :notices, through: :errs
 
-  counter_culture :app, column_name: ->(model){ "unresolved_problems_count" if model.unresolved? }
+  counter_culture :app, column_name: ->(model){ "unresolved_problems_count" if model.unresolved? },
+                        column_names: { ["problems.state = ?", 'unresolved'] => 'unresolved_problems_count' }
 
   distribution :message, :host, :user_agent
 
@@ -23,10 +24,27 @@ class Problem < ActiveRecord::Base
 
   validates_presence_of :last_notice_at, :first_notice_at
 
+  state_machine initial: :unresolved do
+    event :resolve do
+      transition :unresolved => :resolved
+    end
+
+    event :unresolve do
+      transition :resolved => :unresolved
+    end
+
+    before_transition any => :resolved do |problem|
+      problem.resolved_at = Time.current
+    end
+
+    before_transition any => :unresolved do |problem|
+      problem.resolved_at = nil
+      problem.notices_count_before_unresolve = problem.notices_count
+    end
+  end
+
   def default_values
     if self.new_record?
-      self.notices_count ||= 0
-      self.resolved = false if self.resolved.nil?
       self.first_notice_at ||= Time.new
       self.last_notice_at ||= Time.new
     end
@@ -34,18 +52,6 @@ class Problem < ActiveRecord::Base
 
   def comments_allowed?
     Errbit::Config.allow_comments_with_issue_tracker || !app.issue_tracker_configured?
-  end
-
-  def resolve!
-    self.update_attributes!(:resolved => true, :resolved_at => Time.now)
-  end
-
-  def unresolve!
-    self.update_attributes!(:resolved => false, :resolved_at => nil)
-  end
-
-  def unresolved?
-    !resolved?
   end
 
   def self.merge!(*problems)
@@ -56,21 +62,8 @@ class Problem < ActiveRecord::Base
     errs.length > 1
   end
 
-  def unmerge!
-    attrs = {:error_class => error_class, :environment => environment}
-    problem_errs = errs.to_a
-    problem_errs.shift
-    [self] + problem_errs.map(&:id).map do |err_id|
-      err = Err.find(err_id)
-      app.problems.create(attrs).tap do |new_problem|
-        err.update_attribute(:problem_id, new_problem.id)
-        new_problem.reset_cached_attributes
-      end
-    end
-  end
-
-  def reset_cached_attributes
-    ProblemUpdaterCache.new(self).update
+  def notices_count_since_unresolve
+    notices_count - notices_count_before_unresolve
   end
 
   def cache_app_attributes

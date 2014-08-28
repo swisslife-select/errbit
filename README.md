@@ -107,19 +107,6 @@ If this doesn't sound like you, you should probably stick with a hosted service 
 [Airbrake](http://airbrake.io).
 
 
-Mailing List
-------------
-
-Join the Google Group at https://groups.google.com/group/errbit to receive updates and notifications.
-
-Demo
-----
-
-There is a demo available at [http://errbit-demo.herokuapp.com/](http://errbit-demo.herokuapp.com/)
-
-Email: demo@errbit-demo.herokuapp.com<br/>
-Password: password
-
 # Requirement
 
 The list of requirement to install Errbit is :
@@ -203,85 +190,6 @@ cap deploy:setup deploy
 
 (Note: The capistrano deploy script will automatically generate a unique secret token.)
 
-**Deploying to Heroku:**
-
-  * Clone the repository
-
-```bash
-git clone http://github.com/errbit/errbit.git
-```
-  * Update `db/seeds.rb` with admin credentials for your initial login.
-
-  * Run `bundle`
-
-  * Create & configure for Heroku
-
-```bash
-gem install heroku
-heroku create example-errbit
-# If you really want, you can define your stack and your buildpack. the default is good to us :
-# heroku create example-errbit --stack cedar --buildpack https://github.com/heroku/heroku-buildpack-ruby.git
-heroku addons:add heroku-postgresql:dev
-heroku addons:add sendgrid:starter
-heroku config:add HEROKU=true
-heroku config:add SECRET_TOKEN="$(bundle exec rake secret)"
-heroku config:add ERRBIT_HOST=some-hostname.example.com
-heroku config:add ERRBIT_EMAIL_FROM=example@example.com
-# This next line is required to access env variables during asset compilation.
-# For more info, go to this link: https://devcenter.heroku.com/articles/labs-user-env-compile
-heroku labs:enable user-env-compile
-git push heroku master
-```
-
-  * Seed the DB (_NOTE_: No bootstrap task is used on Heroku!) and
-    create index
-
-```bash
-heroku run rake db:seed
-```
-
-  * If you are using a free database on Heroku, you may want to periodically clear resolved errors to free up space.
-
-    * With the heroku-scheduler add-on (replacement for cron):
-
-    ```bash
-    # Install the heroku scheduler add-on
-    heroku addons:add scheduler:standard
-
-    # Go open the dashboard to schedule the job.  You should use
-    # 'rake errbit:db:clear_resolved' as the task command, and schedule it
-    # at whatever frequency you like (once/day should work great).
-    heroku addons:open scheduler
-    ```
-
-    * With the cron add-on:
-
-    ```bash
-    # Install the heroku cron addon, to clear resolved errors daily:
-    heroku addons:add cron:daily
-    ```
-
-    * Or clear resolved errors manually:
-
-    ```bash
-    heroku run rake errbit:db:clear_resolved
-    ```
-
-  * You may want to enable the deployment hook for heroku :
-
-```bash
-heroku addons:add deployhooks:http --url="http://YOUR_ERRBIT_HOST/deploys.txt?api_key=YOUR_API_KEY"
-```
-
-  * You may also want to configure a different secret token for each deploy:
-
-```bash
-heroku config:add SECRET_TOKEN=some-secret-token
-```
-
-  * Enjoy!
-
-
 Authentication
 --------------
 
@@ -316,51 +224,6 @@ You can change the requested account permissions by setting `github_access_scope
   <tr><th>['public_repo'] </th><td>Only allow creating issues for public repos.</td></tr>
   <tr><th>[] </th><td>No permission to create issues on any repos.</td></tr>
 </table>
-
-
-### GitHub authentication when served on Heroku
-
-You will need to set up Heroku variables accordingly as described in [Configuring GitHub authentication](#configuring-github-authentication):
-
-* GITHUB_AUTHENTICATION
-
-```bash
-heroku config:add GITHUB_AUTHENTICATION=true
-```
-
-* GITHUB_CLIENT_ID
-
-```bash
-heroku config:add GITHUB_CLIENT_ID=the_client_id_provided_by_GitHub
-```
-
-* GITHUB_SECRET
-
-```bash
-heroku config:add GITHUB_SECRET=the_secret_provided_by_GitHub
-```
-
-* GITHUB_ACCESS_SCOPE - set only one scope `repo` or `public_repo`. If you really need to put more than one, separate them with comma.
-
-```bash
-heroku config:add GITHUB_ACCESS_SCOPE=repo,public_repo
-```
-
-* GITHUB_ORG_ID [*optional*] - If set, any user of the specified GitHub Organization can login.  If it is their first time, an account will automatically be created for them.
-
-```bash
-heroku config:add GITHUB_ORG_ID=1234567
-```
-
-
-__Note__: To avoid restarting your Heroku app 4 times you can set Heroku variables in a single command, i.e:
-
-```bash
-heroku config:add GITHUB_AUTHENTICATION=true \
-GITHUB_CLIENT_ID=the_client_id_provided_by_GitHub \
-GITHUB_SECRET=the_secret_provided_by_GitHub \
-GITHUB_ACCESS_SCOPE=repo,public_repo
-```
 
 ### Configuring LDAP authentication:
 
@@ -408,17 +271,6 @@ rake assets:precompile
 ```
 
 If we change the way that data is stored, this will run any migrations to bring your database up to date.
-
-
-### Upgrade from errbit 0.2 to 0.3
-
-The file of MongoDB connection config/mongoid.yml change between 0.2 to
-0.3. So Check the new config/mongoid.yml.example file and update it in
-good way.
-
-This change is not need to be done if you use only ENV variable to
-define you access to MongoDB database.
-
 
 ## User information in error reports
 
@@ -601,18 +453,6 @@ A guide can help on this way on  [**Errbit Advanced Developer Guide**](docs/DEVE
 
 * [All ENV variables availables to configure Errbit](docs/ENV-VARIABLES.md)
 
-TODO
-----
-
-* Add ability for watchers to be configured for types of notifications they should receive
-
-
-People using Errbit
--------------------
-
-See our wiki page for a [list of people and companies around the world who use Errbit](https://github.com/errbit/errbit/wiki/People-using-Errbit).
-Feel free to [edit this page](https://github.com/errbit/errbit/wiki/People-using-Errbit/_edit), and add your name and country to the list if you are using Errbit.
-
 
 Special Thanks
 --------------
@@ -626,7 +466,7 @@ Special Thanks
 * [Relevance](http://thinkrelevance.com) - For giving me Open-source Fridays to work on Errbit and all my awesome co-workers for giving feedback and inspiration.
 * [Thoughtbot](http://thoughtbot.com) - For being great open-source advocates and setting the bar with [Airbrake](http://airbrake.io).
 
-See the [contributors graph](https://github.com/errbit/errbit/graphs/contributors) for further details. You can see another list of Contributors by release version on [CONTRIBUTORS.md]
+See the [contributors graph](https://github.com/Undev/errbit/graphs/contributors) for further details. You can see another list of Contributors by release version on [CONTRIBUTORS.md]
 
 
 Contributing

@@ -68,23 +68,6 @@ describe AppsController do
         expect(response).to be_success
       end
 
-      context "pagination" do
-        before(:each) do
-          35.times { Fabricate(:err, :problem => Fabricate(:problem, :app => app)) }
-        end
-
-        it "should have default per_page value for user" do
-          get :show, :id => app.id
-          expect(assigns(:problems).to_a.size).to eq User::PER_PAGE
-        end
-
-        it "should be able to override default per_page value" do
-          admin.update_attribute :per_page, 10
-          get :show, :id => app.id
-          expect(assigns(:problems).to_a.size).to eq 10
-        end
-      end
-
       context 'with resolved errors' do
         before(:each) do
           problem_resolved && problem
@@ -93,23 +76,7 @@ describe AppsController do
         context 'and no params' do
           it 'shows only unresolved problems' do
             get :show, :id => app.id
-            expect(assigns(:problems).size).to eq 1
-          end
-        end
-      end
-
-      context 'with environment filters' do
-        before(:each) do
-          environments = ['production', 'test', 'development', 'staging']
-          20.times do |i|
-            Fabricate(:problem, :app => app, :environment => environments[i % environments.length])
-          end
-        end
-
-        context 'no params' do
-          it 'shows errs for all environments' do
-            get :show, :id => app.id
-            expect(assigns(:problems).size).to eq 20
+            expect(assigns(:problems).all?(&:unresolved?)).to be_true
           end
         end
       end
@@ -163,6 +130,7 @@ describe AppsController do
       it 'finds the correct app' do
         app = Fabricate(:app)
         get :edit, :id => app.id
+        expect(response).to be_success
         expect(assigns(:app)).to eq app
       end
     end
@@ -182,11 +150,6 @@ describe AppsController do
           post :create, :app => {}
           expect(response).to redirect_to(app_path(@app))
         end
-
-        it "should display a message" do
-          post :create, :app => {}
-          expect(request.flash[:success]).to match(/success/)
-        end
       end
     end
 
@@ -199,11 +162,6 @@ describe AppsController do
         it "should redirect to the app page" do
           patch :update, :id => @app.id, :app => {}
           expect(response).to redirect_to(app_path(@app))
-        end
-
-        it "should display a message" do
-          patch :update, :id => @app.id, :app => {}
-          expect(request.flash[:success]).to match(/success/)
         end
       end
 
@@ -239,11 +197,6 @@ describe AppsController do
             patch :update, :id => @app.id, :app => { :email_at_notices => 'asdf, -1,0,foobar,gd00,0,abc' }
             @app.reload
             expect(@app.email_at_notices).to eq Errbit::Config.email_at_notices
-          end
-
-          it "should display a message" do
-            patch :update, :id => @app.id, :app => { :email_at_notices => 'qwertyuiop' }
-            expect(request.flash[:error]).to match(/Couldn't parse/)
           end
         end
       end
@@ -306,11 +259,6 @@ describe AppsController do
       it "should destroy the app" do
         delete :destroy, :id => @app.id
         expect(App.exists?(@app.id)).to be false
-      end
-
-      it "should display a message" do
-        delete :destroy, :id => @app.id
-        expect(request.flash[:success]).to match(/success/)
       end
 
       it "should redirect to the apps page" do

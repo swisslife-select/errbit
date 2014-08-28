@@ -43,10 +43,10 @@ describe Problem do
       expect(problem).to_not be_nil
 
       notice1 = Fabricate(:notice, :err => err)
-      expect(problem.last_notice_at).to eq notice1.created_at
+      expect(problem.last_notice_at).to be_within(1).of(notice1.created_at)
 
       notice2 = Fabricate(:notice, :err => err)
-      expect(problem.last_notice_at).to eq notice2.created_at
+      expect(problem.last_notice_at).to be_within(1).of(notice2.created_at)
     end
   end
 
@@ -84,122 +84,23 @@ describe Problem do
     end
   end
 
-  context "#resolved?" do
-    it "should start out as unresolved" do
-      problem = Problem.new
-      expect(problem).to_not be_resolved
-      expect(problem).to be_unresolved
-    end
-
-    it "should be able to be resolved" do
-      problem = Fabricate(:problem)
-      expect(problem).to_not be_resolved
-      problem.resolve!
-      expect(problem.reload).to be_resolved
-    end
-  end
-
-  context "resolve!" do
-    it "marks the problem as resolved" do
-      problem = Fabricate(:problem)
-      expect(problem).to_not be_resolved
-      problem.resolve!
-      expect(problem).to be_resolved
-    end
-
+  context "resolve" do
     it "should record the time when it was resolved" do
       problem = Fabricate(:problem)
-      expected_resolved_at = Time.zone.now
+      expected_resolved_at = Time.current
       Timecop.freeze(expected_resolved_at) do
         problem.resolve!
       end
-      expect(problem.resolved_at.to_s).to eq expected_resolved_at.to_s
-    end
-
-    it "should not reset notice count" do
-      problem = Fabricate(:problem, :notices_count => 1)
-      original_notices_count = problem.notices_count
-      expect(original_notices_count).to be > 0
-
-      problem.resolve!
-      expect(problem.notices_count).to eq original_notices_count
-    end
-
-    it "should throw an err if it's not successful" do
-      problem = Fabricate(:problem)
-      expect(problem).to_not be_resolved
-      problem.stub(:valid?).and_return(false)
-      ## update_attributes not test #valid? but #errors.any?
-      # https://github.com/mongoid/mongoid/blob/master/lib/mongoid/persistence.rb#L137
-      er = ActiveModel::Errors.new(problem)
-      er.add_on_blank(:resolved)
-      problem.stub(:errors).and_return(er)
-      expect(problem).to_not be_valid
-      expect {
-        problem.resolve!
-      }.to raise_error(ActiveRecord::RecordInvalid)
+      expect(problem.resolved_at).to eq expected_resolved_at
     end
   end
 
-  context "#unmerge!" do
-    it "creates a separate problem for each err" do
-      problem1 = Fabricate(:notice).problem
-      problem2 = Fabricate(:notice).problem
-      merged_problem = Problem.merge!(problem1, problem2)
-      expect(merged_problem.errs.length).to eq 2
-
-      expect { merged_problem.unmerge! }.to change(Problem, :count).by(1)
-      expect(merged_problem.errs(true).length).to eq 1
-    end
-
-    it "runs smoothly for problem without errs" do
-      expect { Fabricate(:problem).unmerge! }.not_to raise_error
-    end
-  end
-
-  context "Scopes" do
-    context "resolved" do
-      it 'only finds resolved Problems' do
-        resolved = Fabricate(:problem, :resolved => true)
-        unresolved = Fabricate(:problem, :resolved => false)
-        expect(Problem.resolved).to include(resolved)
-        expect(Problem.resolved).to_not include(unresolved)
-      end
-    end
-
-    context "unresolved" do
-      it 'only finds unresolved Problems' do
-        resolved = Fabricate(:problem, :resolved => true)
-        unresolved = Fabricate(:problem, :resolved => false)
-        expect(Problem.unresolved).to_not include(resolved)
-        expect(Problem.unresolved).to include(unresolved)
-      end
-    end
-  end
-
-  context "notice counter cache" do
-    before do
-      @app = Fabricate(:app)
-      @problem = Fabricate(:problem, :app => @app)
-      @err = Fabricate(:err, :problem => @problem)
-    end
-
-    it "#notices_count returns 0 by default" do
-      expect(@problem.notices_count).to eq 0
-    end
-
-    it "adding a notice increases #notices_count by 1" do
-      expect {
-        Fabricate(:notice, :err => @err, :message => 'ERR 1')
-      }.to change(@problem.reload, :notices_count).from(0).to(1)
-    end
-
-    it "removing a notice decreases #notices_count by 1" do
-      notice1 = Fabricate(:notice, :err => @err, :message => 'ERR 1')
-      expect {
-        @err.notices.first.destroy
-        @problem.reload
-      }.to change(@problem, :notices_count).from(1).to(0)
+  context "unresolve" do
+    it "should record notices_count when it was unresolved" do
+      problem = Fabricate(:problem_resolved, notices_count: 100)
+      notices_count = problem.notices_count
+      problem.unresolve!
+      expect(problem.notices_count_before_unresolve).to eq notices_count
     end
   end
 

@@ -2,19 +2,11 @@ require 'digest/sha1'
 
 namespace :errbit do
   namespace :db do
-    desc "Magick data migrate from. Read data from config/mongoid.yml or Heroku ENV"
+    desc "Magick data migrate from. Read data from config/mongoid.yml"
     task :migrate_from_mongo => :environment do
       require 'data_migration'
       configuration = DataMigration::MagickConfig.read_configuration
       DataMigration.start(configuration) if configuration && configuration.fetch("sessions", {}).key?("default")
-    end
-
-    desc "Updates cached attributes on Problem"
-    task :update_problem_attrs => :environment do
-      puts "Updating problems"
-      Problem.no_timeout.all.each do |problem|
-        ProblemUpdaterCache.new(problem).update
-      end
     end
 
     desc "Updates Problem#notices_count"

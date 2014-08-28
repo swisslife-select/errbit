@@ -2,28 +2,6 @@ require 'spec_helper'
 
 describe App do
 
-  context 'validations' do
-    it 'requires a name' do
-      app = Fabricate.build(:app, :name => nil)
-      expect(app).to_not be_valid
-      expect(app.errors[:name]).to include("can't be blank")
-    end
-
-    it 'requires unique names' do
-      Fabricate(:app, :name => 'Errbit')
-      app = Fabricate.build(:app, :name => 'Errbit')
-      expect(app).to_not be_valid
-      expect(app.errors[:name]).to include('has already been taken')
-    end
-
-    it 'requires unique api_keys' do
-      Fabricate(:app, :api_key => 'APIKEY')
-      app = Fabricate.build(:app, :api_key => 'APIKEY')
-      expect(app).to_not be_valid
-      expect(app.errors[:api_key]).to include('has already been taken')
-    end
-  end
-
   context 'being created' do
     it 'generates a new api-key' do
       app = Fabricate.build(:app)
@@ -82,14 +60,14 @@ describe App do
   context "application_wide_recipients" do
     it "should send notices to all users plus all app watchers" do
       @app = Fabricate(:app)
-      3.times { Fabricate(:user) }
+      Fabricate(:user)
       Fabricate(:watcher, :app => @app)
-      Fabricate(:watcher_of_errors, :app => @app)
-      Fabricate(:watcher_of_deploys, :app => @app)
 
       @app.reload
       @app.notify_all_users = true
-      expect(@app.error_recipients.count).to eq(6) # 3 users and 3 watchers
+
+      expected_count = User.count + @app.watchers.count
+      expect(@app.error_recipients.count).to eq(expected_count)
     end
   end
 

@@ -16,12 +16,14 @@ class Notice < ActiveRecord::Base
   belongs_to :err
   belongs_to :backtrace
 
-  after_create :unresolve_problem, :cache_attributes_on_problem
+  counter_culture [:err, :problem]
+
+  after_commit :unresolve_problem, on: :create
+  after_commit :cache_attributes_on_problem, on: :create
   after_commit :increase_in_distributions, on: :create
   after_commit :decrease_in_distributions, on: :destroy
 
   before_save :sanitize
-  before_destroy :decrease_counter_cache
   after_initialize :default_values
 
   validates_presence_of :backtrace, :server_environment, :notifier
@@ -115,7 +117,7 @@ class Notice < ActiveRecord::Base
   end
 
   def emailable?
-    app.email_at_notices.include?(similar_count)
+    app.email_at_notices.include?(problem.notices_count_since_unresolve)
   end
 
   def should_email?
@@ -124,7 +126,7 @@ class Notice < ActiveRecord::Base
 
   def should_notify?
     app.notification_service_configured? &&
-    (app.notification_service.notify_at_notices.include?(0) || app.notification_service.notify_at_notices.include?(similar_count))
+    (app.notification_service.notify_at_notices.include?(0) || app.notification_service.notify_at_notices.include?(problem.notices_count_since_unresolve))
   end
 
   ##
@@ -143,7 +145,6 @@ class Notice < ActiveRecord::Base
   end
 
   protected
-
   def increase_in_distributions
     problem.increase_in_message_distribution message_signature
     problem.increase_in_host_distribution host
@@ -156,12 +157,9 @@ class Notice < ActiveRecord::Base
     problem.decrease_in_user_agent_distribution user_agent_string
   end
 
-  def decrease_counter_cache
-    problem.inc(:notices_count, -1) if err
-  end
-
   def unresolve_problem
-    problem.update_attributes!(:resolved => false, :resolved_at => nil, :notices_count => 0) if problem.resolved?
+    return if problem.unresolved?
+    problem.unresolve!
   end
 
   def cache_attributes_on_problem
