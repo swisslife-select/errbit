@@ -12,7 +12,8 @@ class Problem < ActiveRecord::Base
   has_many :comments, inverse_of: :problem, dependent: :destroy
   has_many :notices, through: :errs
 
-  counter_culture :app, column_name: ->(model){ "unresolved_problems_count" if model.unresolved? }
+  counter_culture :app, column_name: ->(model){ "unresolved_problems_count" if model.unresolved? },
+                        column_names: { ["problems.state = ?", 'unresolved'] => 'unresolved_problems_count' }
 
   distribution :message, :host, :user_agent
 
