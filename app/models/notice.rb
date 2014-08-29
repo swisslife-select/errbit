@@ -45,8 +45,8 @@ class Notice < ActiveRecord::Base
     m.gsub!(/\h{8}-\h{4}-\h{4}-\h{4}-\h{12}/, '%UUID%')
     m.gsub!(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/, '%IP%')
     m.gsub!(/0x\h+/, '%HEX%')
-    m.gsub!(/\d+/, '%NUM%')
     m.gsub!(/\h{7,}/, '%HEXSTR%')
+    m.gsub!(/\d+/, '%NUM%')
     m.truncate(150)
   end
 
