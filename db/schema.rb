@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140825152638) do
+ActiveRecord::Schema.define(version: 20140828121539) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,10 +125,12 @@ ActiveRecord::Schema.define(version: 20140825152638) do
     t.text     "error_class"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "problem_id"
   end
 
   add_index "notices", ["backtrace_id"], name: "index_notices_on_backtrace_id", using: :btree
   add_index "notices", ["err_id", "created_at", "id"], name: "index_notices_on_err_id_and_created_at_and_id", using: :btree
+  add_index "notices", ["problem_id", "id"], name: "index_notices_on_problem_id_and_id", using: :btree
 
   create_table "notification_services", force: true do |t|
     t.integer  "app_id"
@@ -165,8 +167,10 @@ ActiveRecord::Schema.define(version: 20140825152638) do
     t.datetime "updated_at"
     t.string   "state"
     t.integer  "notices_count_before_unresolve", default: 0
+    t.string   "fingerprint"
   end
 
+  add_index "problems", ["app_id", "fingerprint"], name: "index_problems_on_app_id_and_fingerprint", using: :btree
   add_index "problems", ["app_id"], name: "index_problems_on_app_id", using: :btree
   add_index "problems", ["comments_count"], name: "index_problems_on_comments_count", using: :btree
   add_index "problems", ["first_notice_at"], name: "index_problems_on_first_notice_at", using: :btree

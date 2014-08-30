@@ -1,5 +1,3 @@
-require 'problem_destroy'
-
 class ResolvedProblemClearer
 
   ##
@@ -9,7 +7,7 @@ class ResolvedProblemClearer
     nb_problem_resolved.tap { |nb|
       if nb > 0
         criteria.each do |problem|
-          ProblemDestroy.new(problem).execute
+          problem.destroy
         end
       end
     }

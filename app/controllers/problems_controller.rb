@@ -28,14 +28,14 @@ class ProblemsController < ApplicationController
   end
 
   def destroy_several
-    nb_problem_destroy = ProblemDestroy.execute(selected_problems)
-    flash[:notice] = "#{I18n.t(:n_errs_have, :count => nb_problem_destroy)} been deleted."
+    destroyed = selected_problems.destroy_all
+    flash[:notice] = "#{I18n.t(:n_errs_have, :count => destroyed.length)} been deleted."
     redirect_to :back
   end
 
   #TODO: think about refactoring
   def selected_problems
-    @selected_problems ||= Problem.find(err_ids)
+    @selected_problems ||= Problem.where(id: err_ids)
   end
 
   def err_ids

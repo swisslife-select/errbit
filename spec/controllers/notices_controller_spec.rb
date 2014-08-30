@@ -83,7 +83,7 @@ describe NoticesController do
 
       it "should locate notice and redirect to problem" do
         problem = Fabricate(:problem, :app => app, :environment => "production")
-        notice = Fabricate(:notice, :err => Fabricate(:err, :problem => problem))
+        notice = Fabricate(:notice, :problem => problem)
         get :locate, :id => notice.id
         expect(response).to redirect_to(app_problem_path(problem.app, problem))
       end

@@ -11,12 +11,12 @@ class Notice < ActiveRecord::Base
   serialize :current_user, Hash
 
   delegate :lines, :to => :backtrace, :prefix => true
-  delegate :app, :problem, :to => :err
+  delegate :app, :to => :problem
 
-  belongs_to :err
+  belongs_to :problem
   belongs_to :backtrace
 
-  counter_culture [:err, :problem]
+  counter_culture :problem
 
   after_commit :unresolve_problem, on: :create
   after_commit :cache_attributes_on_problem, on: :create

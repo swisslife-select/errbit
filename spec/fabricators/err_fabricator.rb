@@ -1,10 +1,5 @@
-Fabricator :err do
-  problem
-  fingerprint 'some-finger-print'
-end
-
 Fabricator :notice do
-  err
+  problem
   message             'FooError: Too Much Bar'
   backtrace
   server_environment  { {'environment-name' => 'production'} }

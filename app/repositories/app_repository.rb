@@ -24,10 +24,10 @@ module AppRepository
   # * <tt>:environment</tt> - the environment the source app was running in (required to create a new Problem)
   # * <tt>:fingerprint</tt> - a unique value identifying the notice
   #
-  def find_or_create_err!(attrs)
-    err = Err.find_by fingerprint: attrs[:fingerprint]
-    return err if err
-    problems.create!(attrs.slice(:error_class, :environment)).errs.create!(attrs.slice(:fingerprint, :problem_id))
+  def find_or_create_problem!(attrs)
+    problem = problems.find_by fingerprint: attrs[:fingerprint]
+    return problem if problem
+    problems.create!(attrs.slice(:error_class, :environment, :fingerprint))
   end
 
   def error_recipients

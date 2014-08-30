@@ -20,11 +20,8 @@ describe AppsController do
     Fabricate(:user_watcher, :user => user, :app => a)
     a
   end
-  let(:err) do
-    Fabricate(:err, :problem => problem)
-  end
   let(:notice) do
-    Fabricate(:notice, :err => err)
+    Fabricate(:notice, :problem => problem)
   end
   let(:problem) do
     Fabricate(:problem, :app => app)
@@ -58,8 +55,8 @@ describe AppsController do
         sign_in admin
       end
 
-      it "should not raise errors for app with err without notices" do
-        err
+      it "should not raise errors for app with problem without notices" do
+        problem
         expect{ get :show, :id => app.id }.to_not raise_error
       end
 

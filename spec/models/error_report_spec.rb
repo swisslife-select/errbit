@@ -139,11 +139,6 @@ describe ErrorReport do
       end
       end
 
-      it 'save a notice assignes to err' do
-        error_report.generate_notice!
-        expect(error_report.notice.err).to be_a(Err)
-      end
-
       it 'memoize the notice' do
         expect {
           error_report.generate_notice!
@@ -154,15 +149,11 @@ describe ErrorReport do
       end
 
       it 'find the correct err for the notice' do
-        err = Fabricate(:err, :problem => Fabricate(:problem_resolved))
+        problem = Fabricate(:problem_resolved)
 
-        ErrorReport.any_instance.stub(:fingerprint).and_return(err.fingerprint)
+        ErrorReport.any_instance.stub(:fingerprint).and_return(problem.fingerprint)
 
-        expect {
-          error_report.generate_notice!
-        }.to change {
-          error_report.error.resolved?
-        }.from(true).to(false)
+        expect(error_report.problem.reload.unresolved?).to be_true
       end
 
       context "with notification service configured" do
