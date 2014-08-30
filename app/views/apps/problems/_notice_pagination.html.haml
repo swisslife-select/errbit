@@ -1,8 +1,8 @@
 - if notice
   .notice-pagination
-    -#= link_to_if notice.previous, raw('&laquo; First'), {notice_id: problem.notices.first.try(:id)}
+    = link_to_if notice.previous, raw('&laquo; First'), {notice_id: problem.notices.first.try(:id)}
     = link_to_if notice.previous, raw('&lsaquo; Older'), {notice_id: notice.previous.try(:id)}
     %span.date= notice.created_at.to_s(:precise)
     = link_to_if notice.next, raw('Newer &rsaquo;'), {notice_id: notice.next.try(:id)}
-    -#= link_to_if notice.next, raw('Last &raquo;'), {notice_id: problem.notices.last.try(:id)}
+    = link_to_if notice.next, raw('Last &raquo;'), {notice_id: problem.notices.last.try(:id)}
   %div total occurrences: #{problem.notices_count}
