@@ -47,6 +47,12 @@ Errbit::Application.routes.draw do
     end
   end
 
+  namespace :api do
+    namespace :v1 do
+      resources :app_statistics, only: :show
+    end
+  end
+
   root :to => 'apps#index'
 
 end
