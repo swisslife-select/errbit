@@ -16,6 +16,7 @@ gem 'devise'
 gem 'authority'
 
 gem 'haml'
+gem 'jbuilder'
 gem 'htmlentities'
 gem 'rack-ssl', :require => 'rack/ssl'   # force SSL
 

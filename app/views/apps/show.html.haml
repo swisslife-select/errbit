@@ -46,6 +46,12 @@
         %tr
           %td= link_to_repository(@app.repo_url)
 
+%h3#api_toggle
+  = t('.api_links')
+  %span.click_span=t('.show_hide')
+#api_div
+  = link_to 'statistics', api_v1_app_statistic_url(@app, format: :json, User.token_authentication_key => current_user.authentication_token)
+
 %h3#deploys_toggle
   =t('.latest_deploys')
   %span.click_span=t('.show_hide')

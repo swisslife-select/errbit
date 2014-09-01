@@ -11,4 +11,8 @@ $(function() {
   $("#deploys_toggle").click(function() {
     $("#deploys_div").slideToggle("slow");
   });
+
+  $("#api_toggle").click(function() {
+    $("#api_div").slideToggle("slow");
+  });
 });
