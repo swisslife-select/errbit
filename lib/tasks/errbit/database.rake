@@ -9,12 +9,11 @@ namespace :errbit do
       DataMigration.start(configuration) if configuration && configuration.fetch("sessions", {}).key?("default")
     end
 
-    desc "Updates Problem#notices_count"
-    task :update_notices_count => :environment do
-      puts "Updating problem.notices_count"
-      Problem.no_timeout.all.each do |pr|
-        pr.update_attributes(:notices_count => pr.notices.count)
-      end
+    desc "Updates counters"
+    task :update_counters => :environment do
+      Notice.counter_culture_fix_counts
+      Problem.counter_culture_fix_counts
+      Comment.counter_culture_fix_counts
     end
 
     desc "Delete resolved errors from the database. (Useful for limited heroku databases)"
