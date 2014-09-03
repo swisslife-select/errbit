@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe "problems/index.atom.builder" do
+describe "problems/index.atom.builder", :type => :view do
 
   it 'display problem message' do
     app = Fabricate :app
-    view.stub(:problems).and_return([
+    allow(view).to receive(:problems).and_return([
       Fabricate(:problem, :message => 'foo', :app => app),
       Fabricate(:problem, :app => app)
     ])

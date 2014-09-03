@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe NoticesController do
+describe NoticesController, :type => :controller do
   it_requires_authentication :for => { :locate => :get }
 
   let(:notice) { Fabricate(:notice) }

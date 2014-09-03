@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Problem do
+describe Problem, :type => :model do
 
   context 'validations' do
     it 'requires an environment' do

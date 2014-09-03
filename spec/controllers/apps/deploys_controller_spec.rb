@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apps::DeploysController do
+describe Apps::DeploysController, :type => :controller do
   render_views
 
   context "GET #index" do

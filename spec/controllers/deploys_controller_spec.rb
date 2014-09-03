@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe DeploysController do
+describe DeploysController, :type => :controller do
   render_views
 
   context 'POST #create' do

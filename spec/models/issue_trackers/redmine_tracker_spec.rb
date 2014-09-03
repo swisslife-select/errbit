@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe IssueTrackers::RedmineTracker do
+describe IssueTrackers::RedmineTracker, :type => :model do
   it "should create an issue on Redmine with problem params, and set issue link for problem" do
     notice = Fabricate(:notice)
     tracker = Fabricate(:redmine_tracker, :app => notice.app, :project_id => 10)

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "apps/show.html.haml" do
+describe "apps/show.html.haml", :type => :view do
   let(:app) { stub_model(App, name: 'app') }
   let(:user) { stub_model(User) }
 
@@ -10,7 +10,7 @@ describe "apps/show.html.haml" do
 
   before do
     assign :app, app
-    controller.stub(:current_user) { user }
+    allow(controller).to receive(:current_user) { user }
   end
 
   context "without errs" do
@@ -22,7 +22,7 @@ describe "apps/show.html.haml" do
 
   context "with user watch application" do
     before do
-      user.stub(:watching?).with(app).and_return(true)
+      allow(user).to receive(:watching?).with(app).and_return(true)
     end
     it 'see the unwatch button' do
       render
@@ -32,7 +32,7 @@ describe "apps/show.html.haml" do
 
   context "with user not watch application" do
     before do
-      user.stub(:watching?).with(app).and_return(false)
+      allow(user).to receive(:watching?).with(app).and_return(false)
     end
     it 'not see the unwatch button' do
       render

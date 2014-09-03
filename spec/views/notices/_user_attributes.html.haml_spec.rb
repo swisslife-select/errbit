@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "notices/_user_attributes.html.haml" do
+describe "notices/_user_attributes.html.haml", :type => :view do
   describe 'autolink' do
     let(:notice) do
       user_attributes = { 'foo' => {'bar' => 'http://example.com'} }

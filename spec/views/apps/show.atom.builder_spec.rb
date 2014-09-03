@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "apps/show.atom.builder" do
+describe "apps/show.atom.builder", :type => :view do
   let(:app) { stub_model(App, name: 'app') }
   let(:problems) { [
     stub_model(Problem, :message => 'foo', :app => app)

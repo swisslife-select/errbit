@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ProblemsController do
+describe ProblemsController, :type => :controller do
   render_views
 
   it_requires_authentication :for => {

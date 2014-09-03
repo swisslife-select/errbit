@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Users::OmniauthCallbacksController do
+describe Users::OmniauthCallbacksController, :type => :controller do
 
   def stub_env_for_github_omniauth(login, token = nil)
     # This a Devise specific thing for functional tests. See https://github.com/plataformatec/devise/issues/closed#issue/608

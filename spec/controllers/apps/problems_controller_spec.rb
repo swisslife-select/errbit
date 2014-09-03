@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apps::ProblemsController do
+describe Apps::ProblemsController, :type => :controller do
   let(:app) { Fabricate(:app) }
   let(:problem) { Fabricate(:problem, :app => app, :environment => "production") }
 

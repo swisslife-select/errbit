@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe NotificationServices::WebhookService do
+describe NotificationServices::WebhookService, :type => :model do
   it "it should send a notification to a user-specified URL" do
     notice = Fabricate :notice
     notification_service = Fabricate :webhook_notification_service, :app => notice.app

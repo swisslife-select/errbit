@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe UsersController do
+describe UsersController, :type => :controller do
 
   it_requires_authentication :for => {
       :edit    => :get,

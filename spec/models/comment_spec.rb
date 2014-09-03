@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Comment do
+describe Comment, :type => :model do
   context 'notification_recipients' do
     let(:app) { Fabricate(:app) }
     let!(:watcher) { Fabricate(:watcher, :app => app) }

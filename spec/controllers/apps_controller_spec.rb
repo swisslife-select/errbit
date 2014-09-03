@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AppsController do
+describe AppsController, :type => :controller do
   render_views
 
   let(:admin) { Fabricate(:admin) }

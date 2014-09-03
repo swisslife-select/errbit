@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe IssueTrackers::PivotalLabsTracker do
+describe IssueTrackers::PivotalLabsTracker, :type => :model do
 
   let(:user) { Fabricate(:user) }
   let(:notice) { Fabricate(:notice) }

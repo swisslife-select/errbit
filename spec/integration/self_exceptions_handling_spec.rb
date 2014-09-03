@@ -6,11 +6,11 @@ class TestsController < ActionController::Base
   end
 end
 
-describe "Self exceptions handling" do
+describe "Self exceptions handling", :type => :request do
   before do
     Rails.application.routes.draw { resource :test }
 
-    Airbrake::Configuration.any_instance.stub(:public?).and_return(true)
+    allow_any_instance_of(Airbrake::Configuration).to receive(:public?).and_return(true)
   end
 
   after do

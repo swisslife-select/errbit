@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe App do
+describe App, :type => :model do
 
   context 'being created' do
     it 'generates a new api-key' do
@@ -53,7 +53,7 @@ describe App do
 
     it 'is false when app has another repo' do
       app = Fabricate(:app, :repo_url => "https://bitbucket.com/errbit/errbit.git")
-      app.github_repo?.should be false
+      expect(app.github_repo?).to be false
     end
   end
 
@@ -79,7 +79,7 @@ describe App do
       Fabricate(:watcher_of_deploys, :app => @app)
       @app.reload
       @app.notify_all_users = false
-      @app.error_recipients.count.should == 2
+      expect(@app.error_recipients.count).to eq(2)
     end
   end
 
@@ -91,7 +91,7 @@ describe App do
       Fabricate(:watcher_of_deploys, :app => @app)
       @app.reload
       @app.notify_all_users = false
-      @app.deploy_recipients.count.should == 2
+      expect(@app.deploy_recipients.count).to eq(2)
     end
   end
 

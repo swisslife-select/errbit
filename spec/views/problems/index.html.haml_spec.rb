@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe "problems/index.html.haml" do
+describe "problems/index.html.haml", :type => :view do
   let!(:problem_1) { Fabricate(:problem) }
   let!(:problem_2) { Fabricate(:problem, :app => problem_1.app) }
 
   before do
     # view.stub(:app).and_return(problem.app)
-    view.stub(:selected_problems).and_return([])
-    controller.stub(:current_user) { Fabricate(:user) }
+    allow(view).to receive(:selected_problems).and_return([])
+    allow(controller).to receive(:current_user) { Fabricate(:user) }
     assign :problems, Kaminari.paginate_array([problem_1, problem_2]).page(1).per(10)
     assign :q, Problem.search
   end

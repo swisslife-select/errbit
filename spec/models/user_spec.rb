@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe User do
+describe User, :type => :model do
 
   context 'validations' do
     it 'require that a name is present' do
@@ -63,7 +63,7 @@ describe User do
   context "First user" do
     it "should be created this admin access via db:seed" do
       expect {
-        $stdout.stub(:puts => true)
+        allow($stdout).to receive_messages(:puts => true)
         require Rails.root.join('db/seeds.rb')
       }.to change {
         User.where(:admin => true).count

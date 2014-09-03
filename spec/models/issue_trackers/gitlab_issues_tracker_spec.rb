@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe IssueTrackers::GitlabTracker do
+describe IssueTrackers::GitlabTracker, :type => :model do
   it "should create an issue on Gitlab with problem params" do
     notice = Fabricate :notice
     tracker = Fabricate :gitlab_tracker, :app => notice.app
