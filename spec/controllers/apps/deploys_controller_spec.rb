@@ -44,7 +44,7 @@ describe Apps::DeploysController do
 
     it "should render successfully" do
       get :show, @params
-      response.should be_success
+      expect(response).to be_success
     end
   end
 

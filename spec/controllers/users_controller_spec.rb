@@ -198,8 +198,8 @@ describe UsersController do
     describe "#user_params" do
       context "with current user not admin" do
         before {
-          controller.stub(:current_user).and_return(user)
-          controller.stub(:params).and_return(ActionController::Parameters.new(user_param))
+          allow(controller).to receive(:current_user){ user }
+          allow(controller).to receive(:params){ ActionController::Parameters.new(user_param) }
         }
         let(:user_param) { {'user' => { :name => 'foo', :admin => true }} }
         it 'not have admin field' do
