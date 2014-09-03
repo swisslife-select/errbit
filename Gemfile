@@ -89,7 +89,7 @@ gem 'git'
 gem 'rinku', require: 'rails_rinku'
 
 group :development, :test do
-  gem 'rspec-rails'
+  gem 'rspec-rails', '2.99'
   gem 'webmock', :require => false
   gem 'pry-rails'
 #  gem 'rpm_contrib'
