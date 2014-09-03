@@ -23,10 +23,6 @@ describe UsersController do
       sign_in user
     end
 
-    it "should set a time zone" do
-      expect(Time.zone.to_s).to match(user.time_zone)
-    end
-
     context "GET /users/:other_id/edit" do
       it "redirects to the home page" do
         get :edit, :id => other_user.id
