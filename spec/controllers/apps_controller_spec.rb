@@ -75,7 +75,7 @@ describe AppsController do
         problem_resolved && problem
         get :show, id: app.id
         expect(response).to be_success
-        expect(assigns(:problems).all?(&:unresolved?)).to be_true
+        expect(assigns(:problems).all?(&:unresolved?)).to be true
       end
     end
   end
@@ -188,7 +188,7 @@ describe AppsController do
         end
 
         IssueTracker.subclasses.each do |tracker_klass|
-          context tracker_klass do
+          context "#{tracker_klass}" do
             it "should save tracker params" do
               params = tracker_klass::Fields.inject({}){|hash,f| hash[f[0]] = "test_value"; hash }
               params[:ticket_properties] = "card_type = defect" if tracker_klass == IssueTrackers::MingleTracker

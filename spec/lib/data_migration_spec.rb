@@ -111,7 +111,7 @@ describe DataMigration do
           memo && item
         end
 
-        expect(all_watch_errors).to be_true
+        expect(all_watch_errors).to be true
       end
 
       it 'set watching_deploys' do
@@ -119,7 +119,7 @@ describe DataMigration do
           memo && item
         end
 
-        expect(all_watch_deploys).to be_true
+        expect(all_watch_deploys).to be true
       end
     end
   end

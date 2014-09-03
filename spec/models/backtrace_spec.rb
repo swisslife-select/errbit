@@ -5,7 +5,7 @@ describe Backtrace do
 
   its(:fingerprint) { should be_present }
 
-  describe "#similar" do
+  context "#similar" do
     context "no similar backtrace" do
       its(:similar) { should be_nil }
     end
@@ -25,7 +25,7 @@ describe Backtrace do
     end
   end
 
-  describe "find_or_create" do
+  context "find_or_create" do
     subject { described_class.find_or_create(attributes) }
     let(:attributes) { double :attributes }
     let(:backtrace) { double :backtrace }

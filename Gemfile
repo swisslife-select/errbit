@@ -119,6 +119,10 @@ group :test do
   gem 'timecop'
   gem 'coveralls', require: false
   gem "fakeredis", require: 'fakeredis/rspec'
+
+  #legacy
+  gem 'rspec-its'
+  gem 'rspec-activemodel-mocks'
 end
 
 group :heroku, :production do

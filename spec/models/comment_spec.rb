@@ -31,20 +31,20 @@ describe Comment do
     end
 
     it 'should be true if app is emailable? and there are notification recipients' do
-      expect(comment.emailable?).to be_true
+      expect(comment.emailable?).to be true
     end
 
     it 'should be false if app is not emailable?' do
       app.update_attribute(:notify_on_errs, false)
-      expect(comment.notification_recipients).to be_any
-      expect(comment.emailable?).to be_false
+      expect(comment.notification_recipients.any?).to be true
+      expect(comment.emailable?).to be false
     end
 
     it 'should be false if there are no notification recipients' do
       watcher.destroy
       comment.problem.reload
-      expect(app.emailable?).to be_true
-      expect(comment.emailable?).to be_false
+      expect(app.emailable?).to be true
+      expect(comment.emailable?).to be false
     end
   end
 end

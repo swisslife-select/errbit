@@ -35,11 +35,12 @@ Fabrication.configure do |config|
 end
 
 RSpec.configure do |config|
-  config.mock_with :rspec
+  config.infer_spec_type_from_file_location!
+  config.mock_with :rspec do |mocks|
+    mocks.yield_receiver_to_any_instance_implementation_blocks = false
+  end
+
   config.include Devise::TestHelpers, :type => :controller
-  config.filter_run :focused => true
-  config.run_all_when_everything_filtered = true
-  config.alias_example_to :fit, :focused => true
   config.use_transactional_fixtures = false
 
   config.include WebMock::API

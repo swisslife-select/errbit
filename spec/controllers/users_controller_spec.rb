@@ -132,7 +132,7 @@ describe UsersController do
           post :create, attrs
           expect(response).to be_redirect
           created_user = User.find_by! attrs[:email]
-          expect(created_user.admin).to be_true
+          expect(created_user).to be_admin
         end
       end
     end

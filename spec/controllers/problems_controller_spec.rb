@@ -22,7 +22,7 @@ describe ProblemsController do
       it 'get correct result' do
         get :index
         expect(response).to be_success
-        expect(assigns(:problems).any?).to be_true
+        expect(assigns(:problems).any?).to be true
       end
     end
 

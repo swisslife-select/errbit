@@ -49,7 +49,7 @@ describe ErrorReport do
 
     describe "#fingerprint_strategy" do
       after(:all) {
-        error_report.fingerprint_strategy = Fingerprint
+        ErrorReport.fingerprint_strategy = Fingerprint
       }
 
       it "should be possible to change how fingerprints are generated" do
@@ -153,7 +153,7 @@ describe ErrorReport do
 
         ErrorReport.any_instance.stub(:fingerprint).and_return(problem.fingerprint)
 
-        expect(error_report.problem.reload.unresolved?).to be_true
+        expect(error_report.problem.reload.unresolved?).to be true
       end
 
       context "with notification service configured" do
