@@ -1,5 +1,6 @@
 class AppsController < ApplicationController
-  authorize_actions_for App
+  authorize_actions_for App, only: [:index, :new, :create]
+  authority_actions regenerate_api_key: :update
 
   before_filter :parse_email_at_notices_or_set_default, :only => [:create, :update]
   before_filter :parse_notice_at_notices_or_set_default, :only => [:create, :update]
@@ -16,7 +17,9 @@ class AppsController < ApplicationController
   end
 
   def show
-    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    @app = App.detect_by_param! params[:id]
+    authorize_action_for @app
+
     params_q = params.fetch(:q, {}).reverse_merge state_eq: 'unresolved', s: 'last_notice_at desc'
     @q = @app.problems.search(params_q)
     @problems = @q.result.page(params[:page]).per(current_user.per_page)
@@ -41,7 +44,8 @@ class AppsController < ApplicationController
   end
 
   def update
-    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    @app = App.detect_by_param! params[:id]
+    authorize_action_for @app
     if @app.update params[:app]
       redirect_to app_url(@app), :flash => { :success => I18n.t('controllers.apps.flash.update.success') }
     else
@@ -51,12 +55,14 @@ class AppsController < ApplicationController
   end
 
   def edit
-    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    @app = App.detect_by_param! params[:id]
+    authorize_action_for @app
     plug_params(@app)
   end
 
   def destroy
-    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    @app = App.detect_by_param! params[:id]
+    authorize_action_for @app
     if @app.destroy
       redirect_to apps_url, :flash => { :success => I18n.t('controllers.apps.flash.destroy.success') }
     else
@@ -66,7 +72,8 @@ class AppsController < ApplicationController
   end
 
   def regenerate_api_key
-    @app = current_user_or_guest.available_apps.detect_by_param! params[:id]
+    @app = App.detect_by_param! params[:id]
+    authorize_action_for @app
     @app.regenerate_api_key!
     redirect_to edit_app_path(@app)
   end

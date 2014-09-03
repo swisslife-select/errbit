@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 describe AppsController do
-
-  it_requires_authentication
-  it_requires_admin_privileges :for => {:new => :get, :edit => :get, :create => :post, :update => :patch, :destroy => :delete}
+  render_views
 
   let(:admin) { Fabricate(:admin) }
   let(:user) { Fabricate(:user) }
@@ -30,21 +28,29 @@ describe AppsController do
 
   describe "GET /apps" do
     context 'when logged in as an admin' do
-      it 'finds all apps' do
+      before(:each) do
         sign_in admin
+      end
+
+      it 'finds all apps' do
         unwatched_app && watched_app1 && watched_app2
         get :index
         expect(assigns(:apps).entries).to eq App.all.sort.entries
+        expect(response).to be_success
       end
     end
 
     context 'when logged in as a regular user' do
+      before(:each) do
+        sign_in user
+      end
+
       it 'finds apps the user is watching' do
-        sign_in(user)
         watched_app1 && watched_app2 && unwatched_app
         get :index
         expect(assigns(:apps)).to include(watched_app1, watched_app2)
         expect(assigns(:apps)).to_not include(unwatched_app)
+        expect(response).to be_success
       end
     end
   end
@@ -65,34 +71,11 @@ describe AppsController do
         expect(response).to be_success
       end
 
-      context 'with resolved errors' do
-        before(:each) do
-          problem_resolved && problem
-        end
-
-        context 'and no params' do
-          it 'shows only unresolved problems' do
-            get :show, :id => app.id
-            expect(assigns(:problems).all?(&:unresolved?)).to be_true
-          end
-        end
-      end
-    end
-
-    context 'logged in as a user' do
-      it 'finds the app if the user is watching it' do
-        watcher
-        sign_in user
+      it "should list unresolved problems" do
+        problem_resolved && problem
         get :show, :id => app.id
-        expect(assigns(:app)).to eq app
-      end
-
-      it 'does not find the app if the user is not watching it' do
-        sign_in Fabricate(:user)
-        app = Fabricate(:app)
-        expect{
-          get :show, :id => app.id
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        expect(response).to be_success
+        expect(assigns(:problems).all?(&:unresolved?)).to be_true
       end
     end
   end
@@ -108,44 +91,36 @@ describe AppsController do
         expect(assigns(:app)).to be_a(App)
         expect(assigns(:app)).to be_new_record
         expect(assigns(:app).watchers).to_not be_empty
+        expect(response).to be_success
       end
 
       it "should copy attributes from an existing app" do
         repo_url = 'https://github.com/test/example'
-        @app = Fabricate(:app_with_watcher, :name => "do not copy",
-                             :repo_url => repo_url)
+        @app = Fabricate(:app_with_watcher, :name => "do not copy", :repo_url => repo_url)
         get :new, :copy_attributes_from => @app.id
-        expect(assigns(:app)).to be_a(App)
         expect(assigns(:app)).to be_new_record
         expect(assigns(:app).name).to be_blank
         expect(assigns(:app).repo_url).to eq repo_url
         expect(assigns(:app).watchers.first.new_record?).to be true
+        expect(response).to be_success
       end
     end
 
     describe "GET /apps/:id/edit" do
-      it 'finds the correct app' do
+      it 'success' do
         app = Fabricate(:app)
-        get :edit, :id => app.id
+        get :edit, id: app.id
         expect(response).to be_success
-        expect(assigns(:app)).to eq app
       end
     end
 
     describe "POST /apps" do
-      before do
-        @app = Fabricate(:app)
-        App.stub(:new).and_return(@app)
-      end
+      let(:app_attrs) { Fabricate.attributes_for :app }
 
       context "when the create is successful" do
-        before do
-          expect(@app).to receive(:save).and_return(true)
-        end
-
         it "should redirect to the app page" do
-          post :create, :app => {}
-          expect(response).to redirect_to(app_path(@app))
+          post :create, :app => app_attrs
+          expect(response).to redirect_to(app_path(assigns(:app)))
         end
       end
     end
@@ -256,29 +231,12 @@ describe AppsController do
       it "should destroy the app" do
         delete :destroy, :id => @app.id
         expect(App.exists?(@app.id)).to be false
-      end
-
-      it "should redirect to the apps page" do
-        delete :destroy, :id => @app.id
         expect(response).to redirect_to(apps_path)
       end
     end
   end
 
   describe "POST /apps/:id/regenerate_api_key" do
-
-    context "like watcher" do
-      before do
-        sign_in watcher.user
-      end
-
-      it 'redirect to root with flash error' do
-        post :regenerate_api_key, :id => 'foo'
-        expect(request).to redirect_to root_path
-      end
-
-    end
-
     context "like admin" do
       before do
         sign_in admin
