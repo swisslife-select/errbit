@@ -79,7 +79,7 @@
 
 - if @app.problems.any?
   %h3.clear=t('.errors')
-  = render 'problems/search_form', q: @q, url: app_path(@app)
+  = render 'problems/search_form', q: @q, url: app_path(@app), environments: @app.problems.environments
   %section
     .problem_table{:id => 'problem_table'}
       = render 'problems/table', problems: @problems, q: @q

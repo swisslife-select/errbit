@@ -28,5 +28,9 @@ module ProblemRepository
     def in_date_range(date_range)
       where(["first_notice_at <= ? AND (resolved_at IS NULL OR resolved_at >= ?)", date_range.end, date_range.begin])
     end
+
+    def environments
+      group(:environment).pluck(:environment)
+    end
   end
 end

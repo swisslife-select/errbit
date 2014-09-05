@@ -6,4 +6,8 @@ module SelectHelper
   def states(klass)
     klass.state_machine.states.map{|s| [s.human_name, s.name]}
   end
+
+  def default_environments
+    %w[production staging development]
+  end
 end
