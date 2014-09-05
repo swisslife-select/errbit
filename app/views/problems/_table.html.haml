@@ -1,5 +1,6 @@
 - any_issue_links = problems.any?{|e| e.issue_link.present? && e.issue_link != 'pending' }
 =form_tag do
+  = render 'problems/tools'
   %table.errs.selectable
     %thead
       %tr
@@ -48,9 +49,4 @@
           %td{:colspan => (any_issue_links ? 8 : 7)}
             %em No errs here
   = paginate problems
-  .tab-bar
-    %ul
-      - %w(resolve unresolve delete).each do |action|
-        %li= submit_tag action.capitalize, :id => "#{action}_problems", :class => 'button',
-          :data => { :action => polymorphic_path([action == 'delete' ? 'destroy' : action, 'several_problems']),
-          :confirm => problem_confirm(action) }
+  = render 'problems/tools'

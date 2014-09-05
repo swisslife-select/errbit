@@ -1,0 +1,6 @@
+.tab-bar
+  %ul
+    - %w(resolve unresolve delete).each do |action|
+      %li= submit_tag action.capitalize, :id => "#{action}_problems", :class => 'button',
+        :data => { :action => polymorphic_path([action == 'delete' ? 'destroy' : action, 'several_problems']),
+        :confirm => problem_confirm(action) }
