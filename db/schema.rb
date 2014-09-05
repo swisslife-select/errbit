@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140828121539) do
+ActiveRecord::Schema.define(version: 20140905130333) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,16 +78,6 @@ ActiveRecord::Schema.define(version: 20140828121539) do
 
   add_index "deploys", ["app_id"], name: "index_deploys_on_app_id", using: :btree
 
-  create_table "errs", force: true do |t|
-    t.integer  "problem_id"
-    t.string   "fingerprint"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "errs", ["fingerprint"], name: "index_errs_on_fingerprint", using: :btree
-  add_index "errs", ["problem_id"], name: "index_errs_on_problem_id", using: :btree
-
   create_table "issue_trackers", force: true do |t|
     t.integer  "app_id"
     t.string   "project_id"
@@ -113,7 +103,6 @@ ActiveRecord::Schema.define(version: 20140828121539) do
   add_index "issue_trackers", ["app_id"], name: "index_issue_trackers_on_app_id", using: :btree
 
   create_table "notices", force: true do |t|
-    t.integer  "err_id"
     t.integer  "backtrace_id"
     t.text     "message"
     t.text     "server_environment"
@@ -129,7 +118,6 @@ ActiveRecord::Schema.define(version: 20140828121539) do
   end
 
   add_index "notices", ["backtrace_id"], name: "index_notices_on_backtrace_id", using: :btree
-  add_index "notices", ["err_id", "created_at", "id"], name: "index_notices_on_err_id_and_created_at_and_id", using: :btree
   add_index "notices", ["problem_id", "id"], name: "index_notices_on_problem_id_and_id", using: :btree
 
   create_table "notification_services", force: true do |t|
