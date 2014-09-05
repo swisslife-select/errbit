@@ -10,6 +10,6 @@
       = f.select :state_eq, states(Problem), include_blank: true, selected: q.state_eq
     %div
       = f.label :environment
-      = f.select :environment_eq, %w[production staging development test], include_blank: true, selected: q.environment_eq
+      = f.select :environment_eq, environments, include_blank: true, selected: q.environment_eq
     = f.submit
 %br
