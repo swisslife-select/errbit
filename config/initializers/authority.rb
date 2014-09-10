@@ -30,7 +30,6 @@ Authority.configure do |config|
      :destroy => 'delete',
 
      #TODO: need refactoring
-     :regenerate_api_key => 'update',
      :locate => 'read',
      :destroy_several => 'delete',
      :resolve_several => 'update',

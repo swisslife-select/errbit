@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe BacktraceLine do
+describe BacktraceLine, :type => :model do
   subject { described_class.new(raw_line) }
 
-  describe "root at the start of decorated filename" do
+  context "root at the start of decorated filename" do
     let(:raw_line) { { 'number' => rand(999), 'file' => '[PROJECT_ROOT]/app/controllers/pages_controller.rb', 'method' => ActiveSupport.methods.shuffle.first.to_s } }
     it "should leave leading root symbol in filepath" do
       expect(subject.decorated_path).to eq 'app/controllers/'

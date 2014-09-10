@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "apps/problems/show.html.ics" do
+describe "apps/problems/show.html.ics", :type => :view do
   let(:problem) { Fabricate(:problem) }
   before do
     assign :problem, problem

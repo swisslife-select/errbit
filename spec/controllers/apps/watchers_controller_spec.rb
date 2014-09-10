@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apps::WatchersController do
+describe Apps::WatchersController, :type => :controller do
   let(:app) { Fabricate(:app_with_user_watcher) }
 
   describe "DELETE /apps/:app_id/watchers/:id/destroy" do

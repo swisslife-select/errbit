@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe IssueTrackers::BitbucketIssuesTracker do
+describe IssueTrackers::BitbucketIssuesTracker, :type => :model do
   it "should create an issue on BitBucket Issues with problem params, and set issue link for problem" do
     repo = "test_user/test_repo"
     notice = Fabricate :notice

@@ -25,7 +25,7 @@ describe "Callback on Deploy" do
         # job
         deploy.reload
 
-        expect(deploy.vcs_changes.any?).to be_true
+        expect(deploy.vcs_changes.any?).to be true
       end
     end
   end

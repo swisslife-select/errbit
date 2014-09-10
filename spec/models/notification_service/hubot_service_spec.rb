@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe NotificationServices::HubotService do
+describe NotificationServices::HubotService, :type => :model do
   it "it should send a notification to Hubot" do
     # setup
     notice = Fabricate :notice

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Deploy do
+describe Deploy, :type => :model do
   context 'being created' do
     context 'when the app has resolve_errs_on_deploy set to false' do
       it 'should not resolve the apps errs' do

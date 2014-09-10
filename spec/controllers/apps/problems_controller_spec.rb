@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apps::ProblemsController do
+describe Apps::ProblemsController, :type => :controller do
   let(:app) { Fabricate(:app) }
   let(:problem) { Fabricate(:problem, :app => app, :environment => "production") }
 
@@ -105,7 +105,7 @@ describe Apps::ProblemsController do
 
       it 'should redirect' do
         patch :resolve,  :app_id => @problem.app.id, :id => @problem.id
-        response.should redirect_to(new_user_session_path)
+        expect(response).to redirect_to(new_user_session_path)
       end
     end
   end

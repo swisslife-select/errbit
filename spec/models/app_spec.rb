@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe App do
+describe App, :type => :model do
 
   context 'being created' do
     it 'generates a new api-key' do
       app = Fabricate.build(:app)
-      expect(app.api_key).to be_nil
+      expect(app.api_key).to be nil
       app.save
-      expect(app.api_key).to_not be_nil
+      expect(app.api_key).to_not be nil
     end
 
     it 'generates a correct api-key' do
@@ -43,17 +43,17 @@ describe App do
   context '#github_repo?' do
     it 'is true when there is a github_repo' do
       app = Fabricate(:app, :repo_url => "https://github.com/errbit/errbit.git")
-      expect(app.github_repo?).to be_true
+      expect(app.github_repo?).to be true
     end
 
     it 'is false when no github_repo' do
       app = Fabricate(:app)
-      expect(app.github_repo?).to be_false
+      expect(app.github_repo?).to be false
     end
 
     it 'is false when app has another repo' do
       app = Fabricate(:app, :repo_url => "https://bitbucket.com/errbit/errbit.git")
-      app.github_repo?.should be_false
+      expect(app.github_repo?).to be false
     end
   end
 
@@ -79,7 +79,7 @@ describe App do
       Fabricate(:watcher_of_deploys, :app => @app)
       @app.reload
       @app.notify_all_users = false
-      @app.error_recipients.count.should == 2
+      expect(@app.error_recipients.count).to eq(2)
     end
   end
 
@@ -91,7 +91,7 @@ describe App do
       Fabricate(:watcher_of_deploys, :app => @app)
       @app.reload
       @app.notify_all_users = false
-      @app.deploy_recipients.count.should == 2
+      expect(@app.deploy_recipients.count).to eq(2)
     end
   end
 
@@ -99,19 +99,19 @@ describe App do
     it "should be true if notify on errs and there are notification recipients" do
       app = Fabricate(:app, :notify_on_errs => true, :notify_all_users => false)
       2.times { app.watchers.create Fabricate.attributes_for(:watcher) }
-      expect(app.emailable?).to be_true
+      expect(app.emailable?).to be true
     end
 
     it "should be false if notify on errs is disabled" do
       app = Fabricate(:app, :notify_on_errs => false, :notify_all_users => false)
       2.times { app.watchers.create Fabricate.attributes_for(:watcher) }
-      expect(app.emailable?).to be_false
+      expect(app.emailable?).to be false
     end
 
     it "should be false if there are no notification recipients" do
       app = Fabricate(:app, :notify_on_errs => true, :notify_all_users => false)
       expect(app.watchers).to be_empty
-      expect(app.emailable?).to be_false
+      expect(app.emailable?).to be false
     end
   end
 
@@ -138,7 +138,7 @@ describe App do
     end
 
     it 'creates a new problem if a matching one does not already exist' do
-      expect(Problem.where(conditions.slice(:fingerprint)).first).to be_nil
+      expect(Problem.where(conditions.slice(:fingerprint)).first).to be nil
       expect {
         app.find_or_create_problem!(conditions)
       }.to change(Problem,:count).by(1)
@@ -151,7 +151,7 @@ describe App do
       }
       }
       it 'save the err' do
-        expect(Problem.where(conditions.slice(:fingerprint)).first).to be_nil
+        expect(Problem.where(conditions.slice(:fingerprint)).first).to be nil
         expect {
           app.find_or_create_problem!(conditions)
         }.to change(Problem,:count).by(1)

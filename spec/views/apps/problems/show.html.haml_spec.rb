@@ -1,24 +1,24 @@
 require 'spec_helper'
 
-describe "apps/problems/show.html.haml" do
+describe "apps/problems/show.html.haml", :type => :view do
   let(:problem) { Fabricate(:problem) }
   let(:comment) { Fabricate(:comment) }
 
   before do
-    view.stub(:resource_app).and_return(problem.app)
+    allow(view).to receive(:resource_app).and_return(problem.app)
     assign :problem, problem
     assign :comment, comment
     assign :notices, problem.notices.page(1).per(1)
     assign :notice, problem.notices.first
 
-    controller.stub(:current_user) { Fabricate(:user) }
+    allow(controller).to receive(:current_user) { Fabricate(:user) }
   end
 
   def with_issue_tracker(tracker, problem)
     # problem with has_one and sti, cause reverse creating
     tracker.create :api_token => "token token token", :project_id => "1234", :app => problem.app
     assign :problem, problem
-    view.stub(:resource_app).and_return(problem.app)
+    allow(view).to receive(:resource_app).and_return(problem.app)
   end
 
   describe "content_for :action_bar" do
@@ -32,13 +32,13 @@ describe "apps/problems/show.html.haml" do
     end
 
     it "should confirm the 'resolve' link if configuration is unset" do
-      Errbit::Config.stub(:confirm_err_actions).and_return(nil)
+      allow(Errbit::Config).to receive(:confirm_err_actions).and_return(nil)
       render
       expect(action_bar).to have_selector('a.resolve[data-confirm="%s"]' % I18n.t('problems.confirm.resolve_one'))
     end
 
     it "should not confirm the 'resolve' link if configured not to" do
-      Errbit::Config.stub(:confirm_err_actions).and_return(false)
+      allow(Errbit::Config).to receive(:confirm_err_actions).and_return(false)
       render
       expect(action_bar).to have_selector('a.resolve[data-confirm="null"]')
     end
@@ -53,8 +53,8 @@ describe "apps/problems/show.html.haml" do
     it "should link 'up' to app_problems_path if HTTP_REFERER isn't set'" do
       controller.request.env['HTTP_REFERER'] = nil
       problem = Fabricate(:problem_with_comments)
-      view.stub(:problem).and_return(problem)
-      view.stub(:resource_app).and_return(problem.app)
+      allow(view).to receive(:problem).and_return(problem)
+      allow(view).to receive(:resource_app).and_return(problem.app)
       render
 
       expect(action_bar).to have_selector("span a.up[href='#{app_path(problem.app)}']", :text => 'up')
@@ -63,11 +63,11 @@ describe "apps/problems/show.html.haml" do
     context 'create issue links' do
       it 'should allow creating issue for github if current user has linked their github account' do
         user = Fabricate(:user, :github_login => 'test_user', :github_oauth_token => 'abcdef')
-        controller.stub(:current_user) { user }
+        allow(controller).to receive(:current_user) { user }
 
         problem = Fabricate(:problem_with_comments, :app => Fabricate(:app, :repo_url => "https://github.com/test_user/test_repo"))
         assign :problem, problem
-        view.stub(:resource_app).and_return(problem.app)
+        allow(view).to receive(:resource_app).and_return(problem.app)
         render
 
         expect(action_bar).to have_selector("span a.github_create.create-issue", :text => 'create issue')
@@ -77,7 +77,7 @@ describe "apps/problems/show.html.haml" do
         problem = Fabricate(:problem_with_comments, :app => Fabricate(:app, :repo_url => "https://github.com/test_user/test_repo"))
         with_issue_tracker(GithubIssuesTracker, problem)
         assign :problem, problem
-        view.stub(:resource_app).and_return(problem.app)
+        allow(view).to receive(:resource_app).and_return(problem.app)
         render
 
         expect(action_bar).to have_selector("span a.github_create.create-issue", :text => 'create issue')
@@ -89,7 +89,7 @@ describe "apps/problems/show.html.haml" do
 
         it 'not see link to create issue' do
           assign :problem, problem
-          view.stub(:resource_app).and_return(problem.app)
+          allow(view).to receive(:resource_app).and_return(problem.app)
           render
           expect(view.content_for(:action_bar)).to_not match(/create issue/)
         end
@@ -103,7 +103,7 @@ describe "apps/problems/show.html.haml" do
           let(:problem) { Fabricate :problem, :app => app }
           it 'not see link if no issue tracker' do
             assign :problem, problem
-            view.stub(:resource_app).and_return(problem.app)
+            allow(view).to receive(:resource_app).and_return(problem.app)
             render
             expect(view.content_for(:action_bar)).to match(/create issue/)
           end
@@ -115,7 +115,7 @@ describe "apps/problems/show.html.haml" do
 
           it 'not see link if no issue tracker' do
             assign :problem, problem
-            view.stub(:resource_app).and_return(problem.app)
+            allow(view).to receive(:resource_app).and_return(problem.app)
             render
             expect(view.content_for(:action_bar)).to_not match(/create issue/)
           end
@@ -127,14 +127,14 @@ describe "apps/problems/show.html.haml" do
 
   describe "content_for :comments with comments disabled for configured issue tracker" do
     before do
-      Errbit::Config.stub(:allow_comments_with_issue_tracker).and_return(false)
-      Errbit::Config.stub(:use_gravatar).and_return(true)
+      allow(Errbit::Config).to receive(:allow_comments_with_issue_tracker).and_return(false)
+      allow(Errbit::Config).to receive(:use_gravatar).and_return(true)
     end
 
     it 'should display comments and new comment form when no issue tracker' do
       problem = Fabricate(:problem_with_comments)
       assign :problem, problem
-      view.stub(:resource_app).and_return(problem.app)
+      allow(view).to receive(:resource_app).and_return(problem.app)
       render
 
       expect(view.content_for(:comments)).to include('Test comment')

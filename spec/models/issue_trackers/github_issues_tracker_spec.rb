@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe IssueTrackers::GithubIssuesTracker do
+describe IssueTrackers::GithubIssuesTracker, :type => :model do
   let(:repo) { "test_user/test_repo" }
 
   let(:notice) do

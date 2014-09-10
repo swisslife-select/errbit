@@ -44,7 +44,7 @@ describe IssueCreation do
         user.github_oauth_token = 'oauthtoken'
         user.save!
 
-        GithubIssuesTracker.any_instance.should_receive(:create_issue)
+        expect_any_instance_of(GithubIssuesTracker).to receive(:create_issue)
         issue_creation.execute
         expect(errors).to be_empty
       end

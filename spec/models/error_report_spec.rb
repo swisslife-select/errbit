@@ -17,7 +17,7 @@ require 'airbrake/utils/params_cleaner'
 #  end
 #end
 
-describe ErrorReport do
+describe ErrorReport, :type => :model do
   context "with notice without line of backtrace" do
     let(:xml){
       Rails.root.join('spec','fixtures','hoptoad_test_notice.xml').read
@@ -49,12 +49,12 @@ describe ErrorReport do
 
     describe "#fingerprint_strategy" do
       after(:all) {
-        error_report.fingerprint_strategy = Fingerprint
+        ErrorReport.fingerprint_strategy = Fingerprint
       }
 
       it "should be possible to change how fingerprints are generated" do
         strategy = double()
-        strategy.should_receive(:generate){ 'fingerprints' }
+        expect(strategy).to receive(:generate){ 'fingerprints' }
         error_report.fingerprint_strategy = strategy
         error_report.generate_notice!
       end
@@ -151,9 +151,9 @@ describe ErrorReport do
       it 'find the correct err for the notice' do
         problem = Fabricate(:problem_resolved)
 
-        ErrorReport.any_instance.stub(:fingerprint).and_return(problem.fingerprint)
+        allow_any_instance_of(ErrorReport).to receive(:fingerprint).and_return(problem.fingerprint)
 
-        expect(error_report.problem.reload.unresolved?).to be_true
+        expect(error_report.problem.reload.unresolved?).to be true
       end
 
       context "with notification service configured" do

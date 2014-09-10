@@ -7,16 +7,16 @@ describe DataMigration do
     @users = MongodbDataStubs.users
     db_name = "test_db"
     db = MongodbDataStubs.db(db_name)
-    MongoClient.should_receive(:new).and_return(db)
+    expect(MongoClient).to receive(:new).and_return(db)
     
     [:apps, :users, :problems, :comments, :errs, :notices, :backtraces].each do |collection|
       records = db[db_name][collection]
-      records.stub(:name).and_return(collection)
+      allow(records).to receive(:name).and_return(collection)
       def records.find(*args)
         yield self if block_given?
         self
       end
-      records.stub(:find_one).and_return(records.last)
+      allow(records).to receive(:find_one).and_return(records.last)
     end
     
     @migrator = DataMigration::Worker.new({sessions: {default: {database: db_name}}})
@@ -35,16 +35,16 @@ describe DataMigration do
     end
 
     it "should copy users" do
-      @pg_user.should_not be_nil
+      expect(@pg_user).not_to be_nil
     end
 
     it "should keep track of each user's legacy id" do
-      @pg_user.remote_id.should == @mongo_user["_id"].to_s
+      expect(@pg_user.remote_id).to eq(@mongo_user["_id"].to_s)
     end
 
     User.columns.each do |column|
       it "should correctly copy values for '#{column.name}'" do
-        @pg_user.read_attribute(column.name).should == @mongo_user[column.name] if @mongo_user.has_key?(column.name)
+        expect(@pg_user.read_attribute(column.name)).to eq(@mongo_user[column.name]) if @mongo_user.has_key?(column.name)
       end
     end
   end
@@ -58,41 +58,41 @@ describe DataMigration do
     end
 
     it "should copy apps" do
-      @pg_app.should_not be_nil
+      expect(@pg_app).not_to be_nil
     end
 
     App.columns.each do |column|
       it "should correct copy value for '#{column.name}'" do
-        @pg_app.read_attribute(column.name).should == @mongo_app[column.name] if @mongo_app.has_key?(column.name)
+        expect(@pg_app.read_attribute(column.name)).to eq(@mongo_app[column.name]) if @mongo_app.has_key?(column.name)
       end
     end
 
     it "fill repo_url" do
       github_repo = @mongo_app['github_repo']
-      @pg_app.repo_url.should == "https://github.com/#{github_repo}"
-      @pg_app.github_repo.should == github_repo
+      expect(@pg_app.repo_url).to eq("https://github.com/#{github_repo}")
+      expect(@pg_app.github_repo).to eq(github_repo)
     end
 
     it "should copy issue tracker" do
-      @pg_app.issue_tracker.should_not be_nil
-      @pg_app.issue_tracker.type.should == @mongo_app["issue_tracker"]["_type"]
+      expect(@pg_app.issue_tracker).not_to be_nil
+      expect(@pg_app.issue_tracker.type).to eq(@mongo_app["issue_tracker"]["_type"])
     end
 
     it "should copy notification service" do
-      @pg_app.notification_service.should_not be_nil
-      @pg_app.notification_service.type.should == @mongo_app["notification_service"]["_type"]
+      expect(@pg_app.notification_service).not_to be_nil
+      expect(@pg_app.notification_service.type).to eq(@mongo_app["notification_service"]["_type"])
     end
 
     describe "migrate watchers" do
       it "should copy watchers" do
-        @pg_app.watchers.count.should == @mongo_app["watchers"].count
+        expect(@pg_app.watchers.count).to eq(@mongo_app["watchers"].count)
       end
 
       it "should copy all emails" do
         @mongo_app["watchers"].each do |watcher|
           next unless watcher["email"]
           
-          @pg_app.watchers.find_by(email: watcher["email"]).should_not be_nil
+          expect(@pg_app.watchers.find_by(email: watcher["email"])).not_to be_nil
         end
       end
 
@@ -101,8 +101,8 @@ describe DataMigration do
           next unless watcher["user_id"]
           
           user = User.find_by remote_id: watcher["user_id"].to_s
-          user.should_not be_nil
-          @pg_app.watchers.find_by(user_id: user.id).should_not be_nil
+          expect(user).not_to be_nil
+          expect(@pg_app.watchers.find_by(user_id: user.id)).not_to be_nil
         end
       end
 
@@ -111,7 +111,7 @@ describe DataMigration do
           memo && item
         end
 
-        expect(all_watch_errors).to be_true
+        expect(all_watch_errors).to be true
       end
 
       it 'set watching_deploys' do
@@ -119,7 +119,7 @@ describe DataMigration do
           memo && item
         end
 
-        expect(all_watch_deploys).to be_true
+        expect(all_watch_deploys).to be true
       end
     end
   end

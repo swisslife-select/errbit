@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe BacktraceLineNormalizer do
+describe BacktraceLineNormalizer, :type => :model do
   subject { described_class.new(raw_line).call }
 
-  describe "sanitize" do
+  context "sanitize" do
     context "unknown file and method" do
       let(:raw_line) { { 'number' => rand(999), 'file' => nil, 'method' => nil } }
 

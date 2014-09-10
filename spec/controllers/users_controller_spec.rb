@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe UsersController do
+describe UsersController, :type => :controller do
 
   it_requires_authentication :for => {
       :edit    => :get,
@@ -21,10 +21,6 @@ describe UsersController do
 
     before do
       sign_in user
-    end
-
-    it "should set a time zone" do
-      expect(Time.zone.to_s).to match(user.time_zone)
     end
 
     context "GET /users/:other_id/edit" do
@@ -136,7 +132,7 @@ describe UsersController do
           post :create, attrs
           expect(response).to be_redirect
           created_user = User.find_by! attrs[:email]
-          expect(created_user.admin).to be_true
+          expect(created_user).to be_admin
         end
       end
     end
@@ -202,8 +198,8 @@ describe UsersController do
     describe "#user_params" do
       context "with current user not admin" do
         before {
-          controller.stub(:current_user).and_return(user)
-          controller.stub(:params).and_return(ActionController::Parameters.new(user_param))
+          allow(controller).to receive(:current_user){ user }
+          allow(controller).to receive(:params){ ActionController::Parameters.new(user_param) }
         }
         let(:user_param) { {'user' => { :name => 'foo', :admin => true }} }
         it 'not have admin field' do

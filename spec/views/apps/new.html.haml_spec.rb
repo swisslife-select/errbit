@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe "apps/new.html.haml" do
+describe "apps/new.html.haml", :type => :view do
   let(:app) { stub_model(App, name: 'app') }
   before do
     assign :app, app
-    controller.stub(:current_user) { stub_model(User) }
+    allow(controller).to receive(:current_user) { stub_model(User) }
   end
 
   describe "content_for :action_bar" do

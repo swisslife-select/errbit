@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe NotificationServices::GtalkService do
+describe NotificationServices::GtalkService, :type => :model do
   it "it should send a notification to gtalk" do
     # setup
     notice = Fabricate :notice
@@ -47,8 +47,8 @@ http://#{Errbit::Config.host}/apps/#{@problem.app.id.to_s}
       expect(@gtalk).to receive(:connect)
       expect(@gtalk).to receive(:auth)
       jid = double("jid")
-      Jabber::JID.stub(:new).with(@notification_service.subdomain).and_return(jid)
-      Jabber::Client.stub(:new).with(jid).and_return(@gtalk)
+      allow(Jabber::JID).to receive(:new).with(@notification_service.subdomain).and_return(jid)
+      allow(Jabber::Client).to receive(:new).with(jid).and_return(@gtalk)
     end
     it "should send a notification to all ',' separated users" do
       expect(Jabber::Message).to receive(:new).with("first@domain.org", @error_msg)

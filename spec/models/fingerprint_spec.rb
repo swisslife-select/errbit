@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Fingerprint do
+describe Fingerprint, :type => :model do
 
   context '#generate' do
     let(:backtrace) {

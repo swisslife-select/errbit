@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apps::DeploysController do
+describe Apps::DeploysController, :type => :controller do
   render_views
 
   context "GET #index" do
@@ -44,7 +44,7 @@ describe Apps::DeploysController do
 
     it "should render successfully" do
       get :show, @params
-      response.should be_success
+      expect(response).to be_success
     end
   end
 

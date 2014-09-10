@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe IssueTrackers::UnfuddleTracker do
+describe IssueTrackers::UnfuddleTracker, :type => :model do
 
   let(:issue_link) { "https://test.unfuddle.com/projects/15/tickets/2436" }
   let(:notice) { Fabricate :notice }

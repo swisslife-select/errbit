@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::V1::AppStatisticsController do
+describe Api::V1::AppStatisticsController, :type => :controller do
   render_views
 
   let(:user) { Fabricate(:user) }

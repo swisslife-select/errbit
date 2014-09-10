@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Notices management" do
+describe "Notices management", :type => :request do
 
   let(:errbit_app) { Fabricate(:app,
                        :api_key => 'APIKEY') }
@@ -40,7 +40,7 @@ describe "Notices management" do
           expect(response.body).to eq "Your API key is unknown"
         }.to_not change {
           errbit_app.problems.count
-        }.by(1)
+        }
       end
 
     end

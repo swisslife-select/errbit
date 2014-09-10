@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Fingerprints::LegacyFingerprint do
+describe Fingerprints::LegacyFingerprint, :type => :model do
   context 'being created' do
     let(:backtrace) do
       Backtrace.create(:raw => [

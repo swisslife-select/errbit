@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe NotificationServices::CampfireService do
+describe NotificationServices::CampfireService, :type => :model do
   it "it should send a notification to campfire" do
     # setup
     notice = Fabricate :notice
@@ -9,8 +9,8 @@ describe NotificationServices::CampfireService do
 
     #campy stubbing
     campy = double('CampfireService')
-    Campy::Room.stub(:new).and_return(campy)
-    campy.stub(:speak) { true }
+    allow(Campy::Room).to receive(:new).and_return(campy)
+    allow(campy).to receive(:speak) { true }
 
     #assert
     expect(campy).to receive(:speak)

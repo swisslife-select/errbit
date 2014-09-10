@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Mailer do
+describe Mailer, :type => :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
@@ -56,7 +56,7 @@ describe Mailer do
     before do
       Fabricate(:notice, :problem => notice.problem)
       comment.reload #for counter_cache
-      comment.stub(:notification_recipients).and_return(recipients)
+      allow(comment).to receive(:notification_recipients).and_return(recipients)
       @email = Mailer.comment_notification(comment).deliver
     end
 
