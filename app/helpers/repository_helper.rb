@@ -30,7 +30,9 @@ module RepositoryHelper
     hosting = RepositoryHosting.for_git_url git_url
     return body unless hosting
 
-    sha = line.app.repo_branch
+    notice = line.backtrace.notice
+    sha = line.app.deploys.where(environment: notice.environment_name).last.try(:revision) || line.app.repo_branch
+
     path = line.decorated_path + line.file_name
     href = hosting.file_with_line_url(git_url, sha, path, line.number)
     link_to(body, href, :target => '_blank')
