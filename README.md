@@ -27,8 +27,8 @@ If you have any questions you can ask them [here](https://gitter.im/Undev/errbit
 - name for this project
 - refactoring tests
 - [add permits](https://github.com/Undev/errbit/blob/master/config/application.rb#L15)
-- move datamigrator to separate gem
-- database structure
+- ~~move datamigrator to separate gem~~
+- ~~database structure~~
 - fix N+1
 - use reform gem
 - todos in code
